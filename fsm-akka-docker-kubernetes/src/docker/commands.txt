@@ -1,0 +1,3 @@
+docker run --rm -p 9042:9042 --name fsm-akka-cassandra -d  cassandra:latest
+docker rm fsm-akka-cassandra
+docker ps -q | xargs -n 1 docker inspect --format '{{ .NetworkSettings.IPAddress }} {{ .Name }}' | sed 's/ \// /'

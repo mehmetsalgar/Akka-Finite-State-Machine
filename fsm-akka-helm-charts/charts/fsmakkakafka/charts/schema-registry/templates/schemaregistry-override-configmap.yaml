@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{.Release.Name}}-schemaregistry-override-configmap
+data:
+  spring_cloud_config_server_overrides_kafka_schemaRegistryUrl: "http://{{ template "schema-registry.fullname" . }}-headless:8081"
+  spring_cloud_config_server_overrides_spring_kafka_properties: |
+    "schema.registry.url":  "http://{{ template "schema-registry.fullname" . }}-headless:8081"

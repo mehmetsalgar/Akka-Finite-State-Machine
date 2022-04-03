@@ -1,0 +1,99 @@
+global:
+  imageRegistryDontOverride: true
+## ------------------------------------------------------
+## Zookeeper
+## ------------------------------------------------------
+zookeeper:
+  enabled: true
+  servers: 3
+  ## Optionally specify an array of imagePullSecrets. Secrets must be manually created in the namespace.
+  ## https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod
+  imagePullSecrets:
+    - name: "regsecret"
+  heapOptions: "-Xms1024M -Xmx1024M"
+  persistence:
+    enabled: true
+    ## The size of the PersistentVolume to allocate to each Zookeeper Pod in the StatefulSet. For
+    ## production servers this number should likely be much larger.
+    ##
+    ## Size for Data dir, where ZooKeeper will store the in-memory database snapshots.
+    dataDirSize: 10Gi
+    # dataDirStorageClass: "fsm-akka-kafka-1"
+    ## Size for data log dir, which is a dedicated log device to be used, and helps avoid competition between logging and snaphots.
+    dataLogDirSize: 10Gi
+    # dataLogDirStorageClass: "fsm-akka-kafka-1"
+    
+  # TODO: find correct security context for user in this zk-image  
+  securityContext: 
+    runAsUser: 0
+
+  resources:
+    limits:
+      cpu: 100m
+      memory: 1G
+    requests:
+      cpu: 100m
+      memory: 1G
+
+## ------------------------------------------------------
+## Kafka
+## ------------------------------------------------------
+kafka:
+  enabled: true
+  brokers: 3
+  ## Optionally helm an array of imagePullSecrets. Secrets must be manually created in the namespace.
+  ## https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod
+  imagePullSecrets:
+    - name: "regsecret"
+  heapOptions: "-Xms10G -Xmx10G"
+  persistence:
+    enabled: true
+    #storageClass: "fsm-akka-kafka"
+    size: 50Gi
+    disksPerBroker: 1
+  resources:
+    limits:
+      cpu: 100m
+      memory: 14G
+    requests:
+      cpu: 100m
+      memory: 14G
+  securityContext: 
+    runAsUser: 0
+
+## ------------------------------------------------------
+## Schema Registry
+## ------------------------------------------------------
+schema-registry:
+  enabled: true
+  ## Optionally specify an array of imagePullSecrets. Secrets must be manually created in the namespace.
+  ## https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod
+  imagePullSecrets:
+    - name: "regsecret"
+  heapOptions: "-Xms1024M -Xmx1024M"
+  replicaCount: 3
+  resources:
+    limits:
+      cpu: 100m
+      memory: 1G
+    requests:
+      cpu: 100m
+      memory: 1G
+
+## ------------------------------------------------------
+## Kafka Connect
+## ------------------------------------------------------
+kafka-connect:
+  enabled: true
+  ## Optionally specify an array of imagePullSecrets. Secrets must be manually created in the namespace.
+  ## https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod
+  imagePullSecrets:
+    - name: "regsecret"
+  heapOptions: "-Xms1024M -Xmx1024M"
+  resources:
+    limits:
+      cpu: 100m
+      memory: 1G
+    requests:
+      cpu: 100m
+      memory: 1G

@@ -1,0 +1,12 @@
+traefik:
+  enabled: false
+artifactory:
+  enabled: false
+k8ssandra:
+  enabled: false
+fsmakkakafka:
+  enabled: false
+elasticsearch:
+  enabled: true
+  imageTag: "7.16.3-arm64"
+  replicas: 1

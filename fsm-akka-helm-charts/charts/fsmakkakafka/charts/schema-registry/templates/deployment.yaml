@@ -1,0 +1,189 @@
+{{- if .Capabilities.APIVersions.Has "apps/v1" }}
+apiVersion: apps/v1
+{{- else }}
+apiVersion: apps/v1beta2
+{{- end }}
+kind: Deployment
+metadata:
+  name: {{ template "schema-registry.fullname" . }}
+  labels:
+    app: {{ template "schema-registry.name" . }}
+    chart: {{ template "schema-registry.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "schema-registry.name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "schema-registry.name" . }}
+        release: {{ .Release.Name }}
+      {{- if or .Values.podAnnotations .Values.prometheus.jmx.enabled }}
+      annotations:
+      {{- range $key, $value := .Values.podAnnotations }}
+        {{ $key }}: {{ $value | quote }}
+      {{- end }}
+      {{- if .Values.prometheus.jmx.enabled }}
+        prometheus.io/scrape: "true"
+        prometheus.io/port: {{ .Values.prometheus.jmx.port | quote }}
+      {{- end }}
+      {{- end }}
+    spec:
+      containers:
+        {{- if .Values.prometheus.jmx.enabled }}
+        - name: prometheus-jmx-exporter
+          image: "{{ if .Values.global.remoteRepository }}{{ .Values.global.remoteRepository}}/{{ end }}{{ .Values.prometheus.jmx.image }}:{{ .Values.prometheus.jmx.imageTag }}"
+          imagePullPolicy: "{{ .Values.prometheus.jmx.imagePullPolicy }}"
+          command:
+          - java
+          - -XX:+UnlockExperimentalVMOptions
+          - -XX:+UseCGroupMemoryLimitForHeap
+          - -XX:MaxRAMFraction=1
+          - -XshowSettings:vm
+          - -jar
+          - jmx_prometheus_httpserver.jar
+          - {{ .Values.prometheus.jmx.port | quote }}
+          - /etc/jmx-schema-registry/jmx-schema-registry-prometheus.yml
+          ports:
+          - containerPort: {{ .Values.prometheus.jmx.port }}
+          resources:
+{{ toYaml .Values.prometheus.jmx.resources | indent 12 }}
+          volumeMounts:
+          - name: jmx-config
+            mountPath: /etc/jmx-schema-registry
+        {{- end }}
+        - name: {{ template "schema-registry.name" . }}-server
+          image: "{{ if .Values.global.remoteRepository }}{{ .Values.global.remoteRepository}}/{{ end }}{{ .Values.image }}:{{ .Values.imageTag }}"
+          imagePullPolicy: "{{ .Values.imagePullPolicy }}"
+          {{- if .Values.global.ssl }}
+          command:
+            - sh
+            - -exc
+            - |
+              export SCHEMA_REGISTRY_KAFKASTORE_SSL_KEY_CREDENTIAL_LOCATION=/etc/schema-registry/secrets/${SCHEMA_REGISTRY_KAFKASTORE_SSL_KEY_CREDENTIAL} && \
+              export SCHEMA_REGISTRY_KAFKASTORE_SSL_KEY_PASSWORD && \
+              SCHEMA_REGISTRY_KAFKASTORE_SSL_KEY_PASSWORD=$(cat $SCHEMA_REGISTRY_KAFKASTORE_SSL_KEY_CREDENTIAL_LOCATION) && \
+              export SCHEMA_REGISTRY_KAFKASTORE_SSL_KEYSTORE_CREDENTIAL_LOCATION=/etc/schema-registry/secrets/$SCHEMA_REGISTRY_KAFKASTORE_SSL_KEYSTORE_CREDENTIAL && \
+              export SCHEMA_REGISTRY_KAFKASTORE_SSL_KEYSTORE_PASSWORD && \
+              SCHEMA_REGISTRY_KAFKASTORE_SSL_KEYSTORE_PASSWORD=$(cat $SCHEMA_REGISTRY_KAFKASTORE_SSL_KEYSTORE_CREDENTIAL_LOCATION) && \
+              export SCHEMA_REGISTRY_SSL_KEYSTORE_CREDENTIAL_LOCATION=/etc/schema-registry/secrets/$SCHEMA_REGISTRY_SSL_KEYSTORE_CREDENTIAL && \
+              export SCHEMA_REGISTRY_SSL_KEYSTORE_PASSWORD && \
+              SCHEMA_REGISTRY_SSL_KEYSTORE_PASSWORD=$(cat $SCHEMA_REGISTRY_SSL_KEYSTORE_CREDENTIAL_LOCATION) && \
+              export SCHEMA_REGISTRY_SSL_KEY_CREDENTIALS_LOCATION=/etc/schema-registry/secrets/$SCHEMA_REGISTRY_SSL_KEY_CREDENTIALS && \
+              export SCHEMA_REGISTRY_SSL_KEY_PASSWORD && \
+              SCHEMA_REGISTRY_SSL_KEY_PASSWORD=$(cat $SCHEMA_REGISTRY_SSL_KEY_CREDENTIALS_LOCATION) && \
+              export SCHEMA_REGISTRY_KAFKASTORE_SSL_TRUSTSTORE_CREDENTIAL_LOCATION=/etc/schema-registry/secrets/$SCHEMA_REGISTRY_KAFKASTORE_SSL_TRUSTSTORE_CREDENTIAL && \
+              export SCHEMA_REGISTRY_KAFKASTORE_SSL_TRUSTSTORE_PASSWORD && \
+              SCHEMA_REGISTRY_KAFKASTORE_SSL_TRUSTSTORE_PASSWORD=$(cat $SCHEMA_REGISTRY_KAFKASTORE_SSL_TRUSTSTORE_CREDENTIAL_LOCATION) && \
+              export SCHEMA_REGISTRY_SSL_TRUSTSTORE_CREDENTIAL_LOCATION=/etc/schema-registry/secrets/$SCHEMA_REGISTRY_SSL_TRUSTSTORE_CREDENTIAL && \
+              export SCHEMA_REGISTRY_SSL_TRUSTSTORE_PASSWORD && \
+              SCHEMA_REGISTRY_SSL_TRUSTSTORE_PASSWORD=$(cat $SCHEMA_REGISTRY_SSL_TRUSTSTORE_CREDENTIAL_LOCATION) && \
+              /etc/confluent/docker/run
+          {{- end }}
+          ports:
+            - name: schema-registry
+              containerPort: {{ .Values.servicePort }}
+              protocol: TCP
+            {{- if .Values.prometheus.jmx.enabled }}
+            - containerPort: {{ .Values.jmx.port }}
+              name: jmx
+            {{- end }}
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+          env:
+          - name: SCHEMA_REGISTRY_HOST_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+          - name: SCHEMA_REGISTRY_LISTENERS
+            value: "http://0.0.0.0:{{ .Values.servicePort }}"
+          - name: SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS
+            value: {{ template "schema-registry.kafka.bootstrapServers" . }}
+          - name: SCHEMA_REGISTRY_KAFKASTORE_GROUP_ID
+            value: {{ template "schema-registry.groupId" . }}
+          - name: SCHEMA_REGISTRY_KAFKASTORE_TOPIC_REPLICATION_FACTOR
+            value: {{ .Values.replicationFactor | quote }}
+          {{- if .Values.global.ssl }}
+          - name: SCHEMA_REGISTRY_KAFKASTORE_SECURITY_PROTOCOL
+            value: SSL
+          - name: SCHEMA_REGISTRY_SECURITY_PROTOCOL
+            value: SSL
+          - name: SCHEMA_REGISTRY_KAFKASTORE_SSL_KEYSTORE_LOCATION
+            value: /etc/schema-registry/secrets/kafka.broker.keystore.jks
+          - name: SCHEMA_REGISTRY_SSL_KEYSTORE_LOCATION
+            value: /etc/schema-registry/secrets/kafka.broker.keystore.jks
+          - name: SCHEMA_REGISTRY_KAFKASTORE_SSL_KEY_CREDENTIAL
+            value: key-creds
+          - name: SCHEMA_REGISTRY_KAFKASTORE_SSL_KEYSTORE_CREDENTIAL
+            value: keystore-creds
+          - name: SCHEMA_REGISTRY_SSL_KEYSTORE_CREDENTIAL
+            value: keystore-creds
+          - name: SCHEMA_REGISTRY_SSL_KEY_CREDENTIALS
+            value: key-creds
+          - name: SCHEMA_REGISTRY_KAFKASTORE_SSL_TRUSTSTORE_LOCATION
+            value: /etc/schema-registry/secrets/kafka.broker.truststore.jks
+          - name: SCHEMA_REGISTRY_SSL_TRUSTSTORE_LOCATION
+            value: /etc/schema-registry/secrets/kafka.broker.truststore.jks
+          - name: SCHEMA_REGISTRY_KAFKASTORE_SSL_TRUSTSTORE_CREDENTIAL
+            value: truststore-creds
+          - name: SCHEMA_REGISTRY_SSL_TRUSTSTORE_CREDENTIAL
+            value: truststore-creds
+          {{- end}}
+          - name: SCHEMA_REGISTRY_MASTER_ELIGIBILITY
+            value: "true"
+          - name: SCHEMA_REGISTRY_HEAP_OPTS
+            value: {{ .Values.heapOptions }}
+          {{ range $configName, $configValue := .Values.configurationOverrides }}
+          - name: SCHEMA_REGISTRY_{{ $configName | replace "." "_" | upper }}
+            value: {{ $configValue | quote }}
+          {{ end }}
+          {{- range $key, $value := .Values.customEnv }}
+          - name: {{ $key | quote }}
+            value: {{ $value | quote }}
+          {{- end }}
+          {{- if .Values.schemaRegistryOpts }}
+          - name: SCHEMA_REGISTRY_OPTS
+            value: "{{ .Values.schemaRegistryOpts }}"
+          {{- end }}
+          {{- if .Values.jmx.port }}
+          - name: JMX_PORT
+            value: "{{ .Values.jmx.port }}"
+          - name: SCHEMA_REGISTRY_JMX_HOSTNAME
+            value: "127.0.0.1"
+          {{- end }}
+          {{- if .Values.global.ssl }}
+          volumeMounts:
+            - name: secrets-vol
+              mountPath: /etc/schema-registry/secrets
+          {{- end }}
+      {{- if .Values.imagePullSecrets }}
+      imagePullSecrets:
+{{ toYaml .Values.imagePullSecrets | indent 8 }}
+      {{- end }}
+      volumes:
+      {{- if .Values.prometheus.jmx.enabled }}
+      - name: jmx-config
+        configMap:
+          name: {{ template "schema-registry.fullname" . }}-jmx-configmap
+      {{- end }}
+      {{- if .Values.global.ssl }}
+      - name: secrets-vol
+        secret:
+          secretName: {{.Release.Name}}-ssl-config
+      {{- end }}
+      {{- if .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.nodeSelector | indent 8 }}
+      {{- end }}
+      {{- if .Values.tolerations }}
+      tolerations:
+{{ toYaml .Values.tolerations | indent 8 }}
+      {{- end }}
+      {{- if .Values.affinity }}
+      affinity:
+{{ toYaml .Values.affinity | indent 8 }}
+      {{- end }}

@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{.Release.Name}}-schemaregistry-configmap
+data:
+  kafka_schemaRegistryUrl: "http://{{ template "schema-registry.fullname" . }}-headless:8081"
+  spring_kafka_properties: |
+    schema.registry.url:  "http://{{ template "schema-registry.fullname" . }}-headless:8081"

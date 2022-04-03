@@ -1,0 +1,12 @@
+POST http://localhost:56677/creditsm/_search?pretty
+Content-Type: application/json
+
+{
+  "query": {
+    "match": {
+      "state": "CREDIT_ACCEPTED"
+    }
+  },
+  "fields": ["*"],
+  "_source": false
+}

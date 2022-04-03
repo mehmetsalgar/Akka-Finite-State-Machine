@@ -1,0 +1,1392 @@
+import java.util.regex.Pattern
+
+buildscript {
+    repositories {
+        mavenCentral()
+        mavenLocal()
+        maven { url "https://repo.spring.io/snapshot" }
+        maven { url "https://repo.spring.io/milestone" }
+        maven { url "https://plugins.gradle.org/m2/"}
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots"}
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:2.6.4"
+        classpath "io.freefair.gradle:lombok-plugin:6.3.0"
+        classpath "org.xtext:xtext-gradle-plugin:2.0.9-alpha.3"
+        classpath "com.diffplug.spotless:spotless-plugin-gradle:5.14.0"
+        classpath 'org.asciidoctor:asciidoctor-gradle-jvm:3.2.0'
+        classpath 'org.asciidoctor:asciidoctor-gradle-jvm-gems:3.2.0'
+        classpath "com.cosminpolifronie.gradle:gradle-plantuml-plugin:1.6.0"
+        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.18'
+        classpath "org.unbroken-dome.gradle-plugins.helm:helm-plugin:1.7.0"
+        classpath "org.unbroken-dome.gradle-plugins.helm:helm-publish-plugin:1.7.0"
+    }
+}
+
+plugins {
+    id 'java'
+    id 'java-library'
+    id 'idea'
+    id 'org.springframework.boot' version '2.6.4'
+    id 'com.google.cloud.tools.jib' version '3.2.0'
+}
+
+
+allprojects {
+    apply plugin: 'io.spring.dependency-management'
+
+    dependencyManagement {
+        imports {
+            mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
+            mavenBom 'org.springframework.cloud:spring-cloud-dependencies:2021.0.1'
+            mavenBom 'org.springframework.data:spring-data-bom:2021.1.2'
+        }
+    }
+
+    group 'org.salgar.akka.fsm'
+    version '1.0-SNAPSHOT'
+
+    repositories {
+        maven { url "https://repo.spring.io/snapshot" }
+        maven { url "https://repo.spring.io/milestone" }
+        maven { url "https://packages.confluent.io/maven/"}
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots"}
+        mavenLocal()
+        mavenCentral()
+    }
+
+    sourceCompatibility = '1.8'
+
+    def scalaVersion = System.getProperty('scala.version', '2.13.7')
+    def scalaMajorVersion = toMajorVersion(scalaVersion)
+
+    ext.versions = [
+            scala               : [major: scalaMajorVersion, current: scalaVersion],
+            akka                : System.getProperty('akka.version', '2.6.19'),
+            akkaManagement      : System.getProperty('akkaManagement.version', '1.1.1'),
+            akkaProjections     : System.getProperty('akkaProjections.version', '1.2.3'),
+            akkaKafkaStream     : '3.0.0',
+            aspectjVersion      : "1.9.5",
+            cassandraPlugin     : "1.0.5",
+            confluent           : "6.1.0",
+            lombok              : "1.18.22",
+            xtext               : "2.25.0",
+            scalikeJdbcVersion  : "3.5.0"
+    ]
+
+            idea {
+        module {
+            downloadJavadoc = true
+            downloadSources = true
+        }
+    }
+
+    jar {
+        manifest {
+            attributes 'Implementation-Title': project.archivesBaseName,
+                    'Implementation-Version': project.version
+        }
+    }
+    bootJar {
+        enabled = false
+    }
+}
+
+subprojects {
+    task allDeps(type: DependencyReportTask) {}
+
+    ext {
+        flag = true
+    }
+
+    if(ext.flag) {
+        ext.props = [
+                SEED_NODES: property('SEED_NODES'),
+                K8SSANDRA_PASSWORD: property('K8SSANDRA_PASSWORD')
+        ]
+    }
+}
+
+project(':4eyes-address-check-api') {
+    apply plugin: 'java'
+    apply plugin: 'io.freefair.lombok'
+
+    dependencies {
+        implementation 'org.projectlombok:lombok'
+        implementation 'com.fasterxml.jackson.core:jackson-databind'
+    }
+}
+
+project(':4eyes-address-check-impl') {
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'java'
+    apply plugin: 'io.freefair.lombok'
+    apply plugin: 'java-library'
+
+    dependencies {
+        api project(':4eyes-address-check-api')
+        api 'org.springframework:spring-context'
+        api 'org.slf4j:slf4j-api'
+    }
+    bootJar {
+        enabled = false
+    }
+}
+
+project(':4eyes-credit-score-api') {
+    apply plugin: 'java'
+    apply plugin: 'io.freefair.lombok'
+
+    dependencies {
+        implementation 'org.projectlombok:lombok'
+        implementation 'com.fasterxml.jackson.core:jackson-databind'
+    }
+}
+
+project(':4eyes-credit-score-impl') {
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'java'
+    apply plugin: 'io.freefair.lombok'
+    apply plugin: 'java-library'
+
+    dependencies {
+        api project(':4eyes-credit-score-api')
+        api 'org.springframework:spring-context'
+        api 'org.slf4j:slf4j-api'
+    }
+    bootJar {
+        enabled = false
+    }
+}
+
+project(':4eyes-fraud-prevention-api') {
+    apply plugin: 'java'
+    apply plugin: 'io.freefair.lombok'
+
+    dependencies {
+        implementation 'org.projectlombok:lombok'
+        implementation 'com.fasterxml.jackson.core:jackson-databind'
+    }
+}
+
+project(':4eyes-fraud-prevention-impl') {
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'java'
+    apply plugin: 'io.freefair.lombok'
+    apply plugin: 'java-library'
+
+    dependencies {
+        api project(':4eyes-fraud-prevention-api')
+        api 'org.springframework:spring-context'
+        api 'org.slf4j:slf4j-api'
+    }
+    bootJar {
+        enabled = false
+    }
+}
+
+project(':4eyes-notifier-api') {
+    apply plugin: 'java'
+    apply plugin: 'io.freefair.lombok'
+
+    dependencies {
+        implementation 'org.projectlombok:lombok'
+        implementation 'com.fasterxml.jackson.core:jackson-databind'
+    }
+}
+
+project(':4eyes-notifier-impl') {
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'java'
+    apply plugin: 'io.freefair.lombok'
+    apply plugin: 'java-library'
+
+    dependencies {
+        api project(':4eyes-notifier-api')
+        api 'org.springframework:spring-context'
+        api 'org.slf4j:slf4j-api'
+    }
+    bootJar {
+        enabled = false
+    }
+}
+
+project(':customer-relationship-adapter') {
+    apply plugin: 'java-library'
+    apply plugin: 'java'
+    apply plugin: 'io.freefair.lombok'
+
+    dependencies {
+        implementation 'org.projectlombok:lombok'
+    }
+}
+
+project(':customer-relationship-adapter-impl') {
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'java-library'
+    apply plugin: 'java'
+    apply plugin: 'io.freefair.lombok'
+
+    dependencies {
+        api project(':customer-relationship-adapter')
+        api 'org.springframework:spring-context'
+        api 'org.slf4j:slf4j-api'
+    }
+    bootJar {
+        enabled = false
+    }
+}
+
+project(':fsm-akka-api') {
+    apply plugin: 'java'
+    apply plugin: 'java-library'
+
+    dependencies {
+        implementation "com.typesafe.akka:akka-actor-typed_${versions.scala.major}:${versions.akka}"
+        implementation "com.typesafe.akka:akka-persistence-typed_${versions.scala.major}:${versions.akka}"
+        implementation 'org.projectlombok:lombok'
+    }
+}
+
+project(':fsm-akka-advice') {
+    apply plugin: 'java'
+
+    configurations {
+        ajc
+        aspects
+        aspectsImplementation {
+            extendsFrom implementation
+            canBeResolved=true
+        }
+        implementation {
+            extendsFrom aspects
+        }
+        tests {
+            extendsFrom testImplementation
+        }
+    }
+
+    ant.lifecycleLogLevel = "INFO"
+
+    compileJava {
+        sourceCompatibility="1.8"
+        targetCompatibility="1.8"
+
+        dependsOn configurations.ajc.getTaskDependencyFromProjectDependency(true, "compileJava")
+
+        doLast{
+            ant.taskdef(
+                    resource:"org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties",
+                    classpath: configurations.ajc.asPath)
+            ant.iajc(
+                    source: "1.8",
+                    target: "1.8",
+                    showWeaveInfo: "true",
+                    destDir: sourceSets.main.java.classesDirectory.get().asFile.path,
+                    maxmem: "512m",
+                    fork: "true",
+                    classpath: configurations.aspectsImplementation.asPath)
+                    {
+                        sourceroots {
+                            sourceSets.main.java.srcDirs.each {
+                                pathelement(location: it.absolutePath)
+                            }
+                        }
+                    }
+        }
+    }
+
+    dependencies {
+        ajc "org.aspectj:aspectjtools:${versions.aspectjVersion}"
+        implementation "org.aspectj:aspectjrt:${versions.aspectjVersion}"
+
+        implementation "com.typesafe.akka:akka-actor-typed_${versions.scala.major}:${versions.akka}"
+        implementation "com.typesafe.akka:akka-persistence-typed_${versions.scala.major}:${versions.akka}"
+
+        implementation "ch.qos.logback:logback-classic"
+    }
+}
+
+project(':fsm-akka-base') {
+    apply plugin: 'scala'
+    apply plugin: 'java-library'
+
+    dependencies {
+        implementation "org.scala-lang:scala-library:${versions.scala.current}"
+        api project(':fsm-akka-api')
+        api "com.typesafe.akka:akka-actor-typed_${versions.scala.major}:${versions.akka}"
+        api "com.typesafe.akka:akka-persistence-typed_${versions.scala.major}:${versions.akka}"
+        api "com.typesafe.akka:akka-slf4j_${versions.scala.major}:${versions.akka}"
+        api "com.chuusai:shapeless_${versions.scala.major}:2.3.3"
+        api "org.springframework:spring-context"
+        api "javax.annotation:javax.annotation-api:1.3.2"
+    }
+}
+
+project(':fsm-akka-xtext-reader') {
+    apply plugin: 'java'
+
+    dependencies {
+        implementation "org.eclipse.xtext:org.eclipse.xtext:${versions.xtext}"
+        implementation "org.eclipse.xtext:org.eclipse.xtext.xbase:${versions.xtext}"
+        implementation "org.eclipse.xtext:org.eclipse.xtext.xtext.generator:${versions.xtext}"
+    }
+}
+
+project(':fsm-akka-xtend') {
+    apply plugin: 'java'
+    apply plugin: 'org.xtext.xtend'
+
+    sourceSets.main.java.srcDirs = ['src/main/java']
+
+    dependencies {
+        implementation 'org.salgar.akka.fsm:fsm-akka-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
+        implementation "org.eclipse.xtend:org.eclipse.xtend.lib:${versions.xtext}"
+        implementation "org.eclipse.xtext:org.eclipse.xtext:${versions.xtext}"
+    }
+}
+
+project(':fsm-akka-4eyes-uml-model') {
+    apply plugin: 'java'
+
+    dependencies {
+
+    }
+}
+
+project(':fsm-akka-4eyes-model') {
+    apply plugin: 'java'
+    apply plugin: 'org.xtext.xtend'
+    apply plugin: 'io.freefair.lombok'
+    apply plugin: 'com.diffplug.spotless'
+
+    sourceSets {
+        main {
+            java {
+                srcDirs = ['src/main/java', 'build/generated-sources/main/java']
+            }
+        }
+    }
+
+    dependencies {
+        implementation 'org.projectlombok:lombok'
+    }
+
+    spotless {
+        java {
+            target '**/*.java'
+            //licenseHeaderFile  "$rootDir/buildSrc/CopyrightHeader.java"
+            importOrder 'java', 'javax', 'org', 'com'
+            //eclipseFormatFile "$rootDir/buildSrc/formatter.xml"
+        }
+        format 'misc', {
+            target 'src/**/*.md', 'src/**/*.xml', 'src/**/*.xsd', 'src/**/*.xsl'
+            indentWithSpaces()
+            trimTrailingWhitespace()
+            endWithNewline()
+        }
+    }
+
+    configurations {
+        mwe2 {
+            extendsFrom implementation
+        }
+    }
+
+    dependencies {
+        mwe2 project(':fsm-akka-xtext-reader')
+        mwe2 project(':fsm-akka-xtend')
+        mwe2 project(':fsm-akka-4eyes-uml-model')
+        mwe2 'org.salgar.akka.fsm:fsm-akka-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
+    }
+
+    task generateXtextLanguage(type: JavaExec) {
+        def generatedFileDir = file("target/generated-sources")
+        outputs.dir generatedFileDir
+        main = 'org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher'
+        classpath = configurations.mwe2
+        inputs.file "src/main/mwe2/GenerateWorkflow.mwe2"
+        outputs.dir "build/generated-sources"
+        args += "src/main/mwe2/GenerateWorkflow.mwe2"
+        args += "-p"
+        args += "rootPath=/${projectDir}/.."
+    }
+
+    generateXtext.dependsOn(generateXtextLanguage)
+    clean.dependsOn(cleanGenerateXtextLanguage)
+    spotlessJava.dependsOn(generateXtextLanguage)
+    compileJava.dependsOn(spotlessApply)
+}
+
+project(':fsm-akka-akkasystem') {
+    apply plugin: 'java-library'
+    apply plugin: 'scala'
+
+    dependencies {
+        api project(':fsm-akka-base')
+        api "com.typesafe.akka:akka-actor-typed_${versions.scala.major}:${versions.akka}"
+        api "com.typesafe.akka:akka-persistence-typed_${versions.scala.major}:${versions.akka}"
+        api "com.typesafe.akka:akka-slf4j_${versions.scala.major}:${versions.akka}"
+        api "com.typesafe.akka:akka-cluster-sharding-typed_${versions.scala.major}:${versions.akka}"
+        implementation "com.typesafe.akka:akka-serialization-jackson_${versions.scala.major}:${versions.akka}"
+        api "com.lightbend.akka.management:akka-management-cluster-http_${versions.scala.major}:${versions.akkaManagement}"
+        api "com.lightbend.akka.management:akka-management-cluster-bootstrap_${versions.scala.major}:${versions.akkaManagement}"
+        api "com.lightbend.akka.discovery:akka-discovery-kubernetes-api_${versions.scala.major}:${versions.akkaManagement}"
+        api "com.typesafe.akka:akka-discovery_${versions.scala.major}:${versions.akka}"
+        api 'org.springframework.cloud:spring-cloud-starter-kubernetes-fabric8-config'
+        api 'org.lmdbjava:lmdbjava:0.8.2'
+        api 'com.github.jnr:jnr-ffi:2.2.11'
+    }
+}
+
+project(':fsm-akka-4eyes-statemachine') {
+    apply plugin: 'java-library'
+    apply plugin: 'scala'
+    apply plugin: 'org.xtext.xtend'
+    apply plugin: 'com.diffplug.spotless'
+
+    sourceSets {
+        main {
+            scala {
+                srcDirs = ['target/generated-sources/main/scala', 'src/main/scala', 'target/generated-sources/main/java', 'src/main/java']
+            }
+            java {
+                srcDirs = []
+            }
+        }
+        test {
+            scala {
+                srcDirs = ['target/generated-sources/test/scala', 'src/test/scala', 'target/generated-sources/test/java', 'src/test/java']
+            }
+            java {
+                srcDirs = []
+            }
+        }
+    }
+
+    configurations {
+        ajc
+        aspects
+        implementation {
+            extendsFrom aspects
+        }
+        tests {
+            extendsFrom testImplementation
+        }
+    }
+
+    task jarTests(type: Jar, dependsOn: testClasses) {
+        archiveClassifier = 'tests'
+        from sourceSets.test.output
+    }
+
+    artifacts {
+        tests jarTests
+    }
+
+    ant.lifecycleLogLevel = "DEBUG"
+
+    compileScala {
+        dependsOn configurations.ajc.getTaskDependencyFromProjectDependency(true, "compileScala")
+        options.compilerArgs << '-parameters'
+
+        doLast {
+            ant.taskdef (
+                    resource:"org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties",
+                    classpath: configurations.ajc.asPath
+            )
+            ant.iajc(
+                    source: "1.8",
+                    target: "1.8",
+                    showWeaveInfo: "true",
+                    destDir: sourceSets.main.scala.outputDir.absolutePath,
+                    maxmem: "512m",
+                    fork: "true",
+                    inpath: sourceSets.main.scala.outputDir.absolutePath,
+                    aspectpath: configurations.aspects.asPath,
+                    classpath: configurations.aspectImplementation.asPath
+            )
+        }
+    }
+
+    dependencies {
+        ajc "org.aspectj:aspectjtools:${versions.aspectjVersion}"
+        implementation "org.aspectj:aspectjrt:${versions.aspectjVersion}"
+        api project(':fsm-akka-base'),
+                project(':fsm-akka-akkasystem')
+        aspects project(':fsm-akka-advice')
+        api "com.typesafe.akka:akka-cluster-sharding-typed_${versions.scala.major}:${versions.akka}"
+        api 'com.fasterxml.jackson.core:jackson-databind'
+    }
+
+    spotless {
+        scala {
+            target 'target/generated-sources/main/scala/**/*.scala'
+            scalafmt().configFile('.scalafmt.conf')
+            // optional: you can specify a specific version or config file
+            //scalafmt('0.5.1').configFile('.scalafmt.conf')
+        }
+        java {
+            target 'target/generated-sources/*/java/**/*.java'
+            //licenseHeaderFile  "$rootDir/buildSrc/CopyrightHeader.java"
+            importOrder 'java', 'javax', 'org', 'com'
+            //eclipseFormatFile "$rootDir/buildSrc/formatter.xml"
+        }
+        format 'misc', {
+            target 'src/**/*.md', 'src/**/*.xml', 'src/**/*.xsd', 'src/**/*.xsl'
+            indentWithSpaces()
+            trimTrailingWhitespace()
+            endWithNewline()
+        }
+    }
+
+    configurations {
+        mwe2 {
+            extendsFrom implementation
+        }
+        aspectImplementation {
+            extendsFrom implementation
+            canBeResolved=true
+        }
+    }
+
+    dependencies {
+        mwe2 project(':fsm-akka-xtext-reader')
+        mwe2 project(':fsm-akka-xtend')
+        mwe2 project(':fsm-akka-4eyes-uml-model')
+        mwe2 'org.salgar.akka.fsm:fsm-akka-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
+    }
+
+    task generateXtextLanguage(type: JavaExec) {
+        def generatedFileDir = file("target/generated-sources")
+        outputs.dir generatedFileDir
+        main = 'org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher'
+        classpath = configurations.mwe2
+        inputs.file "src/main/mwe2/GenerateWorkflow.mwe2"
+        outputs.dir "target/generated-sources"
+        args += "src/main/mwe2/GenerateWorkflow.mwe2"
+        args += "-p"
+        args += "rootPath=/${projectDir}/.."
+    }
+
+    generateXtext.dependsOn(generateXtextLanguage)
+    clean.dependsOn(cleanGenerateXtextLanguage)
+    spotlessScala.dependsOn(generateXtextLanguage)
+    compileJava.dependsOn(spotlessApply)
+    compileScala.dependsOn(spotlessApply)
+}
+
+project(':fsm-akka-statemachine-facade') {
+    apply plugin: 'java-library'
+    apply plugin: 'scala'
+
+    dependencies {
+        api project(':fsm-akka-akkasystem')
+    }
+}
+
+project(':fsm-akka-4eyes-statemachine-facade') {
+    apply plugin: 'java-library'
+    apply plugin: 'scala'
+
+    dependencies {
+        api project(':fsm-akka-4eyes-statemachine'),
+                project(':fsm-akka-statemachine-facade'),
+                project(':fsm-akka-akkasystem')
+    }
+}
+
+project(':fsm-akka-4eyes-actionguard-impl') {
+    apply plugin: 'java'
+    apply plugin: 'java-library'
+    apply plugin: 'io.freefair.lombok'
+
+    dependencies {
+        api project(':fsm-akka-api'),
+                project(':fsm-akka-4eyes-model'),
+                project(':fsm-akka-base'),
+                project(':fsm-akka-4eyes-statemachine-facade'),
+                project(':4eyes-address-check-api'),
+                project(':4eyes-credit-score-api'),
+                project(':4eyes-fraud-prevention-api'),
+                project(':4eyes-notifier-api'),
+                project(':customer-relationship-adapter')
+
+        implementation project(':fsm-akka-4eyes-statemachine')
+        implementation "org.springframework:spring-context"
+        implementation "org.projectlombok:lombok:${versions.lombok}"
+
+        testImplementation('org.springframework.boot:spring-boot-starter-test') {
+            exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+        }
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+}
+
+project(':fsm-akka-4eyes-protobuf') {
+    apply plugin: 'java-library'
+    apply plugin: 'java'
+    apply plugin: 'org.xtext.xtend'
+    apply plugin: 'com.google.protobuf'
+
+    sourceSets {
+        main {
+            java {
+                srcDirs = ['src/main/java', 'build/generated-sources/main/java']
+            }
+            proto {
+                srcDir 'build/generated-sources/main/proto'
+            }
+        }
+    }
+
+    dependencies {
+        //implementation 'com.google.protobuf:protobuf-lite:3.0.0'
+        implementation 'com.google.protobuf:protobuf-java:3.19.4'
+    }
+
+    protobuf {
+        generatedFilesBaseDir = "$projectDir/build/generated-sources"
+        protoc {
+            // You still need protoc like in the non-Android case
+            artifact = 'com.google.protobuf:protoc:3.19.4'
+        }
+        generateProtoTasks {
+            all().each { task ->
+                task.dependsOn{ generateXtextLanguage }
+            }
+        }
+    }
+
+    clean {
+        delete protobuf.generatedFilesBaseDir
+    }
+
+    configurations {
+        mwe2 {
+            extendsFrom implementation
+        }
+    }
+
+    dependencies {
+        mwe2 project(':fsm-akka-xtext-reader')
+        mwe2 project(':fsm-akka-xtend')
+        mwe2 project(':fsm-akka-4eyes-uml-model')
+        mwe2 'org.salgar.akka.fsm:fsm-akka-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
+    }
+
+    task generateXtextLanguage(type: JavaExec) {
+        def generatedFileDir = file("build/generated-sources")
+        outputs.dir generatedFileDir
+        main = 'org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher'
+        classpath = configurations.mwe2
+        inputs.file "src/main/mwe2/GenerateWorkflow.mwe2"
+        outputs.dir "build/generated-sources"
+        args += "src/main/mwe2/GenerateWorkflow.mwe2"
+        args += "-p"
+        args += "rootPath=/${projectDir}/.."
+    }
+
+    generateXtext.dependsOn(generateXtextLanguage)
+    clean.dependsOn(cleanGenerateXtextLanguage)
+}
+
+project(':fsm-akka-converter') {
+    apply plugin: 'java-library'
+    apply plugin: 'java'
+    apply plugin: 'io.freefair.lombok'
+
+    dependencies {
+        api "io.confluent:kafka-protobuf-serializer:${versions.confluent}"
+        api "org.projectlombok:lombok:${versions.lombok}"
+        implementation 'org.springframework.boot:spring-boot-autoconfigure'
+    }
+}
+
+project(':fsm-akka-4eyes-converter') {
+    apply plugin: 'java-library'
+    apply plugin: 'java'
+    apply plugin: 'org.xtext.xtend'
+    apply plugin: 'io.freefair.lombok'
+    apply plugin: 'com.diffplug.spotless'
+
+    sourceSets {
+        main {
+            java {
+                srcDirs = ['src/main/java', 'build/generated-sources/main/java']
+            }
+        }
+    }
+
+    dependencies {
+        api project(':fsm-akka-converter')
+        implementation project(':fsm-akka-4eyes-protobuf'),
+                project(':fsm-akka-4eyes-model')
+        api "io.confluent:kafka-protobuf-serializer:${versions.confluent}"
+        api "org.projectlombok:lombok:${versions.lombok}"
+        implementation 'org.springframework.boot:spring-boot-autoconfigure'
+        api "ch.qos.logback:logback-classic"
+    }
+
+    spotless {
+        java {
+            target '**/*.java'
+            //licenseHeaderFile  "$rootDir/buildSrc/CopyrightHeader.java"
+            importOrder 'java', 'javax', 'org', 'com'
+            //eclipseFormatFile "$rootDir/buildSrc/formatter.xml"
+        }
+        format 'misc', {
+            target 'src/**/*.md', 'src/**/*.xml', 'src/**/*.xsd', 'src/**/*.xsl'
+            indentWithSpaces()
+            trimTrailingWhitespace()
+            endWithNewline()
+        }
+    }
+
+    configurations {
+        mwe2 {
+            extendsFrom implementation
+        }
+    }
+
+    dependencies {
+        mwe2 project(':fsm-akka-xtext-reader')
+        mwe2 project(':fsm-akka-xtend')
+        mwe2 project(':fsm-akka-4eyes-uml-model')
+        mwe2 'org.salgar.akka.fsm:fsm-akka-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
+    }
+
+    task generateXtextLanguage(type: JavaExec) {
+        def generatedFileDir = file("build/generated-sources")
+        outputs.dir generatedFileDir
+        main = 'org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher'
+        classpath = configurations.mwe2
+        inputs.file "src/main/mwe2/GenerateWorkflow.mwe2"
+        outputs.dir "build/generated-sources"
+        args += "src/main/mwe2/GenerateWorkflow.mwe2"
+        args += "-p"
+        args += "rootPath=/${projectDir}/.."
+    }
+
+    generateXtext.dependsOn(generateXtextLanguage)
+    clean.dependsOn(cleanGenerateXtextLanguage)
+    spotlessJava.dependsOn(generateXtextLanguage)
+    compileJava.dependsOn(spotlessApply)
+}
+
+project(':fsm-akka-command') {
+    apply plugin: 'java-library'
+    apply plugin: 'java'
+
+    dependencies {
+        api "io.confluent:kafka-protobuf-serializer:${versions.confluent}"
+        implementation "org.scala-lang:scala-library:${versions.scala.current}"
+    }
+}
+
+project(':fsm-akka-4eyes-command') {
+    apply plugin: 'java-library'
+    apply plugin: 'java'
+    apply plugin: 'org.xtext.xtend'
+    apply plugin: 'io.freefair.lombok'
+    apply plugin: 'com.diffplug.spotless'
+
+    sourceSets {
+        main {
+            java {
+                srcDirs = ['src/main/java', 'build/generated-sources/main/java']
+            }
+        }
+    }
+
+    dependencies {
+        api project(':fsm-akka-command')
+        implementation project(':fsm-akka-4eyes-statemachine'),
+                project(':fsm-akka-4eyes-protobuf'),
+                project(':fsm-akka-4eyes-converter')
+        implementation "org.scala-lang:scala-library:${versions.scala.current}"
+        implementation 'org.springframework.boot:spring-boot-autoconfigure'
+        api "org.projectlombok:lombok:${versions.lombok}"
+    }
+
+    spotless {
+        java {
+            target '**/*.java'
+            //licenseHeaderFile  "$rootDir/buildSrc/CopyrightHeader.java"
+            importOrder 'java', 'javax', 'org', 'com'
+            //eclipseFormatFile "$rootDir/buildSrc/formatter.xml"
+        }
+        format 'misc', {
+            target 'src/**/*.md', 'src/**/*.xml', 'src/**/*.xsd', 'src/**/*.xsl'
+            indentWithSpaces()
+            trimTrailingWhitespace()
+            endWithNewline()
+        }
+    }
+
+    configurations {
+        mwe2 {
+            extendsFrom implementation
+        }
+    }
+
+    dependencies {
+        mwe2 project(':fsm-akka-xtext-reader')
+        mwe2 project(':fsm-akka-xtend')
+        mwe2 project(':fsm-akka-4eyes-uml-model')
+        mwe2 'org.salgar.akka.fsm:fsm-akka-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
+    }
+
+    task generateXtextLanguage(type: JavaExec) {
+        def generatedFileDir = file("build/generated-sources")
+        outputs.dir generatedFileDir
+        main = 'org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher'
+        classpath = configurations.mwe2
+        inputs.file "src/main/mwe2/GenerateWorkflow.mwe2"
+        outputs.dir "build/generated-sources"
+        args += "src/main/mwe2/GenerateWorkflow.mwe2"
+        args += "-p"
+        args += "rootPath=/${projectDir}/.."
+    }
+
+    generateXtext.dependsOn(generateXtextLanguage)
+    clean.dependsOn(cleanGenerateXtextLanguage)
+    spotlessJava.dependsOn(generateXtextLanguage)
+    compileJava.dependsOn(spotlessApply)
+}
+
+project(':fsm-akka-kafka') {
+    apply plugin: 'java-library'
+    apply plugin: 'java'
+    apply plugin: 'io.freefair.lombok'
+
+    dependencies {
+        implementation 'org.springframework.boot:spring-boot-autoconfigure'
+        api "io.confluent:kafka-protobuf-serializer:${versions.confluent}"
+        api "io.confluent:kafka-streams-protobuf-serde:${versions.confluent}"
+    }
+}
+
+project(':fsm-akka-4eyes-kafka') {
+    apply plugin: 'java-library'
+    apply plugin: 'scala'
+    apply plugin: 'org.xtext.xtend'
+    apply plugin: 'io.freefair.lombok'
+    apply plugin: 'com.diffplug.spotless'
+
+    sourceSets {
+        main {
+            scala {
+                srcDirs = ['build/generated-sources/main/scala', 'src/main/scala']
+            }
+            java {
+                srcDirs = ['build/generated-sources/main/java', 'src/main/java']
+            }
+        }
+        test {
+            scala {
+                srcDirs = [ 'src/test/scala']
+            }
+        }
+    }
+
+    spotless {
+        scala {
+            target 'build/generated-sources/main/scala/**/*.scala'
+            scalafmt().configFile('.scalafmt.conf')
+            // optional: you can specify a specific version or config file
+            //scalafmt('0.5.1').configFile('.scalafmt.conf')
+        }
+        java {
+            target 'build/generated-sources/main/java/**/*.java'
+            //licenseHeaderFile  "$rootDir/buildSrc/CopyrightHeader.java"
+            importOrder 'java', 'javax', 'org', 'com'
+            //eclipseFormatFile "$rootDir/buildSrc/formatter.xml"
+        }
+        format 'misc', {
+            target 'src/**/*.md', 'src/**/*.xml', 'src/**/*.xsd', 'src/**/*.xsl'
+            indentWithSpaces()
+            trimTrailingWhitespace()
+            endWithNewline()
+        }
+    }
+
+    dependencies {
+        implementation project(':fsm-akka-kafka'),
+                project(':fsm-akka-4eyes-protobuf'),
+                project(':fsm-akka-4eyes-command'),
+                project(':fsm-akka-akkasystem'),
+                project(':fsm-akka-4eyes-statemachine-facade'),
+                project(':fsm-akka-4eyes-statemachine'),
+                project(':fsm-akka-4eyes-actionguard-impl'),
+                project(':fsm-akka-4eyes-converter'),
+                project(':fsm-akka-advice'),
+                project(':fsm-akka-api'),
+                project(':4eyes-address-check-impl'),
+                project(':4eyes-credit-score-impl'),
+                project(':4eyes-fraud-prevention-impl')
+        implementation "org.scala-lang:scala-library:${versions.scala.current}"
+        implementation 'org.springframework.boot:spring-boot-autoconfigure'
+        implementation 'org.springframework.kafka:spring-kafka'
+        implementation "com.typesafe.akka:akka-persistence-cassandra_${versions.scala.major}:${versions.cassandraPlugin}"
+        implementation "com.typesafe.akka:akka-persistence-query_${versions.scala.major}:${versions.akka}"
+        implementation "com.typesafe.akka:akka-persistence-typed_${versions.scala.major}:${versions.akka}"
+        implementation "com.typesafe.akka:akka-cluster-sharding-typed_${versions.scala.major}:${versions.akka}"
+        implementation "com.typesafe.akka:akka-stream-kafka_${versions.scala.major}:${versions.akkaKafkaStream}"
+        api "io.confluent:kafka-protobuf-serializer:${versions.confluent}"
+        api "io.confluent:kafka-streams-protobuf-serde:${versions.confluent}"
+        implementation "org.projectlombok:lombok:${versions.lombok}"
+        annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+        testImplementation 'org.springframework.boot:spring-boot-starter'
+        testImplementation('org.springframework.boot:spring-boot-starter-test') {
+            exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+        }
+        testImplementation 'org.springframework.kafka:spring-kafka-test'
+    }
+
+    configurations {
+        mwe2 {
+            extendsFrom implementation
+        }
+    }
+
+    dependencies {
+        mwe2 project(':fsm-akka-xtext-reader')
+        mwe2 project(':fsm-akka-xtend')
+        mwe2 project(':fsm-akka-4eyes-uml-model')
+        mwe2 'org.salgar.akka.fsm:fsm-akka-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
+    }
+
+    task generateXtextLanguage(type: JavaExec) {
+        def generatedFileDir = file("build/generated-sources")
+        outputs.dir generatedFileDir
+        main = 'org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher'
+        classpath = configurations.mwe2
+        inputs.file "src/main/mwe2/GenerateWorkflow.mwe2"
+        outputs.dir "build/generated-sources"
+        args += "src/main/mwe2/GenerateWorkflow.mwe2"
+        args += "-p"
+        args += "rootPath=/${projectDir}/.."
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+
+    generateXtext.dependsOn(generateXtextLanguage)
+    clean.dependsOn(cleanGenerateXtextLanguage)
+    spotlessScala.dependsOn(generateXtextLanguage)
+    compileJava.dependsOn(spotlessApply)
+    compileScala.dependsOn(compileJava)
+}
+
+project(':fsm-akka-elasticsearch') {
+    apply plugin: 'java-library'
+    apply plugin: 'java'
+    apply plugin: 'io.freefair.lombok'
+
+    dependencies {
+        api 'org.springframework.boot:spring-boot-starter'
+        api 'org.springframework.data:spring-data-elasticsearch'
+        annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
+        testImplementation 'org.springframework:spring-web'
+        testImplementation 'org.springframework.boot:spring-boot-starter'
+        testImplementation "org.junit.platform:junit-platform-runner:1.8.2"
+        testImplementation('org.springframework.boot:spring-boot-starter-test') {
+            exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+        }
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+}
+
+project(':fsm-akka-4eyes-elasticsearch-statemachine-adapter') {
+    apply plugin: 'java'
+    apply plugin: 'scala'
+    apply plugin: 'io.freefair.lombok'
+    apply plugin: 'org.xtext.xtend'
+    apply plugin: 'io.freefair.lombok'
+    apply plugin: 'com.diffplug.spotless'
+
+    sourceSets {
+        main {
+            java {
+                srcDirs = ['src/main/java', 'build/generated-sources/main/java']
+            }
+            scala {
+                srcDirs = ['build/generated-sources/main/scala', 'src/main/scala']
+            }
+        }
+    }
+
+    dependencies {
+        implementation project(':fsm-akka-4eyes-model'),
+                project(':fsm-akka-4eyes-statemachine')
+        implementation 'org.springframework.data:spring-data-elasticsearch'
+    }
+
+    spotless {
+        scala {
+            target 'build/generated-sources/main/scala/**/*.scala'
+            scalafmt().configFile('.scalafmt.conf')
+            // optional: you can specify a specific version or config file
+            //scalafmt('0.5.1').configFile('.scalafmt.conf')
+        }
+        java {
+            target '**/*.java'
+            //licenseHeaderFile  "$rootDir/buildSrc/CopyrightHeader.java"
+            importOrder 'java', 'javax', 'org', 'com'
+            //eclipseFormatFile "$rootDir/buildSrc/formatter.xml"
+        }
+        format 'misc', {
+            target 'src/**/*.md', 'src/**/*.xml', 'src/**/*.xsd', 'src/**/*.xsl'
+            indentWithSpaces()
+            trimTrailingWhitespace()
+            endWithNewline()
+        }
+    }
+
+    configurations {
+        mwe2 {
+            extendsFrom implementation
+        }
+    }
+
+    dependencies {
+        mwe2 project(':fsm-akka-xtext-reader')
+        mwe2 project(':fsm-akka-xtend')
+        mwe2 project(':fsm-akka-4eyes-uml-model')
+        mwe2 'org.salgar.akka.fsm:fsm-akka-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
+    }
+
+    task generateXtextLanguage(type: JavaExec) {
+        def generatedFileDir = file("build/generated-sources")
+        outputs.dir generatedFileDir
+        main = 'org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher'
+        classpath = configurations.mwe2
+        inputs.file "src/main/mwe2/GenerateWorkflow.mwe2"
+        outputs.dir "build/generated-sources"
+        args += "src/main/mwe2/GenerateWorkflow.mwe2"
+        args += "-p"
+        args += "rootPath=/${projectDir}/.."
+    }
+
+    generateXtext.dependsOn(generateXtextLanguage)
+    clean.dependsOn(cleanGenerateXtextLanguage)
+    spotlessScala.dependsOn(generateXtextLanguage)
+    spotlessJava.dependsOn(generateXtextLanguage)
+    compileJava.dependsOn(spotlessApply)
+}
+
+project(':fsm-akka-4eyes-projections-statemachine-adapter') {
+    apply plugin: 'java-library'
+    apply plugin: 'scala'
+    apply plugin: 'io.freefair.lombok'
+    apply plugin: 'org.xtext.xtend'
+    apply plugin: 'io.freefair.lombok'
+    apply plugin: 'com.diffplug.spotless'
+
+    sourceSets {
+        main {
+            scala {
+                srcDirs = ['build/generated-sources/main/scala', 'src/main/scala']
+            }
+        }
+    }
+
+    dependencies {
+        api project(':fsm-akka-elasticsearch'),
+                project(':fsm-akka-4eyes-statemachine'),
+                project(':fsm-akka-4eyes-elasticsearch-statemachine-adapter')
+        implementation 'org.springframework.data:spring-data-elasticsearch'
+        implementation "com.lightbend.akka:akka-projection-eventsourced_${versions.scala.major}:${versions.akkaProjections}"
+    }
+
+    spotless {
+        scala {
+            target 'build/generated-sources/main/scala/**/*.scala'
+            scalafmt().configFile('.scalafmt.conf')
+            // optional: you can specify a specific version or config file
+            //scalafmt('0.5.1').configFile('.scalafmt.conf')
+        }
+        format 'misc', {
+            target 'src/**/*.md', 'src/**/*.xml', 'src/**/*.xsd', 'src/**/*.xsl'
+            indentWithSpaces()
+            trimTrailingWhitespace()
+            endWithNewline()
+        }
+    }
+
+    configurations {
+        mwe2 {
+            extendsFrom implementation
+        }
+    }
+
+    dependencies {
+        mwe2 project(':fsm-akka-xtext-reader')
+        mwe2 project(':fsm-akka-xtend')
+        mwe2 project(':fsm-akka-4eyes-uml-model')
+        mwe2 'org.salgar.akka.fsm:fsm-akka-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
+    }
+
+    task generateXtextLanguage(type: JavaExec) {
+        def generatedFileDir = file("build/generated-sources")
+        outputs.dir generatedFileDir
+        main = 'org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher'
+        classpath = configurations.mwe2
+        inputs.file "src/main/mwe2/GenerateWorkflow.mwe2"
+        outputs.dir "build/generated-sources"
+        args += "src/main/mwe2/GenerateWorkflow.mwe2"
+        args += "-p"
+        args += "rootPath=/${projectDir}/.."
+    }
+
+    generateXtext.dependsOn(generateXtextLanguage)
+    clean.dependsOn(cleanGenerateXtextLanguage)
+    spotlessScala.dependsOn(generateXtextLanguage)
+    compileJava.dependsOn(spotlessApply)
+}
+
+project(':fsm-akka-projections') {
+    apply plugin: 'java-library'
+    apply plugin: 'scala'
+
+    dependencies {
+        api project(':fsm-akka-elasticsearch'),
+                project(':fsm-akka-akkasystem')
+        api "com.lightbend.akka:akka-projection-eventsourced_${versions.scala.major}:${versions.akkaProjections}"
+        api "com.lightbend.akka:akka-projection-cassandra_${versions.scala.major}:${versions.akkaProjections}"
+        api "com.typesafe.akka:akka-persistence-cassandra_${versions.scala.major}:${versions.cassandraPlugin}"
+        //implementation "com.lightbend.akka:akka-projection-jdbc_${versions.scala.major}:${versions.akkaProjections}"
+        //implementation "org.scalikejdbc:scalikejdbc_${versions.scala.major}:${versions.scalikeJdbcVersion}"
+        //implementation "org.scalikejdbc:scalikejdbc-config_${versions.scala.major}:${versions.scalikeJdbcVersion}"
+        annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+    }
+}
+
+project(':fsm-akka-4eyes-projections') {
+    apply plugin: 'java-library'
+    apply plugin: 'scala'
+
+    dependencies {
+        api project(':fsm-akka-projections'),
+                project(':fsm-akka-elasticsearch'),
+                project(':fsm-akka-4eyes-projections-statemachine-adapter')
+        implementation project(':fsm-akka-4eyes-statemachine')
+        //implementation "com.lightbend.akka:akka-projection-eventsourced_${versions.scala.major}:${versions.akkaProjections}"
+        //implementation "com.lightbend.akka:akka-projection-cassandra_${versions.scala.major}:${versions.akkaProjections}"
+        //implementation "com.typesafe.akka:akka-persistence-cassandra_${versions.scala.major}:${versions.cassandraPlugin}"
+        //implementation "com.lightbend.akka:akka-projection-jdbc_${versions.scala.major}:${versions.akkaProjections}"
+        //implementation "org.scalikejdbc:scalikejdbc_${versions.scala.major}:${versions.scalikeJdbcVersion}"
+        //implementation "org.scalikejdbc:scalikejdbc-config_${versions.scala.major}:${versions.scalikeJdbcVersion}"
+        annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+    }
+}
+
+project(':fsm-akka-4eyes-application') {
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'java'
+    apply plugin: 'io.freefair.lombok'
+    apply plugin: 'groovy'
+    apply plugin: 'com.google.cloud.tools.jib'
+    apply plugin: 'org.unbroken-dome.helm'
+    apply plugin: 'org.unbroken-dome.helm-publish'
+
+    dependencies {
+        implementation 'org.springframework.boot:spring-boot-starter'
+//        implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+        implementation project(':fsm-akka-4eyes-statemachine-facade'),
+                project(':fsm-akka-4eyes-statemachine'),
+                project(':fsm-akka-4eyes-actionguard-impl'),
+                project(':fsm-akka-advice'),
+                project(':fsm-akka-api'),
+                project(':4eyes-address-check-impl'),
+                project(':4eyes-credit-score-impl'),
+                project(':4eyes-fraud-prevention-impl'),
+                project(':4eyes-notifier-api'),
+                project(':4eyes-notifier-impl'),
+                project(':customer-relationship-adapter'),
+                project(':customer-relationship-adapter-impl'),
+                project(':fsm-akka-4eyes-kafka'),
+                project(':fsm-akka-4eyes-projections'),
+                project(':fsm-akka-elasticsearch'),
+                project(':fsm-akka-4eyes-elasticsearch-statemachine-adapter')
+
+        implementation "com.typesafe.akka:akka-persistence-cassandra_${versions.scala.major}:${versions.cassandraPlugin}"
+        implementation "com.typesafe.akka:akka-persistence-query_${versions.scala.major}:${versions.akka}"
+        implementation "com.typesafe.akka:akka-persistence-typed_${versions.scala.major}:${versions.akka}"
+        implementation "com.typesafe.akka:akka-cluster-sharding-typed_${versions.scala.major}:${versions.akka}"
+        testImplementation "com.typesafe.akka:akka-serialization-jackson_${versions.scala.major}:${versions.akka}"
+        testImplementation "org.codehaus.groovy:groovy-all:3.0.9"
+        testImplementation platform("org.spockframework:spock-bom:2.0-groovy-3.0")
+        testImplementation "org.spockframework:spock-core"
+        testImplementation "org.spockframework:spock-spring"
+        testImplementation "org.junit.platform:junit-platform-runner:1.8.2"
+
+        testImplementation('org.springframework.boot:spring-boot-starter-test') {
+            exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+        }
+        testImplementation 'org.springframework.kafka:spring-kafka-test'
+    }
+
+    jar {
+        enabled = false
+    }
+
+    test {
+        jvmArgs "-DSEED_NODES=${props.SEED_NODES}", "-DK8SSANDRA_PASSWORD=${props.K8SSANDRA_PASSWORD}"
+        useJUnitPlatform()
+    }
+
+    jib {
+        from {
+            image = 'azul/zulu-openjdk-centos:11.0.14'
+            auth {
+                username = "posthumecaver"
+                password = "nanimemo"
+            }
+        }
+        to {
+            image = "fsm-akka.registry:5555/fsmakka/${project.name}:${project.version}"
+            auth {
+                username = 'fsm_akka_admin'
+                password = 'Fsm_akka_admin#1234'
+            }
+        }
+        extraDirectories {
+            permissions = [
+                    'var/lib/fsm_akka_4eyes_application': '644'
+            ]
+        }
+        allowInsecureRegistries = true
+    }
+    //tasks.build.dependsOn tasks.jib
+
+    helm {
+        charts {
+            foureyes {
+                chartName = 'fsm-akka-4eyes-application'
+                sourceDir = file('helm')
+            }
+        }
+        repositories {
+            fsmakka {
+                url 'http://localhost:55120/repository/fsmakka/'
+                credentials {
+                    username = 'fsm_helm_user'
+                    password = 'foureyes#123'
+                }
+            }
+        }
+        publishing {
+            repositories {
+                nexus {
+                    url = uri('http://localhost:55120/')
+                    repository = 'fsmakka'
+                    apiVersion = 'v1'
+                    credentials {
+                        username = 'fsm_helm_user'
+                        password = 'foureyes#123'
+                    }
+                }
+            }
+        }
+    }
+}
+
+project(':fsm-akka-asciidoc') {
+    apply plugin: 'org.xtext.xtend'
+    apply plugin: 'org.asciidoctor.jvm.convert'
+    apply plugin: 'org.asciidoctor.jvm.gems'
+    apply plugin: "com.cosminpolifronie.gradle.plantuml"
+
+    repositories {
+        ruby.gems()
+    }
+
+    sourceSets {
+        main {
+            resources {
+               srcDirs  = ['target/generated-sources/docs/asciidoc', 'src/main/resources']
+            }
+        }
+    }
+
+    configurations {
+        mwe2 {
+            extendsFrom implementation
+        }
+    }
+
+    dependencies {
+        mwe2 project(':fsm-akka-xtext-reader')
+        mwe2 project(':fsm-akka-xtend')
+        mwe2 project(':fsm-akka-4eyes-uml-model')
+        mwe2 'org.salgar.akka.fsm:fsm-akka-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
+        asciidoctorGems 'rubygems:rouge:3.15.0'
+    }
+
+    task generateXtextLanguage(type: JavaExec) {
+        main = 'org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher'
+        classpath = configurations.mwe2
+        inputs.file "src/main/mwe2/GenerateWorkflow.mwe2"
+        outputs.dir "target/generated-sources"
+        args += "src/main/mwe2/GenerateWorkflow.mwe2"
+        args += "-p"
+        args += "rootPath=/${projectDir}/.."
+    }
+
+    generateXtext.dependsOn(generateXtextLanguage)
+    clean.dependsOn(cleanGenerateXtextLanguage)
+
+    asciidoctor {
+        dependsOn asciidoctorGemsPrepare
+
+        options doctype: 'book'
+
+        baseDirFollowsSourceFile()
+
+        asciidoctorj {
+            requires 'rouge'
+            attributes 'build-gradle': file('build.gradle'),
+            'sourcedir': project.sourceSets.main.java.srcDirs[0],
+            'endpoint-url': 'http://example.org',
+            'source-highlighter': 'rouge',
+            'imagesdir': 'images',
+            'toc': 'left',
+            'icons': 'font',
+            'setanchors': '',
+            'idprefix': '',
+            'idseparator': '-',
+            'docinfo': 'shared'
+        }
+    }
+
+    plantUml {
+        render input: 'target/generated-sources/docs/puml/activity/**/*.puml', output: "${project.buildDir.absolutePath}/puml/activity", format: 'png', withMetadata: false
+    }
+}
+
+project(':fsm-akka-docker-kubernetes') {
+
+}
+
+def static toMajorVersion(String scalaVersion) {
+    def pattern = Pattern.compile('(\\d+\\.\\d+)\\.\\d+.*')
+    def matcher = pattern.matcher(scalaVersion)
+    if (matcher.matches()) {
+        return matcher.group(1)
+    } else {
+        throw new IllegalArgumentException("Unable to parse scala major version '$scalaVersion'.")
+    }
+}

@@ -1,0 +1,139 @@
+{{- if and .Values.prometheus.jmx.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "kafka.fullname" . }}-jmx-configmap
+  labels:
+    app: {{ template "kafka.name" . }}
+    chart: {{ template "kafka.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data:
+  jmx-kafka-prometheus.yml: |+
+    startDelaySeconds: 300
+    jmxUrl: service:jmx:rmi:///jndi/rmi://localhost:{{ .Values.jmx.port }}/jmxrmi
+    lowercaseOutputName: true
+    lowercaseOutputLabelNames: true
+    ssl: false
+    whitelistObjectNames:
+    - kafka.cluster:*
+    - kafka.coordinator:*
+    - kafka.controller:*
+    - kafka.log:*
+    - kafka.network:*
+    - kafka.server:*
+    - java.lang:*
+    rules:
+    - pattern : kafka.coordinator.(\w+)<type=(.+), name=(.+)><>Value
+      name: kafka_coordinator_$1_$2_$3
+      type: GAUGE
+    - pattern: kafka.controller<type=(ControllerChannelManager), name=(QueueSize), broker-id=(\d+)><>(Value)
+      name: kafka_controller_$1_$2_$4
+      labels:
+        broker_id: "$3"
+    - pattern: kafka.controller<type=(ControllerChannelManager), name=(TotalQueueSize)><>(Value)
+      name: kafka_controller_$1_$2_$3
+    - pattern: kafka.controller<type=(KafkaController), name=(.+)><>(Value)
+      name: kafka_controller_$1_$2_$3
+    - pattern: kafka.controller<type=(ControllerStats), name=(.+)><>(Count)
+      name: kafka_controller_$1_$2_$3
+    - pattern: kafka.log<type=(.+), name=(.+), topic=(.+), partition=(.+)><>Value
+      name: kafka_log_$1_$2
+      labels:
+        topic: $3
+        partition: $4
+    - pattern : kafka.network<type=(Acceptor), name=(.+), listener=(.+)><>(Value)
+      name: kafka_network_$1_$2_$4
+      labels:
+        network_processor: $3
+    - pattern : kafka.network<type=(Processor), name=(IdlePercent), listener=(.+)><>(Value)
+      name: kafka_network_$1_$2_$4
+      labels:
+        network_processor: $3
+    - pattern : kafka.network<type=RequestMetrics, name=RequestsPerSec, request=(Produce|FetchConsumer|FetchFollower|OffsetCommit|Metadata)><>OneMinuteRate
+      name: "kafka_network_requestmetrics_requestspersec_$1"
+    - pattern : kafka.network<type=(RequestMetrics), name=(.+), request=(Produce|Fetch|FetchConsumer|FetchFollower|OffsetCommit|Metadata)><>(Count)
+      name: kafka_network_$1_$2_$4
+      labels:
+        request: $3
+    - pattern: kafka.network<type=RequestChannel, name=RequestQueueSize><>Value
+      name: kafka_network_requestchannel_requestqueuesize
+      help: Size of the request queue. A congested request queue will not be able to process incoming or outgoing requests
+      type: GAUGE
+    - pattern: kafka.network<type=RequestChannel, name=ResponseQueueSize><>Value
+      name: kafka_network_requestchannel_responsequeuesize
+      help: Size of the request queue. A congested request queue will not be able to process incoming or outgoing requests
+      type: GAUGE
+    - pattern: kafka.server<type=(ReplicaFetcherManager), name=(.+), clientId=(.+)><>(Value)
+      name: kafka_server_$1_$2_$4
+      labels:
+        client_id: "$3"
+    - pattern: kafka.server<type=(.+), name=(.+), topic=(.+)><>(Count|OneMinuteRate)
+      name: kafka_server_$1_$2_$4
+      labels:
+        topic: $3
+    - pattern: kafka.server<type=(DelayedOperationPurgatory), name=(.+), delayedOperation=(.+)><>(Value)
+      name: kafka_server_$1_$2_$3_$4
+    - pattern: kafka.server<type=(.+), name=(.+)><>(Count|Value|OneMinuteRate)
+      name: kafka_server_$1_total_$2_$3
+    - pattern: kafka.server<type=(.+)><>(queue-size)
+      name: kafka_server_$1_$2
+    - pattern: kafka.server<type=socket-server-metrics,name=(.+),networkProcessor=(.+)><>(.*)
+      name: kafka_server_$1_$2
+    # Percentile
+    - pattern: kafka.network<type=(RequestMetrics), name=(.+), (.+)=(.*), (.+)=(.+)><>(\d+)thPercentile
+      name: kafka_network_$1_$2
+      type: GAUGE
+      labels:
+        "$3": "$4"
+        "$5": "$6"
+        quantile: "0.$7"
+    - pattern: kafka.network<type=(RequestMetrics), name=(.+), (.+)=(.*)><>(\d+)thPercentile
+      name: kafka_network_$1_$2
+      type: GAUGE
+      labels:
+        "$3": "$4"
+        quantile: "0.$5"
+    - pattern: kafka.network<type=(RequestMetrics), name=(.+)><>(\d+)thPercentile
+      name: kafka_network_$1_$2
+      type: GAUGE
+      labels:
+        quantile: "0.$3"
+    - pattern : kafka.cluster<type=(.+), name=(.+), topic=(.+), partition=(.+)><>Value
+      name: kafka_cluster_$1_$2
+      labels:
+        topic: "$3"
+        partition: "$4"
+    - pattern: 'java.lang<type=Memory><(\w+)MemoryUsage>(\w+): (\d+)'
+      name: jvm_memory_usage_$2_bytes
+      labels:
+        area: "$1"  # Heap/NonHeap
+      value: $3
+      type: GAUGE
+    - pattern: 'java.lang<name=([\s\w]+), type=GarbageCollector, key=(\w+)>(.*): (\d+)'
+      name: jvm_gc_$3
+      labels:
+        name: $1
+        key: $2
+      value: $4
+      type: GAUGE
+    - pattern: 'java.lang<name=([\s\w]+), type=MemoryPool, key=(\w+)>(.*): (\d+)'
+      name: jvm_mempool_$3
+      labels:
+        name: $1
+        key: $2
+      value: $4
+      type: GAUGE
+    - pattern: 'java.lang<name=([\s\w]+), type=GarbageCollector>(.*): (\d+)'
+      name: jvm_gc_$2
+      labels:
+        name: $1
+      value: $3
+      type: GAUGE
+    - pattern: 'java.lang<name=([\s\w]+), type=MemoryPool>(.*): (\d+)'
+      name: jvm_mempool_$2
+      labels:
+        name: $1
+      value: $3
+      type: GAUGE
+  {{- end }}

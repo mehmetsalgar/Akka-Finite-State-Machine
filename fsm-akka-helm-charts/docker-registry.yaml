@@ -1,0 +1,4 @@
+mirrors:
+  "fsm-akka.registry:5555":
+    endpoint:
+      - http://fsm-akka.registry:5555

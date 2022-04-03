@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{.Release.Name}}-kafka-override-configmap
+data:
+  spring_cloud_config_server_overrides_kafka_bootstrapServers: {{ template "kafka.fullname" . }}-headless:9092
+  spring_cloud_config_server_overrides_spring_kafka_bootstrapservers: {{ template "kafka.fullname" . }}-headless:9092
+  spring_cloud_config_server_overrides_kafka_replicationFactor: {{ .Values.replicationFactor | quote }}
+  spring_cloud_config_server_overrides_kafka_inSyncReplica: {{ .Values.inSyncReplica | quote }}

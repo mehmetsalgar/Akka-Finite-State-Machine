@@ -1,0 +1,24 @@
+dependencies:
+- name: k8ssandra
+  repository: https://helm.k8ssandra.io/stable
+  version: 1.5.0-20220218064357-f72a8cb2
+- name: traefik
+  repository: https://helm.traefik.io/traefik
+  version: 10.14.2
+- name: artifactory
+  repository: https://charts.jfrog.io
+  version: 107.27.10
+- name: fsmakkakafka
+  repository: ""
+  version: 1.0.0
+- name: elasticsearch
+  repository: https://helm.elastic.co/
+  version: 7.16.3
+- name: nexus-repository-manager
+  repository: https://sonatype.github.io/helm3-charts/
+  version: 38.0.0
+- name: fsm-akka-4eyes-application
+  repository: http://localhost:55120/repository/fsmakka/
+  version: 1.0-SNAPSHOT
+digest: sha256:6552ed7937c645d82fec5f8a268ee2f7f66a73e5e8ed041fb74732111a6607d8
+generated: "2022-03-21T15:12:21.674631+01:00"

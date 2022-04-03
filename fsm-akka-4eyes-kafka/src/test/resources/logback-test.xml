@@ -1,0 +1,30 @@
+<configuration>
+    <appender name="STDOUT" target="System.out" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>[%date{ISO8601}] [%-5level] [%logger] [%thread] [%X{akkaSource}] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+        <queueSize>1024</queueSize>
+        <neverBlock>true</neverBlock>
+        <appender-ref ref="STDOUT" />
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="ASYNC"/>
+    </root>
+
+    <logger name="org.aspectj" level="INFO" />
+    <logger name="org.springframework" level="INFO" />
+    <logger name="com.datastax" level="WARN" />
+    <logger name="akka" level="INFO" />
+    <logger name="akka.cluster" level="WARN" />
+    <logger name="kafka" level="WARN" />
+    <logger name="org.apache.zookeeper" level="INFO" />
+    <logger name="org.apache.kafka" level="WARN" />
+    <logger name="org.apache.kafka.clients.consumer" level="WARN" />
+    <logger name="org.apache.zookeeper" level="WARN" />
+    <logger name="io.confluent" level="WARN" />
+    <logger name="state.change.logger" level="WARN" />
+</configuration>

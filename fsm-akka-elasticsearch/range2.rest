@@ -1,0 +1,12 @@
+POST http://localhost:56677/creditsm/_search?pretty
+Content-Type: application/json
+
+{
+  "query": {
+    "query_string": {
+      "query": "creditScoreTenantResults.\\*.creditScore: [20 TO 70}"
+    }
+  },
+  "fields": ["creditUuid", "state", "*.creditScore"],
+  "_source": false
+}

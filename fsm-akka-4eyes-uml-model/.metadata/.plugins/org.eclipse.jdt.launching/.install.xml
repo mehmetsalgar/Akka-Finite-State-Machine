@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<dirs>
+    <entry loc="|opt|homebrew|Cellar|openjdk@11|11.0.12|libexec|openjdk.jdk|Contents|Home" stamp="1617961018000"|>
+    <entry loc="|Library|Java|JavaVirtualMachines|zulu-11.jdk|Contents|Home" stamp="1642155736000"|>
+    <entry loc="|Applications|Eclipse.app|Contents|Eclipse|plugins|org.eclipse.justj.openjdk.hotspot.jre.full.macosx.aarch64_17.0.1.v20211116-1657" stamp="1638465220000"|>
+    <entry loc="|Library|Java|JavaVirtualMachines|zulu-17.jdk|Contents|Home" stamp="1641646977000"|>
+    <entry loc="|Library|Java|JavaVirtualMachines|adoptopenjdk-11.jdk|Contents|Home" stamp="1618964067000"|>
+    <entry loc="|Applications|Eclipse.app|Contents|Eclipse|plugins|org.eclipse.justj.openjdk.hotspot.jre.full.macosx.aarch64_17.0.1.v20211116-1657|jre" stamp="1638465220000"|>
+<|dirs>

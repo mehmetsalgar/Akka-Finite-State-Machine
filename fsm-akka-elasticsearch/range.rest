@@ -1,0 +1,15 @@
+POST http://localhost:56677/creditsm/_search?pretty
+Content-Type: application/json
+
+{
+  "query": {
+    "range" : {
+      "creditScoreTenantResults.123456789X.creditScore" : {
+        "gte" : 70,
+        "lte" : 80
+      }
+    }
+  },
+  "fields": ["*"],
+  "_source": false
+}

@@ -1,0 +1,8 @@
+= FSM Akka Four Eyes
+:sectnums:
+:sectnumlevels: 7
+
+Feasiblity study for the Model Driven Programming with Eclipse Papyrus, Xtext, Xtend, Apache Kafka, Akka Finite
+State Machine, Apache Cassandra.
+
+include::../../../target/generated-sources/docs/asciidoc/fsm-akka-base.adoc[leveloffset=+1]
