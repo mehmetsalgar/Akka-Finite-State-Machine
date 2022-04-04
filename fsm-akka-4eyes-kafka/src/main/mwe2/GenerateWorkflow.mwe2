@@ -1,4 +1,4 @@
- module org.salgar.akka.fsm.org.salgar.fsm.akka.foureyes.kafka
+ module org.salgar.fsm.akka.foureyes.kafka
 
  var javaPath = "src"
 

@@ -1,4 +1,4 @@
-module org.salgar.akka.fsm.org.salgar.fsm.akka.foureyes
+module org.salgar.fsm.akka.foureyes.es.adapter
 
 var javaPath = "src"
 

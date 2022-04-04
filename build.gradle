@@ -1105,7 +1105,8 @@ project(':fsm-akka-4eyes-projections-statemachine-adapter') {
     dependencies {
         api project(':fsm-akka-elasticsearch'),
                 project(':fsm-akka-4eyes-statemachine'),
-                project(':fsm-akka-4eyes-elasticsearch-statemachine-adapter')
+                project(':fsm-akka-4eyes-elasticsearch-statemachine-adapter'),
+                project(':fsm-akka-projections')
         implementation 'org.springframework.data:spring-data-elasticsearch'
         implementation "com.lightbend.akka:akka-projection-eventsourced_${versions.scala.major}:${versions.akkaProjections}"
     }
