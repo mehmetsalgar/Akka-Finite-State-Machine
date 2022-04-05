@@ -64,7 +64,7 @@ spec:
               value: "{{ .Values.cassandraContactPoint.cassandraReleaseName }}-dc1-all-pods-service.{{ .Values.cassandraContactPoint.cassandraNamespace }}.svc.cluster.local"
             - name: NUMBER_OF_SHARDS
               value: "{{ .Values.akka.fsm.numberOfShards }}"
-            - name: SPRING_KAFKA_BOOTSTRAP-SERVERS
+            - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
               value: "{{ .Values.spring.kafka.bootstrapServers }}"
             - name: K8SSANDRA_PASSWORD
               valueFrom:

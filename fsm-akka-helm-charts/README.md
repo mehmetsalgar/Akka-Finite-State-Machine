@@ -96,8 +96,8 @@ kafka-topics --zookeeper localhost:2181 --create --topic fraudPreventionSM --par
 # JiB
 gradle :fsm-akka-4eyes-application:jib
 
-#app
-helm install foureyes . -n fsmakka --create-namespace
+# Application
+helm install foureyes . -n fsmakka --create-namespace --set fsm-akka-4eyes-application.enabled=true
 
 # minikube
 https://medium.com/rahasak/replace-docker-desktop-with-minikube-and-hyperkit-on-macos-783ce4fb39e3
@@ -121,3 +121,6 @@ helm install fsmelasticseach . -n fsmakka -f ./values-elasticsearch.yaml
 # ARM64 nexus
 helm repo add nexus https://sonatype.github.io/helm3-charts/
 helm install nexus . -n nexus --create-namespace -f values-nexus.yaml
+
+# Add fsmakka repo
+helm repo add fsmakka http://localhost:55120/repository/fsmakka/

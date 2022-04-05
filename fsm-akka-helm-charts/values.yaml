@@ -12,5 +12,7 @@ fsmakkakafka:
   enabled: false
 elasticsearch:
   enabled: false
+nexus:
+  enabled: false
 fsm-akka-4eyes-application:
   enabled: false

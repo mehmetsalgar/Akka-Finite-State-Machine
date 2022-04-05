@@ -1277,6 +1277,7 @@ project(':fsm-akka-4eyes-application') {
         charts {
             foureyes {
                 chartName = 'fsm-akka-4eyes-application'
+                chartVersion = '1.1.1'
                 sourceDir = file('helm')
             }
         }

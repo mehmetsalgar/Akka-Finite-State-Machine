@@ -5,9 +5,6 @@ dependencies:
 - name: traefik
   repository: https://helm.traefik.io/traefik
   version: 10.14.2
-- name: artifactory
-  repository: https://charts.jfrog.io
-  version: 107.27.10
 - name: fsmakkakafka
   repository: ""
   version: 1.0.0
@@ -19,6 +16,6 @@ dependencies:
   version: 38.0.0
 - name: fsm-akka-4eyes-application
   repository: http://localhost:55120/repository/fsmakka/
-  version: 1.0-SNAPSHOT
-digest: sha256:6552ed7937c645d82fec5f8a268ee2f7f66a73e5e8ed041fb74732111a6607d8
-generated: "2022-03-21T15:12:21.674631+01:00"
+  version: 1.1.1
+digest: sha256:43d5c6da44b661cc0273f71b99ac560b6c03df516d429ec58265b8a51c2e9b5c
+generated: "2022-04-05T09:49:24.943336+02:00"
