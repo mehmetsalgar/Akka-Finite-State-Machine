@@ -156,14 +156,18 @@ Slave State Machines will asyncrhnously reply to Master State Machine, in this c
                   </transition>
                   <transition xmi:type="uml:Transition" xmi:id="_pr70MEFkEey-7smbVHMbdw" name="creditScore_addressCheck_onResultReceived" guard="_OZQQsEFlEey-7smbVHMbdw" source="_VncgkDiwEeyPjN0PDF-AkA" target="_pgDw0EFjEey-7smbVHMbdw">
                     <ownedRule xmi:type="uml:Constraint" xmi:id="_OZQQsEFlEey-7smbVHMbdw" name="isAddressCheckResult">
-                      <ownedComment xmi:type="uml:Comment" xmi:id="_plufMImJEeygS4XeHwQCgQ">
-                        <body>WE have to check the Reult is arriving from Address Check Slave Satet Machine.</body>
+                      <ownedComment xmi:type="uml:Comment" xmi:id="_plufMImJEeygS4XeHwQCgQ" annotatedElement="_yXfFgOSSEeup6LjjOh4MjQ">
+                        <body>We have to check the Result is arriving from Address Check Slave State Machine.</body>
                       </ownedComment>
                     </ownedRule>
                     <trigger xmi:type="uml:Trigger" xmi:id="_5KArwEFkEey-7smbVHMbdw" name="onResultReceived" event="_49mncEFkEey-7smbVHMbdw"/>
                   </transition>
                   <transition xmi:type="uml:Transition" xmi:id="_QnYVIEFlEey-7smbVHMbdw" name="addressCheck_CredfitScore_onResultReceived" guard="_sCPHwEFlEey-7smbVHMbdw" source="_xy_wUDiwEeyPjN0PDF-AkA" target="_pgDw0EFjEey-7smbVHMbdw">
-                    <ownedRule xmi:type="uml:Constraint" xmi:id="_sCPHwEFlEey-7smbVHMbdw" name="isCreditScoreResult"/>
+                    <ownedRule xmi:type="uml:Constraint" xmi:id="_sCPHwEFlEey-7smbVHMbdw" name="isCreditScoreResult">
+                      <ownedComment xmi:type="uml:Comment" xmi:id="_du2n4LZ4EeyecuRKYfK1Yg" annotatedElement="_yXfFgOSSEeup6LjjOh4MjQ">
+                        <body>We have to check the Result is arriving from Credit Score Slave State Machine.</body>
+                      </ownedComment>
+                    </ownedRule>
                     <trigger xmi:type="uml:Trigger" xmi:id="_i65IwEFlEey-7smbVHMbdw" name="onResultReceived" event="_iwvHMEFlEey-7smbVHMbdw"/>
                   </transition>
                   <subvertex xmi:type="uml:Pseudostate" xmi:id="_Nnu4ADiwEeyPjN0PDF-AkA" name="Initial_CSC"/>

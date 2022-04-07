@@ -40,7 +40,7 @@ class ScalaGuardsTemplate {
                 allOwnedElements().filter(Pseudostate),
                 allOwnedElements().filter(State)).filter(t|t.guard !== null).sortWith([o1, o2 | o1.getName().compareTo(o2.getName())]) SEPARATOR ','»
                 «IF (transition.guard !== null)»
-                    @Autowired «name.toLowerCase()»_«transition.source.name.toUpperCase()»_«transition.target.name.toUpperCase()»_«transition.triggers.head.name»_«transition.guard.name»: «transition.source.name.toUpperCase()»«context.getGlobalVariable('targetSourceStateSeperator')»«transition.target.name.toUpperCase()»_«transition.guard.name»_Guard
+                    @Autowired «name.toLowerCase()»_«transition.source.name.toUpperCase()»«context.getGlobalVariable('targetSourceStateSeperator')»«transition.target.name.toUpperCase()»_«transition.triggers.head.name»_«transition.guard.name»: «transition.source.name.toUpperCase()»«context.getGlobalVariable('targetSourceStateSeperator')»«transition.target.name.toUpperCase()»_«transition.guard.name»_Guard
                 «ENDIF»
             «ENDFOR»
          ) {

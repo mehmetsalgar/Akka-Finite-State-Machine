@@ -37,7 +37,7 @@ class ScalaActionsTemplate {
         @Component
         case class Spring«name»ActionsLocator(
             «FOR transition : giveTransitionsRecursive(allOwnedElements().filter(Pseudostate), allOwnedElements().filter(State)).sortWith([o1, o2 | o1.getName().compareTo(o2.getName())]) SEPARATOR ','»
-                @Autowired «name.toLowerCase()»_«transition.source.name.toUpperCase()»_«transition.target.name.toUpperCase()»_«transition.name»Action: «transition.source.name.toUpperCase()»«context.getGlobalVariable('targetSourceStateSeperator')»«transition.target.name.toUpperCase()»_«transition.name»_Action
+                @Autowired «name.toLowerCase()»_«transition.source.name.toUpperCase()»«context.getGlobalVariable('targetSourceStateSeperator')»«transition.target.name.toUpperCase()»_«transition.name»Action: «transition.source.name.toUpperCase()»«context.getGlobalVariable('targetSourceStateSeperator')»«transition.target.name.toUpperCase()»_«transition.name»_Action
             «ENDFOR»
          ) {
           import Spring«name»ActionsLocator._

@@ -269,20 +269,20 @@ class StateMachineTemplate extends AbstractGenerator {
                 «val transitionsForTriggerList = giveTransitionsForTrigger(outgoings.reverseView, trigger)»
                 «FOR transition : transitionsForTriggerList»
                     «IF (transition.guard !== null) && transitionsForTriggerList.get(0).guard !== null»
-                        «IF (transitionsForTriggerList.get(0) != transition)»else «ENDIF»if(Spring«name»GuardsLocator.getInstance.«name.toLowerCase()»_«transition.source.name.toUpperCase()»_«transition.target.name.toUpperCase()»_«transition.triggers.head.name»_«transition.guard.name».evaluate(
+                        «IF (transitionsForTriggerList.get(0) != transition)»else «ENDIF»if(Spring«name»GuardsLocator.getInstance.«name.toLowerCase()»_«transition.source.name.toUpperCase()»«context.getGlobalVariable('targetSourceStateSeperator')»«transition.target.name.toUpperCase()»_«transition.triggers.head.name»_«transition.guard.name».evaluate(
                             context,
                             controlObject,
                             payload)) {
                     «ENDIF»
 
                     «IF (transitionsForTriggerList.get(0) == transition)»
-                        return Spring«name»ActionsLocator.getInstance().«name.toLowerCase()»_«transition.source.name.toUpperCase()»_«transition.target.name.toUpperCase()»_«transition.name»Action.doAction(
+                        return Spring«name»ActionsLocator.getInstance().«name.toLowerCase()»_«transition.source.name.toUpperCase()»«context.getGlobalVariable('targetSourceStateSeperator')»«transition.target.name.toUpperCase()»_«transition.name»Action.doAction(
                                         context,
                                         controlObject,
                                         payload, replyTo)
                     «ELSE»
                         «IF (transitionsForTriggerList.get(0).guard !== null)»
-                            return Spring«name»ActionsLocator.getInstance().«name.toLowerCase()»_«transition.source.name.toUpperCase()»_«transition.target.name.toUpperCase()»_«transition.name»Action.doAction(
+                            return Spring«name»ActionsLocator.getInstance().«name.toLowerCase()»_«transition.source.name.toUpperCase()»«context.getGlobalVariable('targetSourceStateSeperator')»«transition.target.name.toUpperCase()»_«transition.name»Action.doAction(
                                 context,
                                 controlObject,
                                 payload, replyTo)

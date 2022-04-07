@@ -1,0 +1,2 @@
+GET http://localhost:56677/creditsm/_doc/c8359585-a71d-496b-b1a8-3452e6a6350f?pretty
+Content-Type: application/json

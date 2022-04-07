@@ -15,7 +15,9 @@ public class ADRRESCHECK_RESULT_RECEIVED_$$_CREDITSCORE_ADDRESSCHECK_RESULT_RECE
             ActorContext<CreditSM.CreditSMEvent> actorContext,
             Map<String, Object> controlObject,
             Map<String, Object> payload) {
-        actorContext.log().debug("Evaluating ADRRESCHECK_RESULT_RECEIVED addressCheck_ResultReceived_onResultReceived Guard");
+        actorContext
+                .log()
+                .debug("Evaluating ADRRESCHECK_RESULT_RECEIVED addressCheck_ResultReceived_onResultReceived Guard");
 
         String slaveSM = (String) payload.get(SOURCE_SLAVE_SM_TAG);
         if (CUSTOMER_SCORE_SM.equals(slaveSM)) {
