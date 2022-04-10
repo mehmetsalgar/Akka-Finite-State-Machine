@@ -1,9 +1,3 @@
-traefik:
-  enabled: false
-artifactory:
-  enabled: false
-k8ssandra:
-  enabled: false
 fsmakkakafka:
   enabled: true
   zookeeper:

@@ -1,13 +1,6 @@
-traefik:
-  enabled: false
-k8ssandra:
-  enabled: false
-fsmakkakafka:
-  enabled: false
-artifactory:
-  enabled: false
-nexus-repository-manager:
+nexus:
   enabled: true
+nexus-repository-manager:
   image:
     repository: klo2k/nexus3
     tag: latest

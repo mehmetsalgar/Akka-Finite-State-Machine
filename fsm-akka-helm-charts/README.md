@@ -122,5 +122,9 @@ helm install fsmelasticseach . -n fsmakka -f ./values-elasticsearch.yaml
 helm repo add nexus https://sonatype.github.io/helm3-charts/
 helm install nexus . -n nexus --create-namespace -f values-nexus.yaml
 
+# Metric Server
+helm repo add metrics-server https://kubernetes-sigs.github.io/metrics-server/
+helm install metrics-server . -f values-metrics.yaml
+
 # Add fsmakka repo
 helm repo add fsmakka http://localhost:55120/repository/fsmakka/
