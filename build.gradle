@@ -29,7 +29,7 @@ plugins {
     id 'java'
     id 'java-library'
     id 'idea'
-    id 'org.springframework.boot' version '2.6.4'
+    id 'org.springframework.boot' version '2.6.6'
     id 'com.google.cloud.tools.jib' version '3.2.0'
 }
 
@@ -450,7 +450,7 @@ project(':fsm-akka-4eyes-statemachine') {
     sourceSets {
         main {
             scala {
-                srcDirs = ['target/generated-sources/main/scala', 'src/main/scala', 'target/generated-sources/main/java', 'src/main/java']
+                srcDirs = ['build/generated-sources/main/scala', 'src/main/scala', 'build/generated-sources/main/java', 'src/main/java']
             }
             java {
                 srcDirs = []
@@ -458,7 +458,7 @@ project(':fsm-akka-4eyes-statemachine') {
         }
         test {
             scala {
-                srcDirs = ['target/generated-sources/test/scala', 'src/test/scala', 'target/generated-sources/test/java', 'src/test/java']
+                srcDirs = ['build/generated-test-sources/test/scala', 'src/test/scala', 'build/generated-test-sources/test/java', 'src/test/java']
             }
             java {
                 srcDirs = []
@@ -560,12 +560,11 @@ project(':fsm-akka-4eyes-statemachine') {
     }
 
     task generateXtextLanguage(type: JavaExec) {
-        def generatedFileDir = file("target/generated-sources")
+        def generatedFileDir = file("build/generated-sources")
         outputs.dir generatedFileDir
         main = 'org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher'
         classpath = configurations.mwe2
         inputs.file "src/main/mwe2/GenerateWorkflow.mwe2"
-        outputs.dir "target/generated-sources"
         args += "src/main/mwe2/GenerateWorkflow.mwe2"
         args += "-p"
         args += "rootPath=/${projectDir}/.."
@@ -1251,7 +1250,17 @@ project(':fsm-akka-4eyes-application') {
 
     jib {
         from {
-            image = 'azul/zulu-openjdk-centos:11.0.14'
+            image = 'azul/zulu-openjdk:17.0.2-17.32.13'
+            platforms {
+                platform {
+                    architecture = 'amd64'
+                    os = 'linux'
+                }
+                platform {
+                    architecture = 'arm64'
+                    os = 'linux'
+                }
+            }
             auth {
                 username = "posthumecaver"
                 password = "nanimemo"
@@ -1277,7 +1286,7 @@ project(':fsm-akka-4eyes-application') {
         charts {
             foureyes {
                 chartName = 'fsm-akka-4eyes-application'
-                chartVersion = '1.1.1'
+                chartVersion = '1.1.4'
                 sourceDir = file('helm')
             }
         }

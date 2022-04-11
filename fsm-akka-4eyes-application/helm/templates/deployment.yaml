@@ -47,13 +47,13 @@ spec:
             httpGet:
               path: /alive
               port: management
-            initialDelaySeconds: 60
+            initialDelaySeconds: 120
             periodSeconds: 30
           readinessProbe:
             httpGet:
               path: /ready
               port: management
-            initialDelaySeconds: 60
+            initialDelaySeconds: 120
             periodSeconds: 30
           env:
             - name: KUBERNETES_NAMESPACE

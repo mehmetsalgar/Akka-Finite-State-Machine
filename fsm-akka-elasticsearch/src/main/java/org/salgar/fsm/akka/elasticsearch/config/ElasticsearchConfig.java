@@ -24,6 +24,7 @@ public class ElasticsearchConfig extends AbstractElasticsearchConfiguration {
 
     @Override
     public RestHighLevelClient elasticsearchClient() {
+        log.info("Connecting to: {}", elasticsearchProperties.getUrl());
         ClientConfiguration clientConfiguration =
                 ClientConfiguration
                         .builder()

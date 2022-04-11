@@ -5,7 +5,7 @@ var javaPath = "src"
 Workflow {
 	bean = org.salgar.akka.fsm.xtend.uml.engine.UmlGeneratorStandaloneSetup : setupScala {
         config = {
-            javaGenPath = "target/generated-sources/main/scala"
+            javaGenPath = "build/generated-sources/main/scala"
             rootClass = "org.salgar.akka.fsm.xtend.uml.templates.ScalaRoot"
         }
         doInit = true
@@ -13,7 +13,7 @@ Workflow {
 
     bean = org.salgar.akka.fsm.xtend.uml.engine.UmlGeneratorStandaloneSetup : setupJava {
         config = {
-            javaGenPath = "target/generated-sources/main/java"
+            javaGenPath = "build/generated-sources/main/java"
             rootClass = "org.salgar.akka.fsm.xtend.uml.templates.JavaRoot"
         }
         doInit = true
@@ -21,7 +21,7 @@ Workflow {
 
     bean = org.salgar.akka.fsm.xtend.uml.engine.UmlGeneratorStandaloneSetup : setupTestJava {
         config = {
-            javaGenPath = "target/generated-sources/test/java"
+            javaGenPath = "build/generated-sources/test/java"
             rootClass = "org.salgar.akka.fsm.xtend.uml.templates.JavaTestRoot"
         }
         doInit = true
@@ -64,15 +64,15 @@ Workflow {
     }
 
 	component = org.eclipse.emf.mwe.utils.DirectoryCleaner : scalaCleaner {
-		directory = "target/generated-sources/main/scala"
+		directory = "build/generated-sources/main/scala"
 	}
 
 	component = org.eclipse.emf.mwe.utils.DirectoryCleaner : javaCleaner {
-        directory = "target/generated-sources/main/java"
+        directory = "build/generated-sources/main/java"
     }
 
 	component = org.eclipse.emf.mwe.utils.DirectoryCleaner : javaTestCleaner {
-        directory = "target/generated-sources/test/java"
+        directory = "build/generated-test-sources/test/java"
     }
 
 	component = org.salgar.akka.fsm.xtend.uml.generator.FsmAkkaGeneratorComponent : scalaGenerator {
@@ -85,7 +85,7 @@ Workflow {
                 name = "submachineSeperator" value = "_$_"
         }
         outlet = {
-            path = "target/generated-sources/main/scala"
+            path = "build/generated-sources/main/scala"
         }
         outlet = {
         	outletName = "gen-once"
@@ -103,7 +103,7 @@ Workflow {
                 name = "submachineSeperator" value = "_$_"
         }
         outlet = {
-            path = "target/generated-sources/main/java"
+            path = "build/generated-sources/main/java"
         }
         outlet = {
             outletName = "gen-once"
@@ -121,7 +121,7 @@ Workflow {
                 name = "submachineSeperator" value = "_$_"
         }
         outlet = {
-            path = "target/generated-sources/test/java"
+            path = "build/generated-test-sources/test/java"
         }
         outlet = {
             outletName = "gen-once"

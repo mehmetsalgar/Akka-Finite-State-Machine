@@ -26,7 +26,6 @@ org:
         projections:
           offsetStore: elasticsearch
 
-
 management:
   endpoint:
     health:
@@ -95,6 +94,13 @@ spring:
         "linger.ms" : "1"
 ---
 spring.config.activate.on-cloud-platform: kubernetes
+org:
+  salgar:
+    fsm:
+      akka:
+        foureyes:
+          elasticsearch:
+            url: 'elasticsearch-master-headless:9200'
 spring:
   cloud:
     kubernetes:

@@ -220,7 +220,7 @@ public class RecoveryPreTest {
         verify(fraudPreventionServiceMockBean).reportFraudPrevention(anyString(), anyString(), anyString());
         verify(addressCheckServiceMockBean).addressExist(anyString(), anyString(), anyString(), anyString());
 
-        Thread.sleep(TimeUnit.MINUTES.toMillis(1));
+        Thread.sleep(TimeUnit.SECONDS.toMillis(30));
     }
 
     @SneakyThrows

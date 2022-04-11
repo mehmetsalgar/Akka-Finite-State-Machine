@@ -20,5 +20,5 @@
     <logger name="org.springframework" level="INFO" />
     <logger name="com.datastax" level="INFO" />
     <logger name="scala" level="WARN" />
-    <logger name="akka" level="WARN" />
+    <logger name="akka" level="INFO" />
 </configuration>

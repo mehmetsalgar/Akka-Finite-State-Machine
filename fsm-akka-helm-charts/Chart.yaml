@@ -41,7 +41,7 @@ dependencies:
     tags:
       - infrastructure
   - name: fsm-akka-4eyes-application
-    version: 1.1.1
+    version: 1.1.2
     condition: fsm-akka-4eyes-application.enabled
     repository: http://localhost:55120/repository/fsmakka/
     tags:
