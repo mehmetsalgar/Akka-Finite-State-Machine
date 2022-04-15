@@ -1,7 +1,7 @@
 package org.salgar.fsm.akka.foureyes.credit
 
 import akka.persistence.typed.{EventAdapter, EventSeq}
-import org.salgar.fsm.akka.foureyes.credit.CreditSM.SomeAdditionalManagerApprovedPersistEvent
+import org.salgar.fsm.akka.foureyes.credit.CreditSM.{SalesManagerApprovalPersistEvent, SomeAdditionalManagerApprovedPersistEvent}
 
 object CreditSMEventAdapter
   extends EventAdapter[CreditSM.PersistEvent, CreditSM.PersistEvent] {

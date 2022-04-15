@@ -107,6 +107,14 @@ class CreditFacadeImpl(actorService: ActorService)
     actorRef.ask[Response](ref =>  CreditSMGuardian.onCustomerUpdated(payload, ref))
   }
 
+  override def someAdditionalManagerApproved(payload: util.Map[String, AnyRef]): Unit = {
+    actorRef ! onSomeAdditionalManagerApproved (payload)
+  }
+
+  override def askSomeAdditionalManagerApproved(payload: util.Map[String, AnyRef]): Future[Response] = {
+    actorRef.ask[Response](ref =>  CreditSMGuardian.onSomeAdditionalManagerApproved(payload, ref))
+  }
+
   @PostConstruct
   override protected def init = {
     super.init
