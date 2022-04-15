@@ -586,12 +586,21 @@ project(':fsm-akka-statemachine-facade') {
     }
 }
 
+project(':fsm-akka-4eyes-event-adapter') {
+    apply plugin: 'java-library'
+    apply plugin: 'scala'
+
+    dependencies {
+        api project(':fsm-akka-4eyes-statemachine')
+    }
+}
+
 project(':fsm-akka-4eyes-statemachine-facade') {
     apply plugin: 'java-library'
     apply plugin: 'scala'
 
     dependencies {
-        api project(':fsm-akka-4eyes-statemachine'),
+        api project(':fsm-akka-4eyes-event-adapter'),
                 project(':fsm-akka-statemachine-facade'),
                 project(':fsm-akka-akkasystem')
     }

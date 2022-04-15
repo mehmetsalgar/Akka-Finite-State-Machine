@@ -18,7 +18,9 @@ import scala.concurrent.Future
 @Component
 @DependsOn(Array("actorService"))
 class CreditFacadeImpl(actorService: ActorService)
-  extends StateMachineFacade[CreditSMGuardian.CreditSMGuardianEvent, Response] (actorService, "creditSMGuardian", CreditSMGuardian()(actorService.sharding()))
+  extends StateMachineFacade[CreditSMGuardian.CreditSMGuardianEvent, Response] (
+    actorService, "creditSMGuardian",
+    CreditSMGuardian()(actorService.sharding()))
     with CreditSMFacade {
   import ActorService._
 

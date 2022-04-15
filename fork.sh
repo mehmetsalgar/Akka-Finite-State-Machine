@@ -1,5 +1,5 @@
 #!/bin/bash
-
+groupId=$(echo $2 | sed 's|\.|/|g')
 #fsm-akka-***-uml-model
 mkdir "fsm-akka-$1-uml-model"
 mkdir -p "fsm-akka-$1-uml-model/src/main/resources"
@@ -13,11 +13,14 @@ sedStatemachineMwe="${sedStatemachineMwe}s|4eyes|$1|g"
 sed "${sedStatemachineMwe}" "fsm-akka-4eyes-statemachine/src/main/mwe2/GenerateWorkflow.mwe2" > "fsm-akka-$1-statemachine/src/main/mwe2/GenerateWorkflow.mwe2"
 #fsm-akka-***-actionguard-impl
 mkdir "fsm-akka-$1-actionguard-impl"
-mkdir -p "fsm-akka-$1-actionguard-impl/src/main/java"
+mkdir -p "fsm-akka-$1-actionguard-impl/src/main/java/${groupId}"
+#fsm-akka-***-event-adapter
+mkdir "fsm-akka-$1-event-adapter"
+mkdir -p "fsm-akka-$1-statemachine-facade/src/main/scala/${groupId}"
 #fsm-akka-***-statemachine-facade
 mkdir "fsm-akka-$1-statemachine-facade"
-mkdir -p "fsm-akka-$1-statemachine-facade/src/main/java"
-mkdir -p "fsm-akka-$1-statemachine-facade/src/main/scala"
+mkdir -p "fsm-akka-$1-statemachine-facade/src/main/java/${groupId}"
+mkdir -p "fsm-akka-$1-statemachine-facade/src/main/scala/${groupId}"
 #fsm-akka-***-model
 mkdir "fsm-akka-$1-model"
 mkdir -p "fsm-akka-$1-model/src/main/mwe2"
@@ -65,10 +68,9 @@ sedProjSMAdapMwe="${sedProjSMAdapMwe}s|4eyes|$1|g"
 sed "${sedProjSMAdapMwe}" "fsm-akka-4eyes-projections-statemachine-adapter/src/main/mwe2/GenerateWorkflow.mwe2" > "fsm-akka-$1-projections-statemachine-adapter/src/main/mwe2/GenerateWorkflow.mwe2"
 #fsm-akka-***-projections
 mkdir "fsm-akka-$1-projections"
-mkdir -p "fsm-akka-$1-projections/src/main/scala"
+mkdir -p "fsm-akka-$1-projections/src/main/scala/${groupId}"
 #fsm-akka-***-application
 mkdir "fsm-akka-$1-application"
-groupId=$(echo $2 | sed 's|\.|/|g')
 mkdir -p "fsm-akka-$1-application/src/main/java/${groupId}"
 mkdir -p "fsm-akka-$1-application/src/main/resources"
 mkdir -p "fsm-akka-4eyes-application/src/main/jib/var/lib/fsm_akka_$1_application"
@@ -113,6 +115,7 @@ sed "s|foureyes|$1|g" "fsm-akka-4eyes-application/helm/Chart.yaml" > "fsm-akka-$
 sedCommand="s|fsm-akka-4eyes-uml-model|fsm-akka-$1-uml-model|g;"
 sedCommand="${sedCommand}s|fsm-akka-4eyes-statemachine|fsm-akka-$1-statemachine|g;"
 sedCommand="${sedCommand}s|fsm-akka-4eyes-actionguard-impl|fsm-akka-$1-actionguard-impl|g;"
+sedCommand="${sedCommand}s|fsm-akka-4eyes-event-adapter|fsm-akka-$1-event-adapter|g;"
 sedCommand="${sedCommand}s|fsm-akka-4eyes-statemachine-facade|fsm-akka-$1-statemachine-facade|g;"
 sedCommand="${sedCommand}s|fsm-akka-4eyes-model|fsm-akka-$1-model|g;"
 sedCommand="${sedCommand}s|fsm-akka-4eyes-protobuf|fsm-akka-$1-protobuf|g;"
@@ -131,6 +134,7 @@ sed "${sedCommand}" settings.gradle > settings_fork.gradle
 sedBuildCommand="s|fsm-akka-4eyes-uml-model|fsm-akka-$1-uml-model|g;"
 sedBuildCommand="${sedBuildCommand}s|fsm-akka-4eyes-statemachine|fsm-akka-$1-statemachine|g;"
 sedBuildCommand="${sedBuildCommand}s|fsm-akka-4eyes-actionguard-impl|fsm-akka-$1-actionguard-impl|g;"
+sedBuildCommand="${sedBuildCommand}s|fsm-akka-4eyes-event-adapter|fsm-akka-$1-event-adapter|g;"
 sedBuildCommand="${sedBuildCommand}s|fsm-akka-4eyes-statemachine-facade|fsm-akka-$1-statemachine-facade|g;"
 sedBuildCommand="${sedBuildCommand}s|fsm-akka-4eyes-model|fsm-akka-$1-model|g;"
 sedBuildCommand="${sedBuildCommand}s|fsm-akka-4eyes-protobuf|fsm-akka-$1-protobuf|g;"

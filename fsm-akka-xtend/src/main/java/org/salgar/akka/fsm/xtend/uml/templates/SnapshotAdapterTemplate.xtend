@@ -24,7 +24,7 @@ class SnapshotAdapterTemplate {
         import akka.persistence.typed.SnapshotAdapter
         import «packageName».«name»._
 
-        class «name»SnapshotAdapter extends SnapshotAdapter[State] {
+        object «name»SnapshotAdapter extends SnapshotAdapter[State] {
             override def toJournal(state: State): Any = {
                 «name»Snapshot(state.getClass.getSimpleName, state.controlObject)
             }

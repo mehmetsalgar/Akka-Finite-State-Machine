@@ -24,15 +24,18 @@ class SlaveGuardianTemplate {
         import org.salgar.akka.fsm.api.UseCaseKey
         import akka.cluster.sharding.typed.HashCodeNoEnvelopeMessageExtractor
         import akka.cluster.sharding.typed.scaladsl.{ClusterSharding, Entity, EntityTypeKey}
-        import akka.persistence.typed.{PersistenceId, SnapshotSelectionCriteria}
+        import akka.persistence.typed.{EventAdapter, PersistenceId, SnapshotAdapter, SnapshotSelectionCriteria}
         import akka.persistence.typed.scaladsl.{EventSourcedBehavior, Recovery, RetentionCriteria}
+        import org.salgar.akka.fsm.base.eventadapter.NoOpEventAdapter
         import «packageName».«name».{«renderInitialState(it)», «name»Event, Response, PersistEvent, State}
 
         import scala.concurrent.duration._
 
         object «name»Guardian {
-            val «name.toLowerCase()»Key: ServiceKey[«name»Event] = ServiceKey[«name»Event]("«name.toLowerCase()»Service")
+            private val «name.toLowerCase()»Key: ServiceKey[«name»Event] = ServiceKey[«name»Event]("«name.toLowerCase()»Service")
             private val «name.toLowerCase()»TypeKey = EntityTypeKey[«name»Event]("«name.toLowerCase()»")
+            private var _snapshotAdapter: SnapshotAdapter[State] = _
+            private var _eventAdapter: EventAdapter[PersistEvent, PersistEvent] = _
 
             sealed trait «name»GuardianEvent
             final case class onReportState(useCaseKey: UseCaseKey, payload: java.util.Map[String, AnyRef], replyTo : ActorRef[«name».Response]) extends «name»GuardianEvent
@@ -41,7 +44,7 @@ class SlaveGuardianTemplate {
                 final case class «trigger.name»(useCaseKey: UseCaseKey, payload:java.util.Map[String, AnyRef], replyTo: ActorRef[«name».Response]) extends «name»GuardianEvent
                 object «trigger.name» {
                     def apply(useCaseKey: UseCaseKey, payload: java.util.Map[String, AnyRef]) : «trigger.name» = {
-                        «trigger.name»(useCaseKey, payload, null);
+                        «trigger.name»(useCaseKey, payload, null)
                     }
                 }
             «ENDFOR»
@@ -55,7 +58,18 @@ class SlaveGuardianTemplate {
             final case class onAdd«name»Reference(listing: Receptionist.Listing) extends «name»GuardianEvent
             var listing: Receptionist.Listing = _
 
-            def apply()(implicit sharding: ClusterSharding, actorSystem: ActorSystem[NotUsed]): Behavior[«name»GuardianEvent] = {
+            def apply() (implicit sharding: ClusterSharding, actorSystem: ActorSystem[NotUsed]): Behavior[«name»GuardianEvent] =
+                apply(«name»SnapshotAdapter, NoOpEventAdapter.instance[PersistEvent, PersistEvent])(sharding, actorSystem)
+
+            def apply(snapshotAdapter: SnapshotAdapter[State]) (implicit sharding: ClusterSharding, actorSystem: ActorSystem[NotUsed]): Behavior[«name»GuardianEvent] =
+                apply(snapshotAdapter, NoOpEventAdapter.instance[PersistEvent, PersistEvent])(sharding, actorSystem)
+
+            def apply(eventAdapter: EventAdapter[PersistEvent, PersistEvent]) (implicit sharding: ClusterSharding, actorSystem: ActorSystem[NotUsed]): Behavior[«name»GuardianEvent] =
+                apply(«name»SnapshotAdapter, eventAdapter)(sharding, actorSystem)
+
+            def apply(snapshotAdapter: SnapshotAdapter[State], eventAdapter: EventAdapter[PersistEvent, PersistEvent])(implicit sharding: ClusterSharding, actorSystem: ActorSystem[NotUsed]): Behavior[«name»GuardianEvent] = {
+                _snapshotAdapter = snapshotAdapter
+                _eventAdapter = eventAdapter
                 Behaviors
                 .setup[«name»GuardianEvent] {
                     context =>
@@ -136,7 +150,8 @@ class SlaveGuardianTemplate {
                                         «ENDFOR»
                                         case(state, event, sequenceNumber) => false
                                     }
-                                    .snapshotAdapter(new «name»SnapshotAdapter)
+                                    .snapshotAdapter(_snapshotAdapter)
+                                    .eventAdapter(_eventAdapter)
                                     .withRecovery(Recovery.withSnapshotSelectionCriteria(SnapshotSelectionCriteria.latest))
                                     .withRetention(RetentionCriteria.snapshotEvery(numberOfEvents = 100, keepNSnapshots = 2))
                                     .withTagger(event => Set("«name.toLowerCase»-" + Math.abs(entityContext.entityId.hashCode)%ctx.system.settings.config.getInt("akka.fsm.numberOfShards")))
