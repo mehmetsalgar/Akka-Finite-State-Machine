@@ -3,9 +3,9 @@ package org.salgar.fsm.akka.foureyes.facades.actors
 import akka.actor.typed.scaladsl.AskPattern.Askable
 import org.salgar.fsm.akka.akkasystem.ActorService
 import org.salgar.fsm.akka.foureyes.credit.CreditSM.Response
-import org.salgar.fsm.akka.foureyes.credit.CreditSMGuardian
 import org.salgar.fsm.akka.foureyes.credit.CreditSMGuardian._
 import org.salgar.fsm.akka.foureyes.credit.facade.CreditSMFacade
+import org.salgar.fsm.akka.foureyes.credit.{CreditSMEventAdapter, CreditSMGuardian}
 import org.salgar.fsm.akka.foureyes.slaves.SlaveStatemachineConstants.{ADDRESS_CHECK_SM, CUSTOMER_SCORE_SM, FRAUD_PREVENTION_SM, SOURCE_SLAVE_SM_TAG}
 import org.salgar.fsm.akka.statemachine.facade.StateMachineFacade
 import org.springframework.context.annotation.DependsOn
@@ -20,7 +20,7 @@ import scala.concurrent.Future
 class CreditFacadeImpl(actorService: ActorService)
   extends StateMachineFacade[CreditSMGuardian.CreditSMGuardianEvent, Response] (
     actorService, "creditSMGuardian",
-    CreditSMGuardian()(actorService.sharding()))
+    CreditSMGuardian(CreditSMEventAdapter)(actorService.sharding()))
     with CreditSMFacade {
   import ActorService._
 

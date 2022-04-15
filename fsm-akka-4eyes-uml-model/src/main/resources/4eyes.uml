@@ -68,7 +68,7 @@ This action will notificaty, over the notification system, Sales Managers that a
                     </ownedComment>
                     <trigger xmi:type="uml:Trigger" xmi:id="_vrZMcOMCEeuvzPeHGzGr1A" name="onRelationshipManagerApproved" event="_24G_4OMEEeuvzPeHGzGr1A"/>
                   </transition>
-                  <transition xmi:type="uml:Transition" xmi:id="_3urJ0N_2Eeudm_vjRKDtiA" name="relationshipManagerApproved_onSalesManagerApproved" source="_WsNOcN_2Eeudm_vjRKDtiA" target="_rs72QN_2Eeudm_vjRKDtiA">
+                  <transition xmi:type="uml:Transition" xmi:id="_3urJ0N_2Eeudm_vjRKDtiA" name="relationshipManagerApproved_onSalesManagerApproved" source="_F-efcLy5EeyecuRKYfK1Yg" target="_rs72QN_2Eeudm_vjRKDtiA">
                     <ownedComment xmi:type="uml:Comment" xmi:id="_hp1HQIjnEeygS4XeHwQCgQ">
                       <body>Relationshpship Manager approved, now we can call the all Partner Systems, CreditScore Slave State Machine, Fraud Prevention Slave State Machine, Address Check Slave Machine.
 
@@ -87,6 +87,9 @@ Slave State Machines will asyncrhnously reply to Master State Machine, in this c
                   <transition xmi:type="uml:Transition" xmi:id="_ZyB5MOChEeuFXrY5MUYDWw" name="waitingApprovalFromSeniorOfficier_onAcceptableScore" source="_5PlXIOCfEeuquPi25eySzA" target="_X6VH0OCNEeuquPi25eySzA">
                     <trigger xmi:type="uml:Trigger" xmi:id="_hjKpUOMJEeuvzPeHGzGr1A" name="onAcceptableScore" event="_hYylUOMJEeuvzPeHGzGr1A"/>
                   </transition>
+                  <transition xmi:type="uml:Transition" xmi:id="_YkGhULy6EeyecuRKYfK1Yg" name="relationShipManagerApproved_onSomeAdiitionalManagerApproved" source="_WsNOcN_2Eeudm_vjRKDtiA" target="_F-efcLy5EeyecuRKYfK1Yg">
+                    <trigger xmi:type="uml:Trigger" xmi:id="_hxwHMLy7EeyecuRKYfK1Yg" name="onSomeAdditionalManagerApproved" event="_hnk3gLy7EeyecuRKYfK1Yg"/>
+                  </transition>
                   <subvertex xmi:type="uml:Pseudostate" xmi:id="_J_JtAN_2Eeudm_vjRKDtiA" name="Initial_CA">
                     <ownedComment xmi:type="uml:Comment" xmi:id="_J0NU8G4XEeyDm79Hj-X2dw">
                       <body>This is the initial pseudo state for Creadit Approval process, while the following transition has no trigger on it, it will directly realise a transition to WAITING_APPROVAL state.</body>
@@ -101,10 +104,11 @@ Slave State Machines will asyncrhnously reply to Master State Machine, in this c
                   <subvertex xmi:type="uml:State" xmi:id="_rs72QN_2Eeudm_vjRKDtiA" name="SALES_MANAGER_APPROVED" submachine="_-A334DivEeyPjN0PDF-AkA"/>
                   <subvertex xmi:type="uml:State" xmi:id="_X6VH0OCNEeuquPi25eySzA" name="WAITING_CREDIT_ANALYST_APPROVAL"/>
                   <subvertex xmi:type="uml:State" xmi:id="_5PlXIOCfEeuquPi25eySzA" name="WAITING_APPROVAL_FROM_SENIOR_MANAGER"/>
+                  <subvertex xmi:type="uml:State" xmi:id="_F-efcLy5EeyecuRKYfK1Yg" name="SOME_ADDITIONAL_MANAGER_APPROVED"/>
                 </region>
               </packagedElement>
               <packagedElement xmi:type="uml:SignalEvent" xmi:id="_24G_4OMEEeuvzPeHGzGr1A" name="RelationshipManagerApprovedPersistEvent" signal="_MZhDAEFkEey-7smbVHMbdw"/>
-              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_SBnccOMIEeuvzPeHGzGr1A" name="SalesManagerApprovalPersistEvent"/>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_SBnccOMIEeuvzPeHGzGr1A" name="SalesManagerApprovalV2PersistEvent"/>
               <packagedElement xmi:type="uml:SignalEvent" xmi:id="_hIbDgOMIEeuvzPeHGzGr1A" name="CreditScoreNotEnoughPersisteEvent"/>
               <packagedElement xmi:type="uml:SignalEvent" xmi:id="_qD8NAOMIEeuvzPeHGzGr1A" name="PositiveResultReceivedPersistEvent"/>
               <packagedElement xmi:type="uml:SignalEvent" xmi:id="_AUznAOMJEeuvzPeHGzGr1A" name="PositiveResultPersistedEvent"/>
@@ -242,6 +246,85 @@ Slave State Machines will asyncrhnously reply to Master State Machine, in this c
                 </ownedAttribute>
               </packagedElement>
               <packagedElement xmi:type="uml:SignalEvent" xmi:id="_G_egMIp2EeyblZd49qNUpA" name="CustomerUpdatedEvent"/>
+              <packagedElement xmi:type="uml:Class" xmi:id="_MKgIYLyvEeyecuRKYfK1Yg" name="CustomerV2">
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_QuFoULyvEeyecuRKYfK1Yg" name="customerId">
+                  <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_iMq_ELyvEeyecuRKYfK1Yg" name="firstname">
+                  <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_npJO0LyvEeyecuRKYfK1Yg" name="lastname">
+                  <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_SITRoLyxEeyecuRKYfK1Yg" name="identificationinformation" type="_tZy-0LyvEeyecuRKYfK1Yg" association="_SIQ1YLyxEeyecuRKYfK1Yg">
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_SITRoryxEeyecuRKYfK1Yg" value="*"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_0fzQ0ryyEeyecuRKYfK1Yg" name="incomeproof" type="_mb-mMLyxEeyecuRKYfK1Yg" association="_0fypwLyyEeyecuRKYfK1Yg">
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_0fzQ1LyyEeyecuRKYfK1Yg" value="*"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_qjJlAryzEeyecuRKYfK1Yg" name="fixexpanse" type="_BLpRULyzEeyecuRKYfK1Yg" association="_qjI98LyzEeyecuRKYfK1Yg">
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_qjKMEbyzEeyecuRKYfK1Yg" value="*"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_-NkhMbyzEeyecuRKYfK1Yg" name="address" type="_5UqHQFwYEeynMdx0NLQt4g" aggregation="composite" association="_-NjTELyzEeyecuRKYfK1Yg">
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_-NkhM7yzEeyecuRKYfK1Yg" value="*"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_tZy-0LyvEeyecuRKYfK1Yg" name="IdentificationInformation">
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_1jqB4LyvEeyecuRKYfK1Yg" name="identificationId">
+                  <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_-RTugLyvEeyecuRKYfK1Yg" name="identificationType">
+                  <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Association" xmi:id="_SIQ1YLyxEeyecuRKYfK1Yg" name="identificationInformations" visibility="public" memberEnd="_SITRoLyxEeyecuRKYfK1Yg _SITRo7yxEeyecuRKYfK1Yg">
+                <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_SISqkLyxEeyecuRKYfK1Yg" source="org.eclipse.papyrus">
+                  <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_SISqkbyxEeyecuRKYfK1Yg" key="nature" value="UML_Nature"/>
+                </eAnnotations>
+                <ownedEnd xmi:type="uml:Property" xmi:id="_SITRo7yxEeyecuRKYfK1Yg" name="customerv2" type="_MKgIYLyvEeyecuRKYfK1Yg" association="_SIQ1YLyxEeyecuRKYfK1Yg"/>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_mb-mMLyxEeyecuRKYfK1Yg" name="IncomeProof">
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_XJmL0LyyEeyecuRKYfK1Yg" name="id">
+                  <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_c5d4sLyyEeyecuRKYfK1Yg" name="employmentCompany">
+                  <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_tTbwwLyyEeyecuRKYfK1Yg" name="salary">
+                  <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Association" xmi:id="_0fypwLyyEeyecuRKYfK1Yg" name="incomeProofs" memberEnd="_0fzQ0ryyEeyecuRKYfK1Yg _0fzQ1byyEeyecuRKYfK1Yg">
+                <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_0fzQ0LyyEeyecuRKYfK1Yg" source="org.eclipse.papyrus">
+                  <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_0fzQ0byyEeyecuRKYfK1Yg" key="nature" value="UML_Nature"/>
+                </eAnnotations>
+                <ownedEnd xmi:type="uml:Property" xmi:id="_0fzQ1byyEeyecuRKYfK1Yg" name="customerv2" type="_MKgIYLyvEeyecuRKYfK1Yg" association="_0fypwLyyEeyecuRKYfK1Yg"/>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_BLpRULyzEeyecuRKYfK1Yg" name="FixExpanse">
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_OyBAYLyzEeyecuRKYfK1Yg" name="id">
+                  <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_euV6MLyzEeyecuRKYfK1Yg" name="amount">
+                  <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_lG1GQLyzEeyecuRKYfK1Yg" name="type">
+                  <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Association" xmi:id="_qjI98LyzEeyecuRKYfK1Yg" name="expanses" memberEnd="_qjJlAryzEeyecuRKYfK1Yg _qjKMEryzEeyecuRKYfK1Yg">
+                <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_qjJlALyzEeyecuRKYfK1Yg" source="org.eclipse.papyrus">
+                  <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_qjJlAbyzEeyecuRKYfK1Yg" key="nature" value="UML_Nature"/>
+                </eAnnotations>
+                <ownedEnd xmi:type="uml:Property" xmi:id="_qjKMEryzEeyecuRKYfK1Yg" name="customerv2" type="_MKgIYLyvEeyecuRKYfK1Yg" association="_qjI98LyzEeyecuRKYfK1Yg"/>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Association" xmi:id="_-NjTELyzEeyecuRKYfK1Yg" name="addresses" memberEnd="_-NkhMbyzEeyecuRKYfK1Yg _-NkhNLyzEeyecuRKYfK1Yg">
+                <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_-Nj6ILyzEeyecuRKYfK1Yg" source="org.eclipse.papyrus">
+                  <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_-NkhMLyzEeyecuRKYfK1Yg" key="nature" value="UML_Nature"/>
+                </eAnnotations>
+                <ownedEnd xmi:type="uml:Property" xmi:id="_-NkhNLyzEeyecuRKYfK1Yg" name="customerv2" type="_MKgIYLyvEeyecuRKYfK1Yg" association="_-NjTELyzEeyecuRKYfK1Yg"/>
+              </packagedElement>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_HpkdYLy7EeyecuRKYfK1Yg" name="SalesManagerApprovalPersistEvent"/>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_hnk3gLy7EeyecuRKYfK1Yg" name="SomeAdditionalManagerApprovedPersistEvent"/>
             </packagedElement>
             <packagedElement xmi:type="uml:Package" xmi:id="_7WfA0OSSEeup6LjjOh4MjQ" name="creditscore">
               <packagedElement xmi:type="uml:StateMachine" xmi:id="_MYTEgOCMEeuquPi25eySzA" name="CreditScoreSM" isAbstract="true" isActive="true">
