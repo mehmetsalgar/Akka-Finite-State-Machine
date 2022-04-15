@@ -114,15 +114,6 @@ Slave State Machines will asyncrhnously reply to Master State Machine, in this c
               <packagedElement xmi:type="uml:SignalEvent" xmi:id="_0yQe8OMKEeuvzPeHGzGr1A" name="CreditScoreToLowPersistEvent"/>
               <packagedElement xmi:type="uml:SignalEvent" xmi:id="_Cu28sOMLEeuvzPeHGzGr1A" name="CreditRejectedPersistEvent"/>
               <packagedElement xmi:type="uml:SignalEvent" xmi:id="_b-2aQOMLEeuvzPeHGzGr1A" name="FraudPreventionFraudPersistEvent"/>
-              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_mc3mYOMNEeuvzPeHGzGr1A" name="CreditScorePersistEvent"/>
-              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_wXMhgOMNEeuvzPeHGzGr1A" name="CreditScoreErrorPersistEvent"/>
-              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_408J4OMNEeuvzPeHGzGr1A" name="CreditScoreRetryPersistEvent"/>
-              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_GIJsYOMOEeuvzPeHGzGr1A" name="FraudPreventionReceivedPersistEvent"/>
-              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_QvhTsOMOEeuvzPeHGzGr1A" name="FraudPreventionErrorPersistEvent"/>
-              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_bjt2EOMOEeuvzPeHGzGr1A" name="FraudPreventionRetryPersistEvent"/>
-              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_uIZSMOMOEeuvzPeHGzGr1A" name="AddressCheckPersistEvent"/>
-              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_4MkF0OMOEeuvzPeHGzGr1A" name="AddressCheckErrorPersistEvent"/>
-              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_Fh4hIOMPEeuvzPeHGzGr1A" name="AddressCheckRetryPersistEvent"/>
               <packagedElement xmi:type="uml:SignalEvent" xmi:id="_rmK9MOSnEeup6LjjOh4MjQ" name="CreditInitialPersistEvent"/>
               <packagedElement xmi:type="uml:StateMachine" xmi:id="_-A334DivEeyPjN0PDF-AkA" name="CreditSlaveCoordinationSM" submachineState="_rs72QN_2Eeudm_vjRKDtiA">
                 <region xmi:type="uml:Region" xmi:id="_FDFWYDiwEeyPjN0PDF-AkA" name="creditSlaveRegion">
@@ -300,6 +291,9 @@ Slave State Machines will asyncrhnously reply to Master State Machine, in this c
                   <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Real"/>
                 </ownedAttribute>
               </packagedElement>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_408J4OMNEeuvzPeHGzGr1A" name="CreditScoreRetryPersistEvent"/>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_mc3mYOMNEeuvzPeHGzGr1A" name="CreditScorePersistEvent"/>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_wXMhgOMNEeuvzPeHGzGr1A" name="CreditScoreErrorPersistEvent"/>
             </packagedElement>
             <packagedElement xmi:type="uml:Package" xmi:id="_-nYJ0OSSEeup6LjjOh4MjQ" name="fraudprevention">
               <packagedElement xmi:type="uml:StateMachine" xmi:id="_avArYOCMEeuquPi25eySzA" name="FraudPreventionSM" isAbstract="true" isActive="true">
@@ -328,6 +322,9 @@ Slave State Machines will asyncrhnously reply to Master State Machine, in this c
                   <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
                 </ownedAttribute>
               </packagedElement>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_bjt2EOMOEeuvzPeHGzGr1A" name="FraudPreventionRetryPersistEvent"/>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_QvhTsOMOEeuvzPeHGzGr1A" name="FraudPreventionErrorPersistEvent"/>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_GIJsYOMOEeuvzPeHGzGr1A" name="FraudPreventionReceivedPersistEvent"/>
             </packagedElement>
             <packagedElement xmi:type="uml:Package" xmi:id="_CT5e4OSTEeup6LjjOh4MjQ" name="addresscheck">
               <packagedElement xmi:type="uml:StateMachine" xmi:id="_v7Ap4OCeEeuquPi25eySzA" name="AdressCheckSM" isAbstract="true" isActive="true">
@@ -356,6 +353,9 @@ Slave State Machines will asyncrhnously reply to Master State Machine, in this c
                   <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
                 </ownedAttribute>
               </packagedElement>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_Fh4hIOMPEeuvzPeHGzGr1A" name="AddressCheckRetryPersistEvent"/>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_4MkF0OMOEeuvzPeHGzGr1A" name="AddressCheckErrorPersistEvent"/>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_uIZSMOMOEeuvzPeHGzGr1A" name="AddressCheckPersistEvent"/>
             </packagedElement>
           </packagedElement>
         </packagedElement>

@@ -180,23 +180,31 @@ class StateMachineHelper {
 
     def Collection<Event> findSubMachinePersistEventsRecursive(org.eclipse.uml2.uml.StateMachine it) {
         val map = new HashMap<String, Event>
-        for(state : allOwnedElements().filter(Pseudostate).sortWith([o1, o2 | o1.getName().compareTo(o2.getName())])) {
-            for(event : giveTransitionEvents(state.getOutgoings()).sortWith([o1, o2 | o1.getName().compareTo(o2.getName())])) {
-                map.put(event.name, event)
-            }
+        for(signalEvent : nearestPackage.allOwnedElements().filter(SignalEvent).sortWith([o1, o2 | o1.getName().compareTo(o2.getName())])) {
+            map.put(signalEvent.name, signalEvent)
         }
-        for(state : allOwnedElements().filter(State).sortWith([o1, o2 | o1.getName().compareTo(o2.getName())])) {
-            for(event : giveTransitionEvents(state.getOutgoings()).sortWith([o1, o2 | o1.getName().compareTo(o2.getName())])) {
-                map.put(event.name, event)
-            }
-            if(state.getSubmachine() !== null) {
-                findSubMachinePersistEventsRecursive(
-                    state.getSubmachine()).forEach[element, i | map.put(element.name, element)]
-            }
-        }
-
         return map.values()
     }
+
+    def Collection<Event> findSubMachinePersistEventsRecursiveV1(org.eclipse.uml2.uml.StateMachine it) {
+            val map = new HashMap<String, Event>
+            for(state : allOwnedElements().filter(Pseudostate).sortWith([o1, o2 | o1.getName().compareTo(o2.getName())])) {
+                for(event : giveTransitionEvents(state.getOutgoings()).sortWith([o1, o2 | o1.getName().compareTo(o2.getName())])) {
+                    map.put(event.name, event)
+                }
+            }
+            for(state : allOwnedElements().filter(State).sortWith([o1, o2 | o1.getName().compareTo(o2.getName())])) {
+                for(event : giveTransitionEvents(state.getOutgoings()).sortWith([o1, o2 | o1.getName().compareTo(o2.getName())])) {
+                    map.put(event.name, event)
+                }
+                if(state.getSubmachine() !== null) {
+                    findSubMachinePersistEventsRecursive(
+                        state.getSubmachine()).forEach[element, i | map.put(element.name, element)]
+                }
+            }
+
+            return map.values()
+        }
 
     def String renderInitialState(org.eclipse.uml2.uml.StateMachine it) '''
         «val Collection<Vertex> result = findInitialState(it)»
@@ -204,7 +212,6 @@ class StateMachineHelper {
         «IF result !== null»
             «FOR Vertex intialState : result SEPARATOR '_'»«intialState.name.toUpperCase()»«ENDFOR»
         «ENDIF»
-
     '''
 
     def Collection<Vertex> findInitialState(org.eclipse.uml2.uml.StateMachine it) {
