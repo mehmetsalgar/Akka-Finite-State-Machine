@@ -7,14 +7,15 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.salgar.akka.fsm.xtend.uml.templates.Naming
 
 import org.eclipse.uml2.uml.Pseudostate
+import org.eclipse.uml2.uml.Event
 import org.eclipse.uml2.uml.State
 import org.eclipse.uml2.uml.Transition
 
-import org.salgar.akka.fsm.xtend.uml.templates.SubStateMachineHelper
+import org.salgar.akka.fsm.xtend.uml.templates.StateMachineHelper
 
 class ElkPersistEventProcessorTemplate {
 	@Inject extension Naming
-	@Inject extension SubStateMachineHelper
+	@Inject extension StateMachineHelper
 
 	def doGenerate(Resource input, IFileSystemAccess fsa) {
         input
@@ -52,12 +53,10 @@ class ElkPersistEventProcessorTemplate {
 
           def matching(envelope: ElasticsearchEnvelope[EventEnvelope[«name».PersistEvent]]): Future[Done] = {
             envelope.eventEnvelope.event match {
-              «FOR Transition transition : giveTransitionsRecursive(allOwnedElements().filter(Pseudostate), allOwnedElements().filter(State)).sortWith([o1, o2 | o1.getName().compareTo(o2.getName())])»
-                «IF transition.triggers !== null && !transition.triggers.empty»
-                  case «transition.triggers.get(0).event.name.toFirstLower»@«name».«transition.triggers.get(0).event.name»(payload)=> {
-                    process(envelope, payload, «transition.triggers.get(0).event.name.toFirstLower»)
+              «FOR Event event : findSubMachinePersistEventsRecursive»
+                  case «event.name.toFirstLower»@«name».«event.name»(payload)=> {
+                    process(envelope, payload, «event.name.toFirstLower»)
                   }
-                «ENDIF»
               «ENDFOR»
             }
           }
