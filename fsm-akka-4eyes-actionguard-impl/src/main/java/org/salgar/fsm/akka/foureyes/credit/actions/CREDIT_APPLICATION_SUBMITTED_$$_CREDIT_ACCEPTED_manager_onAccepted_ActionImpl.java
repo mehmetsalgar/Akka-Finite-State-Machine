@@ -23,7 +23,6 @@ public class CREDIT_APPLICATION_SUBMITTED_$$_CREDIT_ACCEPTED_manager_onAccepted_
         List<Customer> customers = (List<Customer>) controlObject.get(PayloadVariableConstants.CREDIT_TENANTS);
         List<String> emails = new ArrayList<>();
         for (Customer customer : customers) {
-
             emails.add(customer.getEmail());
         }
         notifierService.notify(emails, "Your credit application is accepted!");

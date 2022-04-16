@@ -2,7 +2,6 @@ package org.salgar.fsm.akka.foureyes.creditsm;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -60,6 +59,7 @@ public class SlaveStateMachineTest {
     final List<String> salesManagerNotificationList = Arrays.asList("salesmanager1@example.com", "salesmanager2@example.com");
     final List<String> creditAnalystNotificationList = List.of("creditanalyst@example.com");
     final List<String> seniorSalesManagerNotificationList = List.of("seniorSalesManagert@example.com");
+    final List<String> someOtherManagerNotificationList = List.of("someOtherManager@example.com");
     private final static long WAIT_TIME_BETWEEN_STEPS = TimeUnit.MILLISECONDS.toMillis(500);
     private final static long WAIT_TIME_ELASTIC = TimeUnit.SECONDS.toMillis(30);
 
@@ -227,16 +227,31 @@ public class SlaveStateMachineTest {
 
         assertNotNull(report);
         assertThat(report.state(), instanceOf(CreditSM.CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED.class));
+        verify(notifierService, atLeastOnce()).notify(eq(someOtherManagerNotificationList), anyString());
+
+        payload = preparePayload(creditUuid, creditTenants);
+        creditSMFacade.someAdditionalManagerApproved(payload);
+
+        Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
+
+        futureCreditSMState = creditSMFacade.currentState(payload);
+
+        report =
+                (CreditSM.ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
+
+        assertNotNull(report);
+        assertThat(report.state(), instanceOf(CreditSM.CREDIT_APPLICATION_SUBMITTED_$_SOME_ADDITIONAL_MANAGER_APPROVED.class));
+        verify(notifierService, atLeastOnce()).notify(eq(salesManagerNotificationList), anyString());
 
         payload = preparePayload(creditUuid, creditTenants);
         creditSMFacade.salesManagerApproved(payload);
 
         Thread.sleep(30000L);
-        verify(notifierService, atLeastOnce()).notify(eq(salesManagerNotificationList), anyString());
+
 
         Optional<CreditSmEs> creditSmEs = creditSMRepository.findById(creditUuid);
 
-        Assert.assertNotNull(creditSmEs);
+        assertNotNull(creditSmEs);
         assertEquals(
                 CreditSM.CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL
                         .class
@@ -245,10 +260,8 @@ public class SlaveStateMachineTest {
                                 CreditSM.CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL
                                 .class
                                 .getSimpleName()
-                                        .indexOf("_$_") + 3,
-                                CreditSM.CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL
-                                        .class
-                                        .getSimpleName().length()),
+                                        .indexOf("_$_") + 3
+                        ),
                 creditSmEs.get().getState());
 
         verify(creditScoreServiceMockBean, times(2)).calculateCreditScore(anyString(), anyString(), anyString());
@@ -282,6 +295,8 @@ public class SlaveStateMachineTest {
                         return creditAnalystNotificationList;
                     } else if(SENIOR_SALES_MANAGER_NOTIFICATION_LIST.equals(invocation.getArgument(0))) {
                         return seniorSalesManagerNotificationList;
+                    } else if(SOME_OTHER_MANAGER_NOTIFICATION_LIST.equals(invocation.getArgument(0))) {
+                        return someOtherManagerNotificationList;
                     }
                     return null;
                 }

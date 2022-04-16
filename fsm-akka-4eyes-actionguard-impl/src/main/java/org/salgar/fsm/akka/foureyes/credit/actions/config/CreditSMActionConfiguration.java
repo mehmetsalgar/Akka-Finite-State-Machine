@@ -12,16 +12,13 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class CreditSMActionConfiguration {
     @Bean
-    public RELATIONSHIP_MANAGER_APPROVED_$$_SALES_MANAGER_APPROVED_relationshipManagerApproved_onSalesManagerApproved_Action
-        creditsm_relationship_manager_approved_SALES_MANAGER_APPROVED_relationshipManagerApproved_onSalesManagerApprovedAction(
-            MultiTenantCreditScoreSMFacade multiTenantCreditScoreSMFacade,
-            FraudPreventionSMFacade fraudPreventionSMFacade,
-            AdressCheckSMFacade addressCheckSMFacade) {
-        return new RELATIONSHIP_MANAGER_APPROVED_$$_SALES_MANAGER_APPROVED_relationshipManagerApproved_onSalesManagerApproved_ActionImpl(
-                multiTenantCreditScoreSMFacade,
-                fraudPreventionSMFacade,
-                addressCheckSMFacade);
+    public RELATIONSHIP_MANAGER_APPROVED_$$_SOME_ADDITIONAL_MANAGER_APPROVED_relationShipManagerApproved_onSomeAdiitionalManagerApproved_Action
+        creditsm_relationship_manager_approved_SOME_ADDITIONAL_MANAGER_APPROVED_relationShipManagerApproved_onSomeAdiitionalManagerApprovedAction(
+            NotifierService notifierService) {
+        return new RELATIONSHIP_MANAGER_APPROVED_$$_SOME_ADDITIONAL_MANAGER_APPROVED_relationShipManagerApproved_onSomeAdiitionalManagerApproved_ActionImpl(
+                notifierService);
     }
+
     @Bean
     public ADRRESCHECK_RESULT_RECEIVED_$$_CREDITSCORE_ADDRESSCHECK_RESULT_RECEIVED_addressCheck_CredfitScore_onResultReceived_Action
         creditsm_adrrescheck_result_received_CREDITSCORE_ADDRESSCHECK_RESULT_RECEIVED_addressCheck_CredfitScore_onResultReceivedAction() {
@@ -83,6 +80,17 @@ public class CreditSMActionConfiguration {
         creditsm_sales_manager_approved_WAITING_CREDIT_ANALYST_APPROVAL_salesManagerApproved_onResultReceivedAction(
             NotifierService notifierService) {
         return new SALES_MANAGER_APPROVED_$$_WAITING_CREDIT_ANALYST_APPROVAL_salesManagerApproved_onResultReceived_ActionImpl(notifierService);
+    }
+    @Bean
+    public SOME_ADDITIONAL_MANAGER_APPROVED_$$_SALES_MANAGER_APPROVED_relationshipManagerApproved_onSalesManagerApproved_Action
+    creditsm_some_additional_manager_approved_SALES_MANAGER_APPROVED_relationshipManagerApproved_onSalesManagerApprovedAction(
+            MultiTenantCreditScoreSMFacade multiTenantCreditScoreSMFacade,
+            FraudPreventionSMFacade fraudPreventionSMFacade,
+            AdressCheckSMFacade addressCheckSMFacade) {
+        return new SOME_ADDITIONAL_MANAGER_APPROVED_$$_SALES_MANAGER_APPROVED_relationshipManagerApproved_onSalesManagerApproved_ActionImpl(
+                multiTenantCreditScoreSMFacade,
+                fraudPreventionSMFacade,
+                addressCheckSMFacade);
     }
     @Bean
     public WAITING_APPROVAL_FROM_SENIOR_MANAGER_$$_WAITING_CREDIT_ANALYST_APPROVAL_waitingApprovalFromSeniorOfficier_onAcceptableScore_Action

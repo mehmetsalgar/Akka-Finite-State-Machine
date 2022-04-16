@@ -5,4 +5,5 @@ public class NotificationHelper {
     public static final String SALES_MANAGER_NOTIFICATION_LIST = "salesManagerNotificationList";
     public static final String CREDIT_ANALYST_NOTIFICATION_LIST = "creditAnalystNotificationList";
     public static final String SENIOR_SALES_MANAGER_NOTIFICATION_LIST = "seniorSalesManagerNotificationList";
+    public static final String SOME_OTHER_MANAGER_NOTIFICATION_LIST = "someOtherManagerNotificationList";
 }

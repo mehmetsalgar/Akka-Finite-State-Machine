@@ -181,9 +181,8 @@ class StateMachineHelper {
     def void findSubMachinePersistEventsRecursiveV1(
         org.eclipse.uml2.uml.StateMachine it,
         Map<String, Event> eventsMap) {
-        val map = new HashMap<String, Event>
         for(signalEvent : nearestPackage.allOwnedElements().filter(SignalEvent).sortWith([o1, o2 | o1.getName().compareTo(o2.getName())])) {
-            map.put(signalEvent.name, signalEvent)
+            eventsMap.put(signalEvent.name, signalEvent)
         }
     }
 

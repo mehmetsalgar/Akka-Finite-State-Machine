@@ -12,8 +12,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RequiredArgsConstructor
-public class RELATIONSHIP_MANAGER_APPROVED_$$_SALES_MANAGER_APPROVED_relationshipManagerApproved_onSalesManagerApproved_ActionImpl
-    extends RELATIONSHIP_MANAGER_APPROVED_$$_SALES_MANAGER_APPROVED_relationshipManagerApproved_onSalesManagerApproved_Action {
+public class SOME_ADDITIONAL_MANAGER_APPROVED_$$_SALES_MANAGER_APPROVED_relationshipManagerApproved_onSalesManagerApproved_ActionImpl
+    extends SOME_ADDITIONAL_MANAGER_APPROVED_$$_SALES_MANAGER_APPROVED_relationshipManagerApproved_onSalesManagerApproved_Action {
     private final MultiTenantCreditScoreSMFacade multiTenantScreditScoreSMFacade;
     private final FraudPreventionSMFacade fraudPreventionSMFacade;
     private final AdressCheckSMFacade adressCheckSMFacade;

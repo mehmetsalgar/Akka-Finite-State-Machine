@@ -937,7 +937,9 @@ project(':fsm-akka-4eyes-kafka') {
                 project(':fsm-akka-api'),
                 project(':4eyes-address-check-impl'),
                 project(':4eyes-credit-score-impl'),
-                project(':4eyes-fraud-prevention-impl')
+                project(':4eyes-fraud-prevention-impl'),
+                project(':customer-relationship-adapter'),
+                project(':customer-relationship-adapter-impl')
         implementation "org.scala-lang:scala-library:${versions.scala.current}"
         implementation 'org.springframework.boot:spring-boot-autoconfigure'
         implementation 'org.springframework.kafka:spring-kafka'
@@ -983,6 +985,7 @@ project(':fsm-akka-4eyes-kafka') {
     }
 
     test {
+        jvmArgs "-DSEED_NODES=${props.SEED_NODES}", "-DK8SSANDRA_PASSWORD=${props.K8SSANDRA_PASSWORD}"
         useJUnitPlatform()
     }
 

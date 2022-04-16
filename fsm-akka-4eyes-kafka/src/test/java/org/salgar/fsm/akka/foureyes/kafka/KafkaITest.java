@@ -4,7 +4,6 @@ import com.google.protobuf.Any;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.salgar.akka.fsm.foureyes.addresscheck.AddressCheckService;
@@ -65,7 +64,7 @@ import static org.mockito.Mockito.*;
 import static org.salgar.akka.fsm.foureyes.notifier.NotificationHelper.*;
 import static org.salgar.fsm.akka.converter.Protobuf2PojoConverter.PROTOBUF_PREFIX;
 
-@Disabled
+//@Disabled
 @ActiveProfiles({"itest"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @EmbeddedKafka(
@@ -93,6 +92,7 @@ public class KafkaITest {
     final List<String> salesManagerNotificationList = Arrays.asList("salesmanager1@example.com", "salesmanager2@example.com");
     final List<String> creditAnalystNotificationList = List.of("creditanalyst@example.com");
     final List<String> seniorSalesManagerNotificationList = List.of("seniorSalesManagert@example.com");
+    final List<String> someOtherManagerNotificationList = List.of("someOtherManager@example.com");
     @Autowired
     private CreditSMFacade creditSMFacade;
 
@@ -334,6 +334,36 @@ public class KafkaITest {
 
         assertNotNull(report);
         assertThat(report.state(), instanceOf(CreditSM.CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED.class));
+        verify(notifierService).notify(eq(someOtherManagerNotificationList), anyString());
+
+        Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
+
+        CreditSMCommand creditSMSomeOtherManagerApprovedCommand =
+                CreditSMCommand
+                        .newBuilder()
+                        .setCommand(CreditSMCommandConstants.ON_SOMEADDITIONALMANAGERAPPROVED)
+                        .setUseCaseKey(creditUuid)
+                        .putPayload(
+                                CreditUseCaseKeyStrategy.CREDIT_UUID,
+                                Any.pack(CreditUUID.newBuilder().setCreditUUID(creditUuid).build()))
+                        .putPayload(
+                                PayloadVariableConstants.CREDIT_TENANTS,
+                                Any.pack(creditTenants))
+                        .build();
+
+        kafkaTemplateCreditSM.send(topicProperties.getCreditSM(), creditSMSomeOtherManagerApprovedCommand);
+
+        Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
+
+        payload = new HashMap<>();
+        payload.put(CreditUseCaseKeyStrategy.CREDIT_UUID, creditUuid);
+
+        futureCreditSMState = creditSMFacade.currentState(payload);
+        report =
+                (CreditSM.ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
+
+        assertNotNull(report);
+        assertThat(report.state(), instanceOf(CreditSM.CREDIT_APPLICATION_SUBMITTED_$_SOME_ADDITIONAL_MANAGER_APPROVED.class));
         verify(notifierService).notify(eq(salesManagerNotificationList), anyString());
 
         Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
@@ -385,6 +415,8 @@ public class KafkaITest {
                         return creditAnalystNotificationList;
                     } else if(SENIOR_SALES_MANAGER_NOTIFICATION_LIST.equals(invocation.getArgument(0))) {
                         return seniorSalesManagerNotificationList;
+                    } else if(SOME_OTHER_MANAGER_NOTIFICATION_LIST.equals(invocation.getArgument(0))) {
+                        return someOtherManagerNotificationList;
                     }
                     return null;
                 }

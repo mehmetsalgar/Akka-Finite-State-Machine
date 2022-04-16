@@ -64,6 +64,7 @@ public class InitialTest {
     final List<String> salesManagerNotificationList = Arrays.asList("salesmanager1@example.com", "salesmanager2@example.com");
     final List<String> creditAnalystNotificationList = List.of("creditanalyst@example.com");
     final List<String> seniorSalesManagerNotificationList = List.of("seniorSalesManagert@example.com");
+    final List<String> someOtherManagerNotificationList = List.of("someOtherManager@example.com");
 
     @Autowired
     private CreditSMFacade creditSMFacade;
@@ -137,6 +138,20 @@ public class InitialTest {
 
         assertNotNull(report);
         assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED.class));
+        verify(notifierService, times(1)).notify(eq(someOtherManagerNotificationList), anyString());
+
+        payload = preparePayload(creditUuid, creditTenants);
+        creditSMFacade.someAdditionalManagerApproved(payload);
+
+        Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
+
+        futureCreditSMState = creditSMFacade.currentState(payload);
+
+        report =
+                (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
+
+        assertNotNull(report);
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_SOME_ADDITIONAL_MANAGER_APPROVED.class));
         verify(notifierService, times(1)).notify(eq(salesManagerNotificationList), anyString());
 
         payload = preparePayload(creditUuid, creditTenants);
@@ -291,6 +306,20 @@ public class InitialTest {
 
         assertNotNull(report);
         assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED.class));
+        verify(notifierService, times(1)).notify(eq(someOtherManagerNotificationList), anyString());
+
+        payload = preparePayload(creditUuid, creditTenants);
+        creditSMFacade.someAdditionalManagerApproved(payload);
+
+        Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
+
+        futureCreditSMState = creditSMFacade.currentState(payload);
+
+        report =
+                (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
+
+        assertNotNull(report);
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_SOME_ADDITIONAL_MANAGER_APPROVED.class));
         verify(notifierService, times(1)).notify(eq(salesManagerNotificationList), anyString());
 
         payload = preparePayload(creditUuid, creditTenants);
@@ -439,7 +468,7 @@ public class InitialTest {
 
         assertNotNull(report);
         assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED.class));
-        verify(notifierService, times(1)).notify(eq(salesManagerNotificationList), anyString());
+        verify(notifierService, times(1)).notify(eq(someOtherManagerNotificationList), anyString());
 
         payload = preparePayload(creditUuid, creditTenants);
         creditSMFacade.rejected(payload);
@@ -510,10 +539,23 @@ public class InitialTest {
 
         assertNotNull(report);
         assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED.class));
+        verify(notifierService, times(1)).notify(eq(someOtherManagerNotificationList), anyString());
+
+        payload = preparePayload(creditUuid, creditTenants);
+        creditSMFacade.someAdditionalManagerApproved(payload);
+
+        Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
+
+        futureCreditSMState = creditSMFacade.currentState(payload);
+
+        report =
+                (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
+
+        assertNotNull(report);
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_SOME_ADDITIONAL_MANAGER_APPROVED.class));
         verify(notifierService, times(1)).notify(eq(salesManagerNotificationList), anyString());
 
         payload = preparePayload(creditUuid, creditTenants);
-
         creditSMFacade.salesManagerApproved(payload);
 
         Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
@@ -666,7 +708,6 @@ public class InitialTest {
         verify(notifierService, times(1)).notify(eq(notificationList), anyString());
 
         payload = preparePayload(creditUuid, creditTenants);
-        final List<String> salesManagerNotificationList = Arrays.asList("salesmanager1@example.com", "salesmanager2@example.com");
         payload.put(SALES_MANAGER_NOTIFICATION_LIST, salesManagerNotificationList);
 
         creditSMFacade.relationshipManagerApproved(payload);
@@ -680,6 +721,20 @@ public class InitialTest {
 
         assertNotNull(report);
         assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED.class));
+        verify(notifierService, times(1)).notify(eq(someOtherManagerNotificationList), anyString());
+
+        payload = preparePayload(creditUuid, creditTenants);
+        creditSMFacade.someAdditionalManagerApproved(payload);
+
+        Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
+
+        futureCreditSMState = creditSMFacade.currentState(payload);
+
+        report =
+                (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
+
+        assertNotNull(report);
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_SOME_ADDITIONAL_MANAGER_APPROVED.class));
         verify(notifierService, times(1)).notify(eq(salesManagerNotificationList), anyString());
 
         payload = preparePayload(creditUuid, creditTenants);
@@ -809,6 +864,20 @@ public class InitialTest {
 
         assertNotNull(report);
         assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED.class));
+        verify(notifierService, times(1)).notify(eq(someOtherManagerNotificationList), anyString());
+
+        payload = preparePayload(creditUuid, creditTenants);
+        creditSMFacade.someAdditionalManagerApproved(payload);
+
+        Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
+
+        futureCreditSMState = creditSMFacade.currentState(payload);
+
+        report =
+                (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
+
+        assertNotNull(report);
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_SOME_ADDITIONAL_MANAGER_APPROVED.class));
         verify(notifierService, times(1)).notify(eq(salesManagerNotificationList), anyString());
 
         payload = preparePayload(creditUuid, creditTenants);
@@ -953,6 +1022,20 @@ public class InitialTest {
 
         assertNotNull(report);
         assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED.class));
+        verify(notifierService, times(1)).notify(eq(someOtherManagerNotificationList), anyString());
+
+        payload = preparePayload(creditUuid, creditTenants);
+        creditSMFacade.someAdditionalManagerApproved(payload);
+
+        Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
+
+        futureCreditSMState = creditSMFacade.currentState(payload);
+
+        report =
+                (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
+
+        assertNotNull(report);
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_SOME_ADDITIONAL_MANAGER_APPROVED.class));
         verify(notifierService, times(1)).notify(eq(salesManagerNotificationList), anyString());
 
         payload = preparePayload(creditUuid, creditTenants);
@@ -1097,6 +1180,8 @@ public class InitialTest {
                         return creditAnalystNotificationList;
                     } else if(SENIOR_SALES_MANAGER_NOTIFICATION_LIST.equals(invocation.getArgument(0))) {
                         return seniorSalesManagerNotificationList;
+                    } else if(SOME_OTHER_MANAGER_NOTIFICATION_LIST.equals(invocation.getArgument(0))) {
+                        return someOtherManagerNotificationList;
                     }
                     return null;
                 }
