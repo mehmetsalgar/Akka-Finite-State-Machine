@@ -20,7 +20,7 @@ public class WAITING_MULTI_TENANT_RESULTS_$$_FINALSTATE_isAllCreditScoreMultiten
 
         List<Customer> creditTenants = (List<Customer>) controlObject.get(PayloadVariableConstants.CREDIT_TENANTS);
 
-        String personalId = (String) payload.get(PayloadVariableConstants.PERSONAL_ID);
+        String customerId = (String) payload.get(PayloadVariableConstants.CUSTOMER_ID);
         Double creditScoreResult = (Double) payload.get(PayloadVariableConstants.CREDIT_SCORE_RESULT);
 
         Map<String, CreditTenantScoreResult> creditTenantScoreResultMap =
@@ -35,7 +35,7 @@ public class WAITING_MULTI_TENANT_RESULTS_$$_FINALSTATE_isAllCreditScoreMultiten
                 return true;
             }
         } else  {
-            if(creditTenantScoreResultMap.get(personalId) != null) {
+            if(creditTenantScoreResultMap.get(customerId) != null) {
                 //We received the Event twice?
                 return false;
             } else if(creditTenantScoreResultMap.size() + 1  == creditTenants.size()) {

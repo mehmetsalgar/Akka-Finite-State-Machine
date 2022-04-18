@@ -2,7 +2,7 @@ package org.salgar.fsm.akka.foureyes.credit.actions;
 
 import akka.actor.typed.scaladsl.ActorContext;
 import org.salgar.fsm.akka.foureyes.credit.CreditSM;
-import org.salgar.fsm.akka.foureyes.credit.model.Customer;
+import org.salgar.fsm.akka.foureyes.credit.model.CustomerV2;
 import org.salgar.fsm.akka.foureyes.variables.PayloadVariableConstants;
 
 import java.util.HashMap;
@@ -16,12 +16,12 @@ public class CREDIT_APPLICATION_SUBMITTED_$$_CREDIT_APPLICATION_SUBMITTED_custom
     protected Map<String, Object> processCustomAction(ActorContext<CreditSM.CreditSMEvent> actorContext,
                                                         Map<String, Object> controlObject,
                                                         Map<String, Object> payload) {
-        List<Customer> creditTenants = (List<Customer>) controlObject.get(PayloadVariableConstants.CREDIT_TENANTS);
-        Customer updatedCustomer = (Customer) payload.get(PayloadVariableConstants.CUSTOMER);
+        List<CustomerV2> creditTenants = (List<CustomerV2>) controlObject.get(PayloadVariableConstants.CREDIT_TENANTS);
+        CustomerV2 updatedCustomer = (CustomerV2) payload.get(PayloadVariableConstants.CUSTOMER);
 
         for(int i = 0, n = creditTenants.size(); i < n; i++) {
-            Customer customer = creditTenants.get(i);
-            if(customer.getPersonalId().equals(updatedCustomer.getPersonalId())) {
+            CustomerV2 customer = creditTenants.get(i);
+            if(customer.getCustomerId().equals(updatedCustomer.getCustomerId())) {
                 creditTenants.remove(i);
                 break;
             }

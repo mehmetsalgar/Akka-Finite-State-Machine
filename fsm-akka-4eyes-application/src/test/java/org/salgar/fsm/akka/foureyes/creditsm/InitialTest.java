@@ -14,9 +14,7 @@ import org.salgar.akka.fsm.foureyes.faudprevention.FraudPreventionService;
 import org.salgar.akka.fsm.foureyes.notifier.NotifierService;
 import org.salgar.fsm.akka.foureyes.FSMAkka4EyesApplication;
 import org.salgar.fsm.akka.foureyes.credit.facade.CreditSMFacade;
-import org.salgar.fsm.akka.foureyes.credit.model.Address;
-import org.salgar.fsm.akka.foureyes.credit.model.CreditTenantScoreResult;
-import org.salgar.fsm.akka.foureyes.credit.model.Customer;
+import org.salgar.fsm.akka.foureyes.credit.model.*;
 import org.salgar.fsm.akka.foureyes.elasticsearch.CreditSMRepository;
 import org.salgar.fsm.akka.foureyes.elasticsearch.model.CreditSmEs;
 import org.salgar.fsm.akka.foureyes.usecasekey.CreditUseCaseKeyStrategy;
@@ -96,20 +94,49 @@ public class InitialTest {
     @SneakyThrows
     public void creditAcceptedTest() {
         final String creditUuid = UUID.randomUUID().toString();
-        final Customer customer =
-                new Customer(
+        IdentificationInformation identificationInformation =
+                new IdentificationInformation(
+                        UUID.randomUUID().toString(),
+                        "PASS"
+                );
+        IncomeProof incomeProof =
+                new IncomeProof(
+                        UUID.randomUUID().toString(),
+                        "ABC",
+                        "99999.99"
+                );
+        FixExpanse expanseRent =
+                new FixExpanse(
+                        UUID.randomUUID().toString(),
+                        "1500",
+                        "Rent"
+                );
+        FixExpanse expanseCarCredit =
+                new FixExpanse(
+                        UUID.randomUUID().toString(),
+                        "600",
+                        "Credit"
+                );
+
+        CustomerV2 customerV2 =
+                new CustomerV2(
+                        UUID.randomUUID().toString(),
                         "John",
                         "Doe",
-                        "123456789X",
-                        new Address(
+                        List.of(identificationInformation),
+                        List.of(incomeProof),
+                        Arrays.asList(expanseRent, expanseCarCredit),
+                        List.of(new Address(
                                 "muster strasse 1",
                                 "11A",
                                 "city1",
                                 "country1"
-                        ),
-                        "customer1@test.info");
-        final List<Customer> creditTenants = new ArrayList<>();
-        creditTenants.add(customer);
+                        )),
+                        "customer1@test.org"
+                );
+
+        final List<CustomerV2> creditTenants = new ArrayList<>();
+        creditTenants.add(customerV2);
         Map<String, Object> payload = preparePayload(creditUuid, creditTenants);
 
         creditSMFacade.submit(payload);
@@ -122,7 +149,9 @@ public class InitialTest {
 
         assertNotNull(report);
         assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_WAITING_APPROVAL.class));
-        assertEquals(((List<Customer>)report.state().controlObject().get(PayloadVariableConstants.CREDIT_TENANTS)).get(0), customer);
+        assertEquals(
+                ((List<CustomerV2>)report.state().controlObject().get(PayloadVariableConstants.CREDIT_TENANTS)).get(0),
+                customerV2);
         verify(notifierService, times(1)).notify(eq(relationShipNotificationList), anyString());
 
         payload = preparePayload(creditUuid, creditTenants);
@@ -172,8 +201,8 @@ public class InitialTest {
         payload = preparePayload(creditUuid, creditTenants);
         Map<String, CreditTenantScoreResult> creditTenantScoreResultMap = new HashMap<>();
         creditTenantScoreResultMap.put(
-                customer.getPersonalId(),
-                new CreditTenantScoreResult(customer.getPersonalId(), 73.72));
+                customerV2.getCustomerId(),
+                new CreditTenantScoreResult(customerV2.getCustomerId(), 73.72));
         payload.put(PayloadVariableConstants.CREDIT_SCORE_TENANT_RESULTS, creditTenantScoreResultMap);
         payload.put(SOURCE_SLAVE_SM_TAG, CUSTOMER_SCORE_SM);
         creditSMFacade.resultReceived(payload);
@@ -188,7 +217,7 @@ public class InitialTest {
         assertNotNull(report);
         assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_SALES_MANAGER_APPROVED_$_CREDITSCORE_RECEIVED.class));
         Map<String, CreditTenantScoreResult> map = (Map<String, CreditTenantScoreResult>) report.state().controlObject().get(PayloadVariableConstants.CREDIT_SCORE_TENANT_RESULTS);
-        assertEquals(73.72, map.get(customer.getPersonalId()).getCreditScore());
+        assertEquals(73.72, map.get(customerV2.getCustomerId()).getCreditScore());
 
         Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
 
@@ -236,9 +265,9 @@ public class InitialTest {
 
         Optional<CreditSmEs> creditSmEs = creditSMRepository.findById(creditUuid);
 
-        Assert.assertNotNull(creditSmEs);
+        assertNotNull(creditSmEs);
         assertEquals(creditSmEs.get().getState(), CREDIT_ACCEPTED.class.getSimpleName());
-        verify(notifierService, times(1)).notify(eq(List.of(customer.getEmail())), anyString());
+        verify(notifierService, times(1)).notify(eq(List.of(customerV2.getEmail())), anyString());
 
         Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
 
@@ -249,8 +278,8 @@ public class InitialTest {
         verify(customerRelationshipAdapter).transferCustomerCreation(
                 eq(
                         new CRMCustomer(
-                                customer.getFirstName(),
-                                customer.getLastName()
+                                customerV2.getFirstname(),
+                                customerV2.getLastname()
                         )));
 
         Thread.sleep(WAIT_TIME_ELASTIC);
@@ -260,24 +289,10 @@ public class InitialTest {
     @SneakyThrows
     public void eventUnhandledTest() {
         final String creditUuid = UUID.randomUUID().toString();
-        final Customer customer =
-                new Customer(
-                        "John",
-                        "Doe",
-                        "123456789X",
-                        new Address(
-                                "muster strasse 1",
-                                "11A",
-                                "city1",
-                                "country1"
-                        ),
-                        "customer1@test.info");
-        final List<Customer> creditTenants = new ArrayList<>();
+        final CustomerV2 customer = prepareCustomerV2();
+        final List<CustomerV2> creditTenants = new ArrayList<>();
         creditTenants.add(customer);
         Map<String, Object> payload = preparePayload(creditUuid, creditTenants);
-
-        //final List<String> notificationList = Arrays.asList("relationshipmanager1@example.com", "relationshipmanager2@example.com");
-        //final List<String> salesManagerNotificationList = Arrays.asList("salesmanager1@example.com", "salesmanager2@example.com");
 
         creditSMFacade.submit(payload);
 
@@ -289,7 +304,7 @@ public class InitialTest {
 
         assertNotNull(report);
         assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_WAITING_APPROVAL.class));
-        assertEquals(((List<Customer>)report.state().controlObject().get(PayloadVariableConstants.CREDIT_TENANTS)).get(0), customer);
+        assertEquals(((List<CustomerV2>)report.state().controlObject().get(PayloadVariableConstants.CREDIT_TENANTS)).get(0), customer);
         verify(notifierService, times(1)).notify(eq(relationShipNotificationList), anyString());
 
         payload = preparePayload(creditUuid, creditTenants);
@@ -340,8 +355,8 @@ public class InitialTest {
         payload = preparePayload(creditUuid, creditTenants);
         Map<String, CreditTenantScoreResult> creditTenantScoreResultMap = new HashMap<>();
         creditTenantScoreResultMap.put(
-                customer.getPersonalId(),
-                new CreditTenantScoreResult(customer.getPersonalId(), 73.72));
+                customer.getCustomerId(),
+                new CreditTenantScoreResult(customer.getCustomerId(), 73.72));
         payload.put(PayloadVariableConstants.CREDIT_SCORE_TENANT_RESULTS, creditTenantScoreResultMap);
         payload.put(SOURCE_SLAVE_SM_TAG, CUSTOMER_SCORE_SM);
         creditSMFacade.resultReceived(payload);
@@ -356,7 +371,7 @@ public class InitialTest {
         assertNotNull(report);
         assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_SALES_MANAGER_APPROVED_$_CREDITSCORE_RECEIVED.class));
         Map<String, CreditTenantScoreResult> map = (Map<String, CreditTenantScoreResult>) report.state().controlObject().get(PayloadVariableConstants.CREDIT_SCORE_TENANT_RESULTS);
-        assertEquals(73.72, map.get(customer.getPersonalId()).getCreditScore());
+        assertEquals(73.72, map.get(customer.getCustomerId()).getCreditScore());
 
         Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
 
@@ -423,24 +438,10 @@ public class InitialTest {
     @SneakyThrows
     public void salesManagerRejectsTest() {
         final String creditUuid = UUID.randomUUID().toString();
-        final Customer customer =
-                new Customer(
-                        "John",
-                        "Doe",
-                        "123456789X",
-                        new Address(
-                                "muster strasse 1",
-                                "11A",
-                                "city1",
-                                "country1"
-                        ),
-                        "customer1@test.info");
-        final List<Customer> creditTenants = new ArrayList<>();
+        final CustomerV2 customer = prepareCustomerV2();
+        final List<CustomerV2> creditTenants = new ArrayList<>();
         creditTenants.add(customer);
         Map<String, Object> payload = preparePayload(creditUuid, creditTenants);
-
-        final List<String> notificationList = Arrays.asList("relationshipmanager1@example.com", "relationshipmanager2@example.com");
-        final List<String> salesManagerNotificationList = Arrays.asList("salesmanager1@example.com", "salesmanager2@example.com");
 
         creditSMFacade.submit(payload);
 
@@ -452,8 +453,8 @@ public class InitialTest {
 
         assertNotNull(report);
         assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_WAITING_APPROVAL.class));
-        assertEquals(((List<Customer>)report.state().controlObject().get(PayloadVariableConstants.CREDIT_TENANTS)).get(0), customer);
-        verify(notifierService, times(1)).notify(eq(notificationList), anyString());
+        assertEquals(((List<CustomerV2>)report.state().controlObject().get(PayloadVariableConstants.CREDIT_TENANTS)).get(0), customer);
+        verify(notifierService, times(1)).notify(eq(relationShipNotificationList), anyString());
 
         payload = preparePayload(creditUuid, creditTenants);
 
@@ -494,24 +495,10 @@ public class InitialTest {
     @SneakyThrows
     public void notSufficientCreditScoreTest() {
         final String creditUuid = UUID.randomUUID().toString();
-        final Customer customer =
-                new Customer(
-                        "John",
-                        "Doe",
-                        "123456789X",
-                        new Address(
-                                "muster strasse 1",
-                                "11A",
-                                "city1",
-                                "country1"
-                        ),
-                        "customer1@test.info");
-        final List<Customer> creditTenants = new ArrayList<>();
+        final CustomerV2 customer = prepareCustomerV2();
+        final List<CustomerV2> creditTenants = new ArrayList<>();
         creditTenants.add(customer);
         Map<String, Object> payload = preparePayload(creditUuid, creditTenants);
-
-        final List<String> notificationList = Arrays.asList("relationshipmanager1@example.com", "relationshipmanager2@example.com");
-        final List<String> salesManagerNotificationList = Arrays.asList("salesmanager1@example.com", "salesmanager2@example.com");
 
         creditSMFacade.submit(payload);
 
@@ -523,8 +510,8 @@ public class InitialTest {
 
         assertNotNull(report);
         assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_WAITING_APPROVAL.class));
-        assertEquals(((List<Customer>)report.state().controlObject().get(PayloadVariableConstants.CREDIT_TENANTS)).get(0), customer);
-        verify(notifierService, times(1)).notify(eq(notificationList), anyString());
+        assertEquals(((List<CustomerV2>)report.state().controlObject().get(PayloadVariableConstants.CREDIT_TENANTS)).get(0), customer);
+        verify(notifierService, times(1)).notify(eq(relationShipNotificationList), anyString());
 
         payload = preparePayload(creditUuid, creditTenants);
 
@@ -573,8 +560,8 @@ public class InitialTest {
         payload = preparePayload(creditUuid, creditTenants);
         Map<String, CreditTenantScoreResult> creditTenantScoreResultMap = new HashMap<>();
         creditTenantScoreResultMap.put(
-                customer.getPersonalId(),
-                new CreditTenantScoreResult(customer.getPersonalId(), 64.63));
+                customer.getCustomerId(),
+                new CreditTenantScoreResult(customer.getCustomerId(), 64.63));
         payload.put(PayloadVariableConstants.CREDIT_SCORE_TENANT_RESULTS, creditTenantScoreResultMap);
         payload.put(SOURCE_SLAVE_SM_TAG, CUSTOMER_SCORE_SM);
         creditSMFacade.resultReceived(payload);
@@ -594,7 +581,7 @@ public class InitialTest {
                         .state()
                         .controlObject()
                         .get(PayloadVariableConstants.CREDIT_SCORE_TENANT_RESULTS);
-        assertEquals(64.63, map.get(customer.getPersonalId()).getCreditScore());
+        assertEquals(64.63, map.get(customer.getCustomerId()).getCreditScore());
 
         Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
 
@@ -675,24 +662,12 @@ public class InitialTest {
     @SneakyThrows
     public void creditScoreLowRejectTest() {
         final String creditUuid = UUID.randomUUID().toString();
-        final Customer customer =
-                new Customer(
-                        "John",
-                        "Doe",
-                        "123456789X",
-                        new Address(
-                                "muster strasse 1",
-                                "11A",
-                                "city1",
-                                "country1"
-                        ),
-                        "customer1@test.info");
-        final List<Customer> creditTenants = new ArrayList<>();
+        final CustomerV2 customer = prepareCustomerV2();
+        final List<CustomerV2> creditTenants = new ArrayList<>();
         creditTenants.add(customer);
         Map<String, Object> payload = preparePayload(creditUuid, creditTenants);
 
-        final List<String> notificationList = Arrays.asList("relationshipmanager1@example.com", "relationshipmanager2@example.com");
-        payload.put(RELATIONSHIP_MANAGER_NOTIFICATION_LIST, notificationList);
+        payload.put(RELATIONSHIP_MANAGER_NOTIFICATION_LIST, relationShipNotificationList);
 
         creditSMFacade.submit(payload);
 
@@ -704,8 +679,8 @@ public class InitialTest {
 
         assertNotNull(report);
         assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_WAITING_APPROVAL.class));
-        assertEquals(((List<Customer>)report.state().controlObject().get(PayloadVariableConstants.CREDIT_TENANTS)).get(0), customer);
-        verify(notifierService, times(1)).notify(eq(notificationList), anyString());
+        assertEquals(((List<CustomerV2>)report.state().controlObject().get(PayloadVariableConstants.CREDIT_TENANTS)).get(0), customer);
+        verify(notifierService, times(1)).notify(eq(relationShipNotificationList), anyString());
 
         payload = preparePayload(creditUuid, creditTenants);
         payload.put(SALES_MANAGER_NOTIFICATION_LIST, salesManagerNotificationList);
@@ -755,8 +730,8 @@ public class InitialTest {
         payload = preparePayload(creditUuid, creditTenants);
         Map<String, CreditTenantScoreResult> creditTenantScoreResultMap = new HashMap<>();
         creditTenantScoreResultMap.put(
-                customer.getPersonalId(),
-                new CreditTenantScoreResult(customer.getPersonalId(), 28.91));
+                customer.getCustomerId(),
+                new CreditTenantScoreResult(customer.getCustomerId(), 28.91));
         payload.put(PayloadVariableConstants.CREDIT_SCORE_TENANT_RESULTS, creditTenantScoreResultMap);
         payload.put(SOURCE_SLAVE_SM_TAG, CUSTOMER_SCORE_SM);
         creditSMFacade.resultReceived(payload);
@@ -771,7 +746,7 @@ public class InitialTest {
         assertNotNull(report);
         assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_SALES_MANAGER_APPROVED_$_CREDITSCORE_RECEIVED.class));
         Map<String, CreditTenantScoreResult> map = (Map<String, CreditTenantScoreResult>) report.state().controlObject().get(PayloadVariableConstants.CREDIT_SCORE_TENANT_RESULTS);
-        assertEquals(28.91, map.get(customer.getPersonalId()).getCreditScore());
+        assertEquals(28.91, map.get(customer.getCustomerId()).getCreditScore());
 
         Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
 
@@ -819,24 +794,10 @@ public class InitialTest {
     @SneakyThrows
     public void addressCheckResultReceviedFirstTest() {
         final String creditUuid = UUID.randomUUID().toString();
-        final Customer customer =
-                new Customer(
-                        "John",
-                        "Doe",
-                        "123456789X",
-                        new Address(
-                                "muster strasse 1",
-                                "11A",
-                                "city1",
-                                "country1"
-                        ),
-                        "customer1@test.info");
-        final List<Customer> creditTenants = new ArrayList<>();
+        final CustomerV2 customer = prepareCustomerV2();
+        final List<CustomerV2> creditTenants = new ArrayList<>();
         creditTenants.add(customer);
         Map<String, Object> payload = preparePayload(creditUuid, creditTenants);
-
-        final List<String> notificationList = Arrays.asList("relationshipmanager1@example.com", "relationshipmanager2@example.com");
-        final List<String> salesManagerNotificationList = Arrays.asList("salesmanager1@example.com", "salesmanager2@example.com");
 
         creditSMFacade.submit(payload);
 
@@ -849,7 +810,7 @@ public class InitialTest {
         assertNotNull(report);
         assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_WAITING_APPROVAL.class));
         assertEquals(((List<Customer>)report.state().controlObject().get(PayloadVariableConstants.CREDIT_TENANTS)).get(0), customer);
-        verify(notifierService, times(1)).notify(eq(notificationList), anyString());
+        verify(notifierService, times(1)).notify(eq(relationShipNotificationList), anyString());
 
         payload = preparePayload(creditUuid, creditTenants);
 
@@ -916,8 +877,8 @@ public class InitialTest {
         payload = preparePayload(creditUuid, creditTenants);
         Map<String, CreditTenantScoreResult> creditTenantScoreResultMap = new HashMap<>();
         creditTenantScoreResultMap.put(
-                customer.getPersonalId(),
-                new CreditTenantScoreResult(customer.getPersonalId(), 73.72));
+                customer.getCustomerId(),
+                new CreditTenantScoreResult(customer.getCustomerId(), 73.72));
         payload.put(PayloadVariableConstants.CREDIT_SCORE_TENANT_RESULTS, creditTenantScoreResultMap);
         payload.put(SOURCE_SLAVE_SM_TAG, CUSTOMER_SCORE_SM);
         creditSMFacade.resultReceived(payload);
@@ -932,7 +893,7 @@ public class InitialTest {
         assertNotNull(report);
         assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_SALES_MANAGER_APPROVED_$_CREDITSCORE_ADDRESSCHECK_RESULT_RECEIVED.class));
         Map<String, CreditTenantScoreResult> map = (Map<String, CreditTenantScoreResult>) report.state().controlObject().get(PayloadVariableConstants.CREDIT_SCORE_TENANT_RESULTS);
-        assertEquals(73.72, map.get(customer.getPersonalId()).getCreditScore());
+        assertEquals(73.72, map.get(customer.getCustomerId()).getCreditScore());
 
         Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
 
@@ -962,7 +923,7 @@ public class InitialTest {
 
         Optional<CreditSmEs> creditSmEs = creditSMRepository.findById(creditUuid);
 
-        Assert.assertNotNull(creditSmEs);
+        assertNotNull(creditSmEs);
         assertEquals(creditSmEs.get().getState(), CREDIT_ACCEPTED.class.getSimpleName());
         assertEquals(true, creditSmEs.get().getAddressCheckResult());
         verify(notifierService, times(1)).notify(eq(List.of(customer.getEmail())), anyString());
@@ -980,19 +941,8 @@ public class InitialTest {
     @SneakyThrows
     public void customerRelationshipAdapterTest() {
         final String creditUuid = UUID.randomUUID().toString();
-        final Customer customer =
-                new Customer(
-                        "John",
-                        "Doe",
-                        "123456789X",
-                        new Address(
-                                "muster strasse 1",
-                                "11A",
-                                "city1",
-                                "country1"
-                        ),
-                        "customer1@test.info");
-        final List<Customer> creditTenants = new ArrayList<>();
+        final CustomerV2 customer = prepareCustomerV2();
+        final List<CustomerV2> creditTenants = new ArrayList<>();
         creditTenants.add(customer);
         Map<String, Object> payload = preparePayload(creditUuid, creditTenants);
 
@@ -1006,7 +956,7 @@ public class InitialTest {
 
         assertNotNull(report);
         assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_WAITING_APPROVAL.class));
-        assertEquals(((List<Customer>)report.state().controlObject().get(PayloadVariableConstants.CREDIT_TENANTS)).get(0), customer);
+        assertEquals(((List<CustomerV2>)report.state().controlObject().get(PayloadVariableConstants.CREDIT_TENANTS)).get(0), customer);
         verify(notifierService, times(1)).notify(eq(relationShipNotificationList), anyString());
 
         payload = preparePayload(creditUuid, creditTenants);
@@ -1056,8 +1006,8 @@ public class InitialTest {
         payload = preparePayload(creditUuid, creditTenants);
         Map<String, CreditTenantScoreResult> creditTenantScoreResultMap = new HashMap<>();
         creditTenantScoreResultMap.put(
-                customer.getPersonalId(),
-                new CreditTenantScoreResult(customer.getPersonalId(), 73.72));
+                customer.getCustomerId(),
+                new CreditTenantScoreResult(customer.getCustomerId(), 73.72));
         payload.put(PayloadVariableConstants.CREDIT_SCORE_TENANT_RESULTS, creditTenantScoreResultMap);
         payload.put(SOURCE_SLAVE_SM_TAG, CUSTOMER_SCORE_SM);
         creditSMFacade.resultReceived(payload);
@@ -1072,7 +1022,7 @@ public class InitialTest {
         assertNotNull(report);
         assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_SALES_MANAGER_APPROVED_$_CREDITSCORE_RECEIVED.class));
         Map<String, CreditTenantScoreResult> map = (Map<String, CreditTenantScoreResult>) report.state().controlObject().get(PayloadVariableConstants.CREDIT_SCORE_TENANT_RESULTS);
-        assertEquals(73.72, map.get(customer.getPersonalId()).getCreditScore());
+        assertEquals(73.72, map.get(customer.getCustomerId()).getCreditScore());
 
         Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
 
@@ -1095,7 +1045,7 @@ public class InitialTest {
         Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
 
         //Customer Relationship Adapter
-        final Customer updatedCustomer = customer.toBuilder().firstName("UpdatedJohn").lastName("UpdatedDoe").build();
+        final CustomerV2 updatedCustomer = customer.toBuilder().firstname("UpdatedJohn").lastname("UpdatedDoe").build();
         final Map<String, Object> customerRelationShipAdapterPayload = new HashMap<>();
         customerRelationShipAdapterPayload.put(CreditUseCaseKeyStrategy.CREDIT_UUID, creditUuid);
         customerRelationShipAdapterPayload.put(PayloadVariableConstants.CUSTOMER, updatedCustomer);
@@ -1112,9 +1062,9 @@ public class InitialTest {
         assertNotNull(report);
         assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_SALES_MANAGER_APPROVED_$_CREDITSCORE_FRAUDPREVENTION_RESULT_RECEIVED.class));
         assertEquals(true, report.state().controlObject().get(PayloadVariableConstants.FRAUD_PREVENTION_RESULT));
-        List<Customer> checkCreditTenants = (List<Customer>) report.state().controlObject().get(PayloadVariableConstants.CREDIT_TENANTS);
-        assertEquals("UpdatedJohn", checkCreditTenants.get(0).getFirstName());
-        assertEquals("UpdatedDoe", checkCreditTenants.get(0).getLastName());
+        List<CustomerV2> checkCreditTenants = (List<CustomerV2>) report.state().controlObject().get(PayloadVariableConstants.CREDIT_TENANTS);
+        assertEquals("UpdatedJohn", checkCreditTenants.get(0).getFirstname());
+        assertEquals("UpdatedDoe", checkCreditTenants.get(0).getLastname());
 
         Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
 
@@ -1160,13 +1110,56 @@ public class InitialTest {
 
     private Map<String, Object> preparePayload(
             String creditUuid,
-            List<Customer> creditTenants) {
+            List<CustomerV2> creditTenants) {
 
         final Map<String, Object> payload = new HashMap<>();
         payload.put(CreditUseCaseKeyStrategy.CREDIT_UUID, creditUuid);
         payload.put(PayloadVariableConstants.CREDIT_TENANTS, creditTenants);
 
         return payload;
+    }
+
+    private CustomerV2 prepareCustomerV2() {
+        IdentificationInformation identificationInformation =
+                new IdentificationInformation(
+                        UUID.randomUUID().toString(),
+                        "PASS"
+                );
+        IncomeProof incomeProof =
+                new IncomeProof(
+                        UUID.randomUUID().toString(),
+                        "ABC",
+                        "99999.99"
+                );
+        FixExpanse expanseRent =
+                new FixExpanse(
+                        UUID.randomUUID().toString(),
+                        "1500",
+                        "Rent"
+                );
+        FixExpanse expanseCarCredit =
+                new FixExpanse(
+                        UUID.randomUUID().toString(),
+                        "600",
+                        "Credit"
+                );
+
+
+        return new CustomerV2(
+                        UUID.randomUUID().toString(),
+                        "John",
+                        "Doe",
+                        List.of(identificationInformation),
+                        List.of(incomeProof),
+                        Arrays.asList(expanseRent, expanseCarCredit),
+                        List.of(new Address(
+                                "muster strasse 1",
+                                "11A",
+                                "city1",
+                                "country1"
+                        )),
+                        "customer1@test.org"
+                );
     }
 
     private void prepareNotificationService() {

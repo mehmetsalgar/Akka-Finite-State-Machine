@@ -6,10 +6,7 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 
 import org.salgar.akka.fsm.xtend.uml.templates.Naming
 
-import org.eclipse.uml2.uml.Pseudostate
 import org.eclipse.uml2.uml.Event
-import org.eclipse.uml2.uml.State
-import org.eclipse.uml2.uml.Transition
 
 import org.salgar.akka.fsm.xtend.uml.templates.StateMachineHelper
 

@@ -4,7 +4,8 @@ import akka.actor.typed.scaladsl.ActorContext;
 import lombok.RequiredArgsConstructor;
 import org.salgar.akka.fsm.foureyes.addresscheck.AddressCheckService;
 import org.salgar.fsm.akka.foureyes.addresscheck.AdressCheckSM;
-import org.salgar.fsm.akka.foureyes.credit.model.Customer;
+import org.salgar.fsm.akka.foureyes.credit.model.Address;
+import org.salgar.fsm.akka.foureyes.credit.model.CustomerV2;
 import org.salgar.fsm.akka.foureyes.variables.PayloadVariableConstants;
 
 import java.util.List;
@@ -20,15 +21,16 @@ public class INITIAL_$$_WAITING_RESULT_initial_ActionImpl
                                                         Map<String, Object> controlObject,
                                                         Map<String, Object> payload) {
         if(payload != null) {
-            List<Customer> creditTenants = (List<Customer>) payload.get(PayloadVariableConstants.CREDIT_TENANTS);
+            List<CustomerV2> creditTenants = (List<CustomerV2>) payload.get(PayloadVariableConstants.CREDIT_TENANTS);
 
             //We should actually do Multi Tenant Fraud Prevention, but living that as exercise
-            Customer customer = creditTenants.get(0);
+            CustomerV2 customer = creditTenants.get(0);
+            Address address = customer.getAddresses().get(0);
             addressCheckService.addressExist(
-                    customer.getAddress().getStreet(),
-                    customer.getAddress().getHouseNo(),
-                    customer.getAddress().getCity(),
-                    customer.getAddress().getCountry());
+                    address.getStreet(),
+                    address.getHouseNo(),
+                    address.getCity(),
+                    address.getCountry());
         }
 
         return payload;

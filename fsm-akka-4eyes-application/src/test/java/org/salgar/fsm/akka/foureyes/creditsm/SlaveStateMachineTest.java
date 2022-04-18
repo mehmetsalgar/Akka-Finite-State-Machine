@@ -12,8 +12,7 @@ import org.salgar.akka.fsm.foureyes.notifier.NotifierService;
 import org.salgar.fsm.akka.foureyes.addresscheck.facade.AdressCheckSMFacade;
 import org.salgar.fsm.akka.foureyes.credit.CreditSM;
 import org.salgar.fsm.akka.foureyes.credit.facade.CreditSMFacade;
-import org.salgar.fsm.akka.foureyes.credit.model.Address;
-import org.salgar.fsm.akka.foureyes.credit.model.Customer;
+import org.salgar.fsm.akka.foureyes.credit.model.*;
 import org.salgar.fsm.akka.foureyes.creditscore.facade.CreditScoreSMFacade;
 import org.salgar.fsm.akka.foureyes.elasticsearch.CreditSMRepository;
 import org.salgar.fsm.akka.foureyes.elasticsearch.model.CreditSmEs;
@@ -99,32 +98,10 @@ public class SlaveStateMachineTest {
     @Test
     public void slaveStateMachineTest() {
         final String creditUuid = UUID.randomUUID().toString();
-        final Customer customer1 =
-                new Customer(
-                        "John",
-                        "Doe",
-                        "123456789X",
-                        new Address(
-                                "muster strasse 1",
-                                "11A",
-                                "city1",
-                                "country1"
-                        ),
-                        "customer1@test.info");
-        final Customer customer2 =
-                new Customer(
-                        "Max",
-                        "Musterman",
-                        "Z987654321",
-                        new Address(
-                                "muster strasse 1",
-                                "11A",
-                                "city1",
-                                "country1"
-                        ),
-                        "customer1@test.info");
+        final CustomerV2 customer1 = prepareCustomer1V2();
+        final CustomerV2 customer2 = prepareCustomer2V2();
 
-        List<Customer> creditTenants = new ArrayList<>();
+        List<CustomerV2> creditTenants = new ArrayList<>();
         creditTenants.add(customer1);
         creditTenants.add(customer2);
 
@@ -133,7 +110,7 @@ public class SlaveStateMachineTest {
         /* Mock Preparation */
 
         doAnswer(invocation -> {
-            if(invocation.getArgument(2).equals(customer1.getPersonalId())) {
+            if(invocation.getArgument(2).equals(customer1.getCustomerId())) {
                 log.info("Sending Credit Score Result customer1");
 
                 Thread.sleep(5000L);
@@ -141,9 +118,9 @@ public class SlaveStateMachineTest {
                 Map<String, Object> creditScorePayload = new HashMap<>();
                 creditScorePayload.put(PayloadVariableConstants.CREDIT_SCORE_RESULT, 84.21);
                 creditScoreSMFacade.resultReceived(
-                        () -> creditUuid + "_" + customer1.getPersonalId(),
+                        () -> creditUuid + "_" + customer1.getCustomerId(),
                         creditScorePayload);
-            } else if(invocation.getArgument(2).equals(customer2.getPersonalId())) {
+            } else if(invocation.getArgument(2).equals(customer2.getCustomerId())) {
                 log.info("Sending Credit Score Result customer2");
 
                 Thread.sleep(5000L);
@@ -151,7 +128,7 @@ public class SlaveStateMachineTest {
                 Map<String, Object> creditScorePayload = new HashMap<>();
                 creditScorePayload.put(PayloadVariableConstants.CREDIT_SCORE_RESULT, 97.45);
                 creditScoreSMFacade.resultReceived(
-                        () -> creditUuid + "_" + customer2.getPersonalId(),
+                        () -> creditUuid + "_" + customer2.getCustomerId(),
                         creditScorePayload);
             } else {
                 String personalId = invocation.getArgument(2);
@@ -211,8 +188,8 @@ public class SlaveStateMachineTest {
 
         assertNotNull(report);
         assertThat(report.state(), instanceOf(CreditSM.CREDIT_APPLICATION_SUBMITTED_$_WAITING_APPROVAL.class));
-        assertEquals(((List<Customer>)report.state().controlObject().get(PayloadVariableConstants.CREDIT_TENANTS)).get(0), customer1);
-        assertEquals(((List<Customer>)report.state().controlObject().get(PayloadVariableConstants.CREDIT_TENANTS)).get(1), customer2);
+        assertEquals(((List<CustomerV2>)report.state().controlObject().get(PayloadVariableConstants.CREDIT_TENANTS)).get(0), customer1);
+        assertEquals(((List<CustomerV2>)report.state().controlObject().get(PayloadVariableConstants.CREDIT_TENANTS)).get(1), customer2);
         verify(notifierService, atLeastOnce()).notify(eq(relationShipNotificationList), anyString());
 
         payload = preparePayload(creditUuid, creditTenants);
@@ -275,13 +252,103 @@ public class SlaveStateMachineTest {
 
     private Map<String, Object> preparePayload (
             String creditUuid,
-            List<Customer> creditTenants) {
+            List<CustomerV2> creditTenants) {
 
         final Map<String, Object> payload = new HashMap<>();
         payload.put(CreditUseCaseKeyStrategy.CREDIT_UUID, creditUuid);
         payload.put(PayloadVariableConstants.CREDIT_TENANTS, creditTenants);
 
         return payload;
+    }
+
+    private CustomerV2 prepareCustomer1V2() {
+        IdentificationInformation identificationInformation =
+                new IdentificationInformation(
+                        "123456789X",
+                        "PASS"
+                );
+        IncomeProof incomeProof =
+                new IncomeProof(
+                        UUID.randomUUID().toString(),
+                        "ABC",
+                        "99999.99"
+                );
+        FixExpanse expanseRent =
+                new FixExpanse(
+                        UUID.randomUUID().toString(),
+                        "1500",
+                        "Rent"
+                );
+        FixExpanse expanseCarCredit =
+                new FixExpanse(
+                        UUID.randomUUID().toString(),
+                        "600",
+                        "Credit"
+                );
+
+        return new CustomerV2(
+                UUID.randomUUID().toString(),
+                "John",
+                "Doe",
+                List.of(identificationInformation),
+                List.of(incomeProof),
+                Arrays.asList(expanseRent, expanseCarCredit),
+                List.of(new Address(
+                        "muster strasse 1",
+                        "11A",
+                        "city1",
+                        "country1"
+                )),
+                "customer1@test.org"
+        );
+    }
+
+    private CustomerV2 prepareCustomer2V2() {
+        new Customer(
+                "Max",
+                "Musterman",
+                "Z987654321",
+                new Address(
+                        "muster strasse 1",
+                        "11A",
+                        "city1",
+                        "country1"
+                ),
+                "customer1@test.info");
+        IdentificationInformation identificationInformation =
+                new IdentificationInformation(
+                        "Z987654321",
+                        "PERSO"
+                );
+        IncomeProof incomeProof =
+                new IncomeProof(
+                        UUID.randomUUID().toString(),
+                        "ZXY",
+                        "1111.11"
+                );
+        FixExpanse expanseCarCredit =
+                new FixExpanse(
+                        UUID.randomUUID().toString(),
+                        "900",
+                        "Credit"
+                );
+
+
+        return new CustomerV2(
+                UUID.randomUUID().toString(),
+                "Max",
+                "Musterman",
+                List.of(identificationInformation),
+                List.of(incomeProof),
+                List.of(expanseCarCredit),
+                List.of(new Address(
+                        "muster strasse 1",
+                        "11A",
+                        "city1",
+                        "country1"
+                )),
+                "customer1@test.org"
+        );
     }
 
     private void prepareNotificationService() {

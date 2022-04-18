@@ -20,13 +20,13 @@ public class WAITING_MULTI_TENANT_RESULTS_$$_WAITING_MULTI_TENANT_RESULTS_isNotA
 
         List<Customer> creditTenants = (List<Customer>) controlObject.get(PayloadVariableConstants.CREDIT_TENANTS);
 
-        String personalId = (String) payload.get(PayloadVariableConstants.PERSONAL_ID);
+        String customerId = (String) payload.get(PayloadVariableConstants.CUSTOMER_ID);
         Double creditScoreResult = (Double) payload.get(PayloadVariableConstants.CREDIT_SCORE_RESULT);
 
         Map<String, CreditTenantScoreResult> creditTenantScoreResultMap =
                 (Map<String, CreditTenantScoreResult>) controlObject.get(PayloadVariableConstants.CREDIT_SCORE_TENANT_RESULTS);
 
-        if(creditTenantScoreResultMap != null && creditTenantScoreResultMap.get(personalId) != null) {
+        if(creditTenantScoreResultMap != null && creditTenantScoreResultMap.get(customerId) != null) {
             return false;
         }
 

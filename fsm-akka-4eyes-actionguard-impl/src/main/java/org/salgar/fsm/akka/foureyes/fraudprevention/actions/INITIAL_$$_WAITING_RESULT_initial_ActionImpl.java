@@ -3,7 +3,7 @@ package org.salgar.fsm.akka.foureyes.fraudprevention.actions;
 import akka.actor.typed.scaladsl.ActorContext;
 import lombok.RequiredArgsConstructor;
 import org.salgar.akka.fsm.foureyes.faudprevention.FraudPreventionService;
-import org.salgar.fsm.akka.foureyes.credit.model.Customer;
+import org.salgar.fsm.akka.foureyes.credit.model.CustomerV2;
 import org.salgar.fsm.akka.foureyes.fraudprevention.FraudPreventionSM;
 import org.salgar.fsm.akka.foureyes.variables.PayloadVariableConstants;
 
@@ -20,14 +20,14 @@ public class INITIAL_$$_WAITING_RESULT_initial_ActionImpl
                                                         Map<String, Object> controlObject,
                                                         Map<String, Object> payload) {
         if(payload != null) {
-            List<Customer> creditTenants = (List<Customer>) payload.get(PayloadVariableConstants.CREDIT_TENANTS);
+            List<CustomerV2> creditTenants = (List<CustomerV2>) payload.get(PayloadVariableConstants.CREDIT_TENANTS);
 
             //We should actually do Multi Tenant Fraud Prevention, but living that as exercise
-            Customer customer = creditTenants.get(0);
+            CustomerV2 customer = creditTenants.get(0);
             fraudPreventionService.reportFraudPrevention(
-                    customer.getFirstName(),
-                    customer.getLastName(),
-                    customer.getPersonalId());
+                    customer.getFirstname(),
+                    customer.getLastname(),
+                    customer.getCustomerId());
         }
         return payload;
     }

@@ -19,7 +19,7 @@ public class WAITING_MULTI_TENANT_RESULTS_$$_WAITING_MULTI_TENANT_RESULTS_waitin
                                                         Map<String, Object> payload) {
 
         Double creditScoreResult = (Double) payload.get(PayloadVariableConstants.CREDIT_SCORE_RESULT);
-        String personalId = (String) payload.get(PayloadVariableConstants.PERSONAL_ID);
+        String customerId = (String) payload.get(PayloadVariableConstants.CUSTOMER_ID);
 
         Map<String, CreditTenantScoreResult> creditTenantScoreResultMap =
                 (Map<String, CreditTenantScoreResult>) controlObject.get(PayloadVariableConstants.CREDIT_SCORE_TENANT_RESULTS);
@@ -28,13 +28,14 @@ public class WAITING_MULTI_TENANT_RESULTS_$$_WAITING_MULTI_TENANT_RESULTS_waitin
             creditTenantScoreResultMap = new HashMap<>();
         }
 
-        if(creditTenantScoreResultMap.get(personalId) != null) {
-            log.warn("We actually processed this customer for Credit Score: {}", creditTenantScoreResultMap.get(personalId) );
+        if(creditTenantScoreResultMap.get(customerId) != null) {
+            log.warn("We actually processed this customer for Credit Score: {}",
+                    creditTenantScoreResultMap.get(customerId) );
         }
 
         creditTenantScoreResultMap.put(
-                personalId,
-                new CreditTenantScoreResult(personalId, creditScoreResult));
+                customerId,
+                new CreditTenantScoreResult(customerId, creditScoreResult));
 
         controlObject.put(PayloadVariableConstants.CREDIT_SCORE_TENANT_RESULTS, creditTenantScoreResultMap);
 

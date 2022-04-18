@@ -2,7 +2,7 @@ package org.salgar.fsm.akka.foureyes.creditscore.actions;
 
 import akka.actor.typed.scaladsl.ActorContext;
 import lombok.RequiredArgsConstructor;
-import org.salgar.fsm.akka.foureyes.credit.model.Customer;
+import org.salgar.fsm.akka.foureyes.credit.model.CustomerV2;
 import org.salgar.fsm.akka.foureyes.creditscore.CreditScoreSM;
 import org.salgar.fsm.akka.foureyes.creditscore.facade.MultiTenantCreditScoreSMFacade;
 import org.salgar.fsm.akka.foureyes.usecasekey.CreditUseCaseKeyStrategy;
@@ -27,10 +27,10 @@ public class WAITING_RESULT_$$_RESULTRECEIVED_waitingResult_onResultReceived_Act
 
         //Don't forget creditUUID
         String creditUuid = (String) controlObject.get(CreditUseCaseKeyStrategy.CREDIT_UUID);
-        Customer customer = (Customer) controlObject.get(PayloadVariableConstants.CUSTOMER);
+        CustomerV2 customer = (CustomerV2) controlObject.get(PayloadVariableConstants.CUSTOMER);
         Map<String, Object> multiTenantCreditScoreSmPayload = new HashMap<>();
         multiTenantCreditScoreSmPayload.put(CreditUseCaseKeyStrategy.CREDIT_UUID, creditUuid);
-        multiTenantCreditScoreSmPayload.put(PayloadVariableConstants.PERSONAL_ID, customer.getPersonalId());
+        multiTenantCreditScoreSmPayload.put(PayloadVariableConstants.CUSTOMER_ID, customer.getCustomerId());
         multiTenantCreditScoreSmPayload.put(PayloadVariableConstants.CREDIT_SCORE_RESULT, creditScoreResult);
         multiTenantCreditScoreSMFacade.creditScoreReceived(() -> creditUuid,  multiTenantCreditScoreSmPayload);
 

@@ -6,7 +6,7 @@ import org.salgar.akka.fsm.foureyes.cra.kafka.CustomerRelationshipAdapter;
 import org.salgar.akka.fsm.foureyes.cra.model.CRMCustomer;
 import org.salgar.akka.fsm.foureyes.notifier.NotifierService;
 import org.salgar.fsm.akka.foureyes.credit.CreditSM;
-import org.salgar.fsm.akka.foureyes.credit.model.Customer;
+import org.salgar.fsm.akka.foureyes.credit.model.CustomerV2;
 import org.salgar.fsm.akka.foureyes.usecasekey.CreditUseCaseKeyStrategy;
 
 import java.util.List;
@@ -30,16 +30,16 @@ public class INITIAL_$$_CREDIT_APPLICATION_SUBMITTED_intial_onSubmit_ActionImpl
         notifierService.notify(notificationList, "Credit Tenants applied for Credit. Please check!");
 
         String creditId = (String) payload.get(CreditUseCaseKeyStrategy.CREDIT_UUID);
-        List<Customer> customers = (List<Customer>) payload.get(CREDIT_TENANTS);
+        List<CustomerV2> customers = (List<CustomerV2>) payload.get(CREDIT_TENANTS);
 
         controlObject.put(CreditUseCaseKeyStrategy.CREDIT_UUID, creditId);
         controlObject.put(CREDIT_TENANTS, customers);
 
-        for (Customer customer: customers) {
+        for (CustomerV2 customer: customers) {
             CRMCustomer crmCustomer =
                     new CRMCustomer(
-                            customer.getFirstName(),
-                            customer.getLastName());
+                            customer.getFirstname(),
+                            customer.getLastname());
             customerRelationshipAdapter.transferCustomerCreation(crmCustomer);
         }
 

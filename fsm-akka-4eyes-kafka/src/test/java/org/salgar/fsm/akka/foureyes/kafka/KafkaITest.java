@@ -23,10 +23,7 @@ import org.salgar.fsm.akka.foureyes.credit.command.CreditSMCommandConstants;
 import org.salgar.fsm.akka.foureyes.credit.facade.CreditSMFacade;
 import org.salgar.fsm.akka.foureyes.credit.guards.config.CreditSMGuardConfiguration;
 import org.salgar.fsm.akka.foureyes.credit.kafka.config.TopicProperties;
-import org.salgar.fsm.akka.foureyes.credit.protobuf.CreditSMCommand;
-import org.salgar.fsm.akka.foureyes.credit.protobuf.CreditTenants;
-import org.salgar.fsm.akka.foureyes.credit.protobuf.CreditUUID;
-import org.salgar.fsm.akka.foureyes.credit.protobuf.Customer;
+import org.salgar.fsm.akka.foureyes.credit.protobuf.*;
 import org.salgar.fsm.akka.foureyes.creditscore.actions.config.CreditScoreSMActionConfiguration;
 import org.salgar.fsm.akka.foureyes.creditscore.command.CreditScoreSMCommandConstants;
 import org.salgar.fsm.akka.foureyes.creditscore.guards.config.CreditScoreSMGuardConfiguration;
@@ -141,37 +138,9 @@ public class KafkaITest {
         kafkaTemplateAddressCheckSM.setCloseTimeout(java.time.Duration.ofMillis(TimeUnit.MILLISECONDS.toMillis(10)));
         kafkaTemplateFraudPreventionSM.setCloseTimeout(java.time.Duration.ofMillis(TimeUnit.MILLISECONDS.toMillis(10)));
 
-        Customer.Builder customer1Builder =
-                Customer
-                        .getDefaultInstance().toBuilder();
-        customer1Builder
-                .setFirstName("John")
-                .setLastName("Doe")
-                .setPersonalId("123456789X")
-                .setEmail("customer1@test.info")
-                .getAddressBuilder()
-                .setStreet("muster strasse 1")
-                .setHouseNo("11A")
-                .setCity("city1")
-                .setCountry("country1");
+        final CustomerV2 customer1 = prepareCustomer1V22();
 
-        final Customer customer1 = customer1Builder.build();
-
-        Customer.Builder customer2Builder =
-                Customer
-                        .getDefaultInstance().toBuilder();
-        customer2Builder
-                .setFirstName("Max")
-                .setLastName("Musterman")
-                .setPersonalId("Z987654321")
-                .setEmail("customer2@test.info")
-                .getAddressBuilder()
-                .setStreet("muster strasse 1")
-                .setHouseNo("11A")
-                .setCity("city1")
-                .setCountry("country1");
-
-        final Customer customer2 = customer2Builder.build();
+        final CustomerV2 customer2 = prepareCustomer2V22();
 
         CreditTenants.Builder creditTenantsBuilder =
                 CreditTenants.getDefaultInstance().toBuilder();
@@ -186,7 +155,7 @@ public class KafkaITest {
         /* Mock Preparation */
 
         doAnswer(invocation -> {
-            if(invocation.getArgument(2).equals(customer1.getPersonalId())) {
+            if(invocation.getArgument(2).equals(customer1.getCustomerId())) {
                 log.info("Sending Credit Score Result customer1");
 
                 Thread.sleep(5000L);
@@ -195,14 +164,14 @@ public class KafkaITest {
                         CreditScoreSMCommand
                                 .newBuilder()
                                 .setCommand(CreditScoreSMCommandConstants.ON_RESULTRECEIVED)
-                                .setUseCaseKey(creditUuid + "_" + customer1.getPersonalId())
+                                .setUseCaseKey(creditUuid + "_" + customer1.getCustomerId())
                                 .putPayload(
                                         PayloadVariableConstants.CREDIT_SCORE_RESULT,
                                         Any.pack(CreditScoreResult.newBuilder().setCreditScore(84.21).build()))
                                 .build();
                 kafkaTemplateCreditScoreSM.send(topicProperties.getCreditScoreSM(), creditScoreSMCommand);
 
-            } else if(invocation.getArgument(2).equals(customer2.getPersonalId())) {
+            } else if(invocation.getArgument(2).equals(customer2.getCustomerId())) {
                 log.info("Sending Credit Score Result customer2");
 
                 Thread.sleep(3000L);
@@ -211,7 +180,7 @@ public class KafkaITest {
                         CreditScoreSMCommand
                                 .newBuilder()
                                 .setCommand(CreditScoreSMCommandConstants.ON_RESULTRECEIVED)
-                                .setUseCaseKey(creditUuid + "_" + customer2.getPersonalId())
+                                .setUseCaseKey(creditUuid + "_" + customer2.getCustomerId())
                                 .putPayload(
                                         PayloadVariableConstants.CREDIT_SCORE_RESULT,
                                         Any.pack(CreditScoreResult.newBuilder().setCreditScore(97.45).build()))
@@ -402,6 +371,100 @@ public class KafkaITest {
         verify(notifierService, never()).notify(eq(seniorSalesManagerNotificationList), anyString());
 
         Thread.sleep(WAIT_TIME_ELASTIC);
+    }
+
+    private CustomerV2 prepareCustomer1V22() {
+        CustomerV2.Builder customer1V2Builder =
+                CustomerV2.getDefaultInstance().toBuilder();
+
+        IdentificationInformation.Builder identificationInformationBuilder =
+                IdentificationInformation.getDefaultInstance().toBuilder();
+        identificationInformationBuilder
+                .setIdentificationId("123456789X")
+                .setIdentificationType("PASS");
+
+        IncomeProof.Builder incomeProofBuilder =
+                IncomeProof.getDefaultInstance().toBuilder();
+        incomeProofBuilder
+                .setId(UUID.randomUUID().toString())
+                .setEmploymentCompany("ABC")
+                .setSalary("99999.99");
+
+        FixExpanse.Builder expanseRentBuilder =
+                FixExpanse.getDefaultInstance().toBuilder();
+        expanseRentBuilder
+                .setId(UUID.randomUUID().toString())
+                .setAmount("1500")
+                .setType("Rent");
+
+        FixExpanse.Builder expanseCarCreditBuilder =
+                FixExpanse.getDefaultInstance().toBuilder();
+        expanseCarCreditBuilder
+                .setId(UUID.randomUUID().toString())
+                .setAmount("600")
+                .setType("Credit");
+
+        Address.Builder addressBuilder = Address.getDefaultInstance().toBuilder();
+        addressBuilder
+                .setStreet("muster strasse 1")
+                .setHouseNo("11A")
+                .setCity("city1")
+                .setCountry("country1");
+
+        return customer1V2Builder
+                .setCustomerId(UUID.randomUUID().toString())
+                .setFirstname( "John")
+                .setLastname("Doe")
+                .addIdentificationInformations(identificationInformationBuilder)
+                .addIncomeProofs(incomeProofBuilder)
+                .addExpanses(expanseRentBuilder)
+                .addExpanses(expanseCarCreditBuilder)
+                .addAddresses(addressBuilder)
+                .setEmail("customer1@test.info")
+                .build();
+    }
+
+    private CustomerV2 prepareCustomer2V22() {
+        CustomerV2.Builder customer1V2Builder =
+                CustomerV2.getDefaultInstance().toBuilder();
+
+        IdentificationInformation.Builder identificationInformationBuilder =
+                IdentificationInformation.getDefaultInstance().toBuilder();
+        identificationInformationBuilder
+                .setIdentificationId("Z987654321")
+                .setIdentificationType("PERSO");
+
+        IncomeProof.Builder incomeProofBuilder =
+                IncomeProof.getDefaultInstance().toBuilder();
+        incomeProofBuilder
+                .setId(UUID.randomUUID().toString())
+                .setEmploymentCompany("ZXY")
+                .setSalary("1111.11");
+
+        FixExpanse.Builder expanseCarCreditBuilder =
+                FixExpanse.getDefaultInstance().toBuilder();
+        expanseCarCreditBuilder
+                .setId(UUID.randomUUID().toString())
+                .setAmount("900")
+                .setType("Credit");
+
+        Address.Builder addressBuilder = Address.getDefaultInstance().toBuilder();
+        addressBuilder
+                .setStreet("muster strasse 1")
+                .setHouseNo("11A")
+                .setCity("city1")
+                .setCountry("country1");
+
+        return customer1V2Builder
+                .setCustomerId(UUID.randomUUID().toString())
+                .setFirstname( "Max")
+                .setLastname("Musterman")
+                .addIdentificationInformations(identificationInformationBuilder)
+                .addIncomeProofs(incomeProofBuilder)
+                .addExpanses(expanseCarCreditBuilder)
+                .addAddresses(addressBuilder)
+                .setEmail("customer2@test.info")
+                .build();
     }
 
     private void prepareNotificationService() {
