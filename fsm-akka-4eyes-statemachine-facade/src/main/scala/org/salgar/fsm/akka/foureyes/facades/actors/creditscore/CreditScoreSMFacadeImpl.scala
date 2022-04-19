@@ -7,7 +7,7 @@ import org.salgar.fsm.akka.akkasystem.ActorService
 import org.salgar.fsm.akka.foureyes.creditscore.CreditScoreSM.{CreditScoreSMEvent, Response}
 import org.salgar.fsm.akka.foureyes.creditscore.CreditScoreSMGuardian._
 import org.salgar.fsm.akka.foureyes.creditscore.facade.CreditScoreSMFacade
-import org.salgar.fsm.akka.foureyes.creditscore.{CreditScoreSM, CreditScoreSMGuardian}
+import org.salgar.fsm.akka.foureyes.creditscore.{CreditScoreSM, CreditScoreSMEventAdapter, CreditScoreSMGuardian}
 import org.salgar.fsm.akka.statemachine.facade.StateMachineFacade
 import org.springframework.context.annotation.DependsOn
 import org.springframework.stereotype.Service
@@ -19,7 +19,9 @@ import scala.concurrent.Future
 @Service
 @DependsOn(Array("actorService"))
 class CreditScoreSMFacadeImpl(actorService: ActorService)
-  extends StateMachineFacade[CreditScoreSMGuardianEvent, Response] (actorService, "creditScoreSMGuardian", CreditScoreSMGuardian()(actorService.sharding(), actorService.actorSystem()))
+  extends StateMachineFacade[CreditScoreSMGuardianEvent, Response] (
+      actorService, "creditScoreSMGuardian",
+      CreditScoreSMGuardian(CreditScoreSMEventAdapter)(actorService.sharding(), actorService.actorSystem()))
     with CreditScoreSMFacade{
   import ActorService._
 
