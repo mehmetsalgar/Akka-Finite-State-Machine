@@ -6,9 +6,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.salgar.akka.fsm.foureyes.addresscheck.AddressCheckService;
-import org.salgar.akka.fsm.foureyes.creditscore.CreditScoreService;
-import org.salgar.akka.fsm.foureyes.faudprevention.FraudPreventionService;
 import org.salgar.akka.fsm.foureyes.notifier.NotifierService;
 import org.salgar.fsm.akka.foureyes.credit.CreditSM;
 import org.salgar.fsm.akka.foureyes.credit.facade.CreditSMFacade;
@@ -44,6 +41,11 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.salgar.akka.fsm.foureyes.notifier.NotificationHelper.*;
 
+/**
+ * These tests are disabled because they are here to demonstrate the Recovery Capabilities of Akka Framework, so
+ * they are designed to run only once per day, if the continuous integration system would try to run multiple times
+ * per day, they will fail.
+ */
 @Disabled
 @EnableElasticsearchRepositories("org.salgar.fsm.akka.foureyes.elasticsearch")
 @ActiveProfiles({"itest"})
@@ -58,8 +60,8 @@ import static org.salgar.akka.fsm.foureyes.notifier.NotificationHelper.*;
 public class RecoveryPostTest {
     final List<String> relationShipNotificationList = Arrays.asList("relationshipmanager1@example.com", "relationshipmanager2@example.com");
     final List<String> salesManagerNotificationList = Arrays.asList("salesmanager1@example.com", "salesmanager2@example.com");
-    final List<String> creditAnalystNotificationList = Arrays.asList("creditanalyst@example.com");
-    final List<String> seniorSalesManagerNotificationList = Arrays.asList("seniorSalesManagert@example.com");
+    final List<String> creditAnalystNotificationList = List.of("creditanalyst@example.com");
+    final List<String> seniorSalesManagerNotificationList = List.of("seniorSalesManagert@example.com");
     private final static long WAIT_TIME_BETWEEN_STEPS = TimeUnit.MILLISECONDS.toMillis(2000);
     private final static long WAIT_TIME_ELASTIC = TimeUnit.SECONDS.toMillis(10);
 
@@ -68,15 +70,6 @@ public class RecoveryPostTest {
 
     @Autowired
     private CreditSMRepository creditSMRepository;
-
-    @MockBean
-    private CreditScoreService creditScoreServiceMockBean;
-
-    @MockBean
-    private FraudPreventionService fraudPreventionServiceMockBean;
-
-    @MockBean
-    private AddressCheckService addressCheckServiceMockBean;
 
     @MockBean
     private NotifierService notifierService;
@@ -267,7 +260,7 @@ public class RecoveryPostTest {
 
         final Map<String, Object> payload = new HashMap<>();
         payload.put(CreditUseCaseKeyStrategy.CREDIT_UUID, creditUuid);
-        payload.put(PayloadVariableConstants.CREDIT_TENANTS, creditTenants);
+        //payload.put(PayloadVariableConstants.CREDIT_TENANTS, creditTenants);
 
         return payload;
     }

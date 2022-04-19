@@ -16,7 +16,6 @@ import org.salgar.fsm.akka.foureyes.credit.facade.CreditSMFacade;
 import org.salgar.fsm.akka.foureyes.credit.model.Address;
 import org.salgar.fsm.akka.foureyes.credit.model.Customer;
 import org.salgar.fsm.akka.foureyes.creditscore.facade.CreditScoreSMFacade;
-import org.salgar.fsm.akka.foureyes.elasticsearch.CreditSMRepository;
 import org.salgar.fsm.akka.foureyes.fraudprevention.facade.FraudPreventionSMFacade;
 import org.salgar.fsm.akka.foureyes.usecasekey.CreditUseCaseKeyStrategy;
 import org.salgar.fsm.akka.foureyes.variables.PayloadVariableConstants;
@@ -45,6 +44,11 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 import static org.salgar.akka.fsm.foureyes.notifier.NotificationHelper.*;
 
+/**
+ * These tests are disabled because they are here to demonstrate the Recovery Capabilities of Akka Framework, so
+ * they are designed to run only once per day, if the continuous integration system would try to run multiple times
+ * per day, they will fail.
+ */
 @Disabled
 @EnableElasticsearchRepositories("org.salgar.fsm.akka.foureyes.elasticsearch")
 @ActiveProfiles({"itest"})
@@ -62,13 +66,9 @@ public class RecoveryPreTest {
     final List<String> creditAnalystNotificationList = List.of("creditanalyst@example.com");
     final List<String> seniorSalesManagerNotificationList = List.of("seniorSalesManagert@example.com");
     private final static long WAIT_TIME_BETWEEN_STEPS = TimeUnit.MILLISECONDS.toMillis(700);
-    private final static long WAIT_TIME_ELASTIC = TimeUnit.SECONDS.toMillis(30);
 
     @Autowired
     private CreditSMFacade creditSMFacade;
-
-    @Autowired
-    private CreditSMRepository creditSMRepository;
 
     @MockBean
     private CreditScoreService creditScoreServiceMockBean;
