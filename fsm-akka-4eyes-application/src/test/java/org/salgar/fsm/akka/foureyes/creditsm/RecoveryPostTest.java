@@ -39,6 +39,12 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.salgar.akka.fsm.foureyes.notifier.NotificationHelper.*;
 
+/**
+ * These tests are disabled because they are here to demonstrate the Recovery Capabilities of Akka Framework, so
+ * they are designed to run only once per day, if the continuous integration system would try to run multiple times
+ * per day, they will fail.
+ */
+@Disabled
 @EnableElasticsearchRepositories("org.salgar.fsm.akka.foureyes.elasticsearch")
 @ActiveProfiles({"itest"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)

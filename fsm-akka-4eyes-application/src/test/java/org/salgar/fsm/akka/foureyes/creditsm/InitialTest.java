@@ -2,7 +2,6 @@ package org.salgar.fsm.akka.foureyes.creditsm;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -646,7 +645,7 @@ public class InitialTest {
 
         Optional<CreditSmEs> creditSmEs = creditSMRepository.findById(creditUuid);
 
-        Assert.assertNotNull(creditSmEs);
+        assertNotNull(creditSmEs);
         assertEquals(creditSmEs.get().getState(), CREDIT_ACCEPTED.class.getSimpleName());
         verify(notifierService, times(1)).notify(eq(List.of(customer.getEmail())), anyString());
 
