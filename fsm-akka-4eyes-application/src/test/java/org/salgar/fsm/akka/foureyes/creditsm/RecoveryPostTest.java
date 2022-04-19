@@ -229,7 +229,7 @@ public class RecoveryPostTest {
                 );
 
         return new CustomerV2(
-                "123456789",
+                "123456789X",
                 "John",
                 "Doe",
                 List.of(identificationInformation),
@@ -266,7 +266,7 @@ public class RecoveryPostTest {
 
 
         return new CustomerV2(
-                "987654321",
+                "Z987654321",
                 "Max",
                 "Musterman",
                 List.of(identificationInformation),
