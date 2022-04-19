@@ -809,7 +809,7 @@ public class InitialTest {
 
         assertNotNull(report);
         assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_WAITING_APPROVAL.class));
-        assertEquals(((List<Customer>)report.state().controlObject().get(PayloadVariableConstants.CREDIT_TENANTS)).get(0), customer);
+        assertEquals(((List<CustomerV2>)report.state().controlObject().get(PayloadVariableConstants.CREDIT_TENANTS)).get(0), customer);
         verify(notifierService, times(1)).notify(eq(relationShipNotificationList), anyString());
 
         payload = preparePayload(creditUuid, creditTenants);

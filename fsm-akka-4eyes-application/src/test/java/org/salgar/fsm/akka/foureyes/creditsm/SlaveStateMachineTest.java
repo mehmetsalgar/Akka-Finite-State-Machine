@@ -304,17 +304,6 @@ public class SlaveStateMachineTest {
     }
 
     private CustomerV2 prepareCustomer2V2() {
-        new Customer(
-                "Max",
-                "Musterman",
-                "Z987654321",
-                new Address(
-                        "muster strasse 1",
-                        "11A",
-                        "city1",
-                        "country1"
-                ),
-                "customer1@test.info");
         IdentificationInformation identificationInformation =
                 new IdentificationInformation(
                         "Z987654321",

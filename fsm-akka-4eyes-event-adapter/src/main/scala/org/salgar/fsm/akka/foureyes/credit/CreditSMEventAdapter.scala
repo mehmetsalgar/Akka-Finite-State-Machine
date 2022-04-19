@@ -18,7 +18,7 @@ object CreditSMEventAdapter
 
   override def fromJournal(event: CreditSM.PersistEvent, manifest: String): EventSeq[CreditSM.PersistEvent] = event match {
     case SalesManagerApprovalPersistEvent(controlObject) => {
-      val creditTenants:  java.util.List[Customer]  = controlObject.get("creditTenants").asInstanceOf[java.util.List[Customer]]
+      val creditTenants:  java.util.List[CustomerV1]  = controlObject.get("creditTenants").asInstanceOf[java.util.List[CustomerV1]]
       val customerTenants : java.util.List[CustomerV2] = new util.ArrayList[CustomerV2]()
 
       creditTenants.forEach( customer => {

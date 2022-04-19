@@ -123,7 +123,11 @@ public class RecoveryPostTest {
                                 CreditSM
                                         .CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL
                                         .class
-                                        .getSimpleName().indexOf("_$_") + 3
+                                        .getSimpleName().indexOf("_$_") + 3,
+                                CreditSM
+                                        .CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL
+                                        .class
+                                        .getSimpleName().length()
                         ),
                 creditSmEs.get().getState()
         );
@@ -184,7 +188,11 @@ public class RecoveryPostTest {
                                 CreditSM
                                         .CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL
                                         .class
-                                        .getSimpleName().indexOf("_$_") + 3
+                                        .getSimpleName().indexOf("_$_") + 3,
+                                CreditSM
+                                        .CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL
+                                        .class
+                                        .getSimpleName().length()
                         ),
                 creditSmEs.get().getState()
         );
@@ -221,7 +229,7 @@ public class RecoveryPostTest {
                 );
 
         return new CustomerV2(
-                UUID.randomUUID().toString(),
+                "123456789",
                 "John",
                 "Doe",
                 List.of(identificationInformation),
@@ -238,17 +246,6 @@ public class RecoveryPostTest {
     }
 
     private CustomerV2 prepareCustomer2V2() {
-        new Customer(
-                "Max",
-                "Musterman",
-                "Z987654321",
-                new Address(
-                        "muster strasse 1",
-                        "11A",
-                        "city1",
-                        "country1"
-                ),
-                "customer1@test.info");
         IdentificationInformation identificationInformation =
                 new IdentificationInformation(
                         "Z987654321",
@@ -269,7 +266,7 @@ public class RecoveryPostTest {
 
 
         return new CustomerV2(
-                UUID.randomUUID().toString(),
+                "987654321",
                 "Max",
                 "Musterman",
                 List.of(identificationInformation),
@@ -291,7 +288,7 @@ public class RecoveryPostTest {
 
         final Map<String, Object> payload = new HashMap<>();
         payload.put(CreditUseCaseKeyStrategy.CREDIT_UUID, creditUuid);
-        payload.put(PayloadVariableConstants.CREDIT_TENANTS, creditTenants);
+        //payload.put(PayloadVariableConstants.CREDIT_TENANTS, creditTenants);
 
         return payload;
     }

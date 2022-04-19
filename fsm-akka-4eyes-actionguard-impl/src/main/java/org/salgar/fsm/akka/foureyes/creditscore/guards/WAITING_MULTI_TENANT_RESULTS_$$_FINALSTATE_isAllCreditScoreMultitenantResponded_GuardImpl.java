@@ -2,7 +2,7 @@ package org.salgar.fsm.akka.foureyes.creditscore.guards;
 
 import akka.actor.typed.scaladsl.ActorContext;
 import org.salgar.fsm.akka.foureyes.credit.model.CreditTenantScoreResult;
-import org.salgar.fsm.akka.foureyes.credit.model.Customer;
+import org.salgar.fsm.akka.foureyes.credit.model.CustomerV2;
 import org.salgar.fsm.akka.foureyes.creditscore.MultiTenantCreditScoreSM;
 import org.salgar.fsm.akka.foureyes.variables.PayloadVariableConstants;
 
@@ -18,7 +18,7 @@ public class WAITING_MULTI_TENANT_RESULTS_$$_FINALSTATE_isAllCreditScoreMultiten
             Map<String, Object> payload) {
         actorContext.log().debug("Evaluating WAITING_MULTI_TENANT_RESULTS waitingMultiTenantResult_finalState Guard");
 
-        List<Customer> creditTenants = (List<Customer>) controlObject.get(PayloadVariableConstants.CREDIT_TENANTS);
+        List<CustomerV2> creditTenants = (List<CustomerV2>) controlObject.get(PayloadVariableConstants.CREDIT_TENANTS);
 
         String customerId = (String) payload.get(PayloadVariableConstants.CUSTOMER_ID);
         Double creditScoreResult = (Double) payload.get(PayloadVariableConstants.CREDIT_SCORE_RESULT);

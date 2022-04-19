@@ -26,6 +26,9 @@ org:
         projections:
           offsetStore: elasticsearch
 
+logging:
+  file: logback.xml
+
 management:
   endpoint:
     health:

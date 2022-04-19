@@ -5,3 +5,6 @@ org:
         foureyes:
           elasticsearch:
             batchSize: 1
+
+logging:
+  file: logback-test.xml
