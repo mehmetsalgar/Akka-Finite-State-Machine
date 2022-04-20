@@ -3,6 +3,7 @@ package org.salgar.fsm.akka.foureyes.creditsm;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.salgar.akka.fsm.foureyes.notifier.NotifierService;

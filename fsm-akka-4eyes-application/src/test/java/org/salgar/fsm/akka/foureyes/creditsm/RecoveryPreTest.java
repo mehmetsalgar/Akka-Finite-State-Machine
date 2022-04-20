@@ -3,6 +3,7 @@ package org.salgar.fsm.akka.foureyes.creditsm;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.salgar.akka.fsm.foureyes.addresscheck.AddressCheckService;
@@ -65,7 +66,6 @@ public class RecoveryPreTest {
     final List<String> seniorSalesManagerNotificationList = List.of("seniorSalesManagert@example.com");
     final List<String> someOtherManagerNotificationList = List.of("someOtherManager@example.com");
     private final static long WAIT_TIME_BETWEEN_STEPS = TimeUnit.MILLISECONDS.toMillis(700);
-    private final static long WAIT_TIME_ELASTIC = TimeUnit.SECONDS.toMillis(30);
 
     @Autowired
     private CreditSMFacade creditSMFacade;
@@ -162,7 +162,6 @@ public class RecoveryPreTest {
         assertEquals(((List<CustomerV2>)report.state().controlObject().get(PayloadVariableConstants.CREDIT_TENANTS)).get(1), customer2);
         verify(notifierService, atLeastOnce()).notify(eq(relationShipNotificationList), anyString());
 
-        payload = preparePayload(creditUuid, creditTenants);
         payload = preparePayload(creditUuid, creditTenants);
         creditSMFacade.relationshipManagerApproved(payload);
 
