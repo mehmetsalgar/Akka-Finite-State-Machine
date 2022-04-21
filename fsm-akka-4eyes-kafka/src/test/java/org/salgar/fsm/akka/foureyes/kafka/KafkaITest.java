@@ -4,6 +4,7 @@ import com.google.protobuf.Any;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.salgar.akka.fsm.foureyes.addresscheck.AddressCheckService;
@@ -64,6 +65,7 @@ import static org.mockito.Mockito.*;
 import static org.salgar.akka.fsm.foureyes.notifier.NotificationHelper.*;
 import static org.salgar.fsm.akka.converter.Protobuf2PojoConverter.PROTOBUF_PREFIX;
 
+@Disabled
 @ActiveProfiles({"itest"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @EmbeddedKafka(
