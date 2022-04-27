@@ -250,7 +250,7 @@ project(':fsm-akka-api') {
     }
 }
 
-project(':fsm-akka-advice') {
+project(':fsm-akka-4eyes-advice') {
     apply plugin: 'java'
 
     configurations {
@@ -516,7 +516,7 @@ project(':fsm-akka-4eyes-statemachine') {
         implementation "org.aspectj:aspectjrt:${versions.aspectjVersion}"
         api project(':fsm-akka-base'),
                 project(':fsm-akka-akkasystem')
-        aspects project(':fsm-akka-advice')
+        aspects project(':fsm-akka-4eyes-advice')
         api "com.typesafe.akka:akka-cluster-sharding-typed_${versions.scala.major}:${versions.akka}"
         api 'com.fasterxml.jackson.core:jackson-databind'
     }
@@ -933,7 +933,7 @@ project(':fsm-akka-4eyes-kafka') {
                 project(':fsm-akka-4eyes-statemachine'),
                 project(':fsm-akka-4eyes-actionguard-impl'),
                 project(':fsm-akka-4eyes-converter'),
-                project(':fsm-akka-advice'),
+                project(':fsm-akka-4eyes-advice'),
                 project(':fsm-akka-api'),
                 project(':4eyes-address-check-impl'),
                 project(':4eyes-credit-score-impl'),
@@ -1220,7 +1220,7 @@ project(':fsm-akka-4eyes-application') {
         implementation project(':fsm-akka-4eyes-statemachine-facade'),
                 project(':fsm-akka-4eyes-statemachine'),
                 project(':fsm-akka-4eyes-actionguard-impl'),
-                project(':fsm-akka-advice'),
+                project(':fsm-akka-4eyes-advice'),
                 project(':fsm-akka-api'),
                 project(':4eyes-address-check-impl'),
                 project(':4eyes-credit-score-impl'),
