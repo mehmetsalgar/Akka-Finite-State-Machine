@@ -2,9 +2,9 @@
 groupId=$(echo $2 | sed 's|\.|/|g')
 #fsm-akka-***-advice
 mkdir "fsm-akka-$1-advice"
-mkdir -p "fsm-akka-$1-advice/src/main/java/${groupId}"
-sedAspectJ="s|org.salgar.fsm.akka.foureyes|$2|g;"
-sed "${sedAspectJ}" "fsm-akka-4eyes-advice/org/salgar/akka/fsm/aspect/FSMAspect.aj" > "fsm-akka-$1-advice/org/salgar/akka/fsm/aspect/FSMAspect.aj"
+mkdir -p "fsm-akka-$1-advice/src/main/java/${groupId}/aspect"
+sedAspectJ="s|org.salgar.akka.fsm|$2|g;"
+sed "${sedAspectJ}" "fsm-akka-4eyes-advice/src/main/java/org/salgar/akka/fsm/aspect/FSMAspect.aj" > "fsm-akka-$1-advice/src/main/java/${groupId}/aspect/FSMAspect.aj"
 #fsm-akka-***-uml-model
 mkdir "fsm-akka-$1-uml-model"
 mkdir -p "fsm-akka-$1-uml-model/src/main/resources"
