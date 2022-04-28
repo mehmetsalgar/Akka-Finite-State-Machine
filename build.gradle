@@ -562,7 +562,7 @@ project(':fsm-akka-4eyes-statemachine') {
     task generateXtextLanguage(type: JavaExec) {
         def generatedFileDir = file("build/generated-sources")
         outputs.dir generatedFileDir
-        main = 'org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher'
+        mainClass = 'org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher'
         classpath = configurations.mwe2
         inputs.file "src/main/mwe2/GenerateWorkflow.mwe2"
         args += "src/main/mwe2/GenerateWorkflow.mwe2"
@@ -603,6 +603,7 @@ project(':fsm-akka-4eyes-statemachine-facade') {
         api project(':fsm-akka-4eyes-event-adapter'),
                 project(':fsm-akka-statemachine-facade'),
                 project(':fsm-akka-akkasystem')
+        implementation project(':fsm-akka-kafka')
     }
 }
 
@@ -870,13 +871,14 @@ project(':fsm-akka-4eyes-command') {
 
 project(':fsm-akka-kafka') {
     apply plugin: 'java-library'
-    apply plugin: 'java'
+    apply plugin: 'scala'
     apply plugin: 'io.freefair.lombok'
 
     dependencies {
         implementation 'org.springframework.boot:spring-boot-autoconfigure'
         api "io.confluent:kafka-protobuf-serializer:${versions.confluent}"
         api "io.confluent:kafka-streams-protobuf-serde:${versions.confluent}"
+        implementation "com.typesafe.akka:akka-stream-kafka-cluster-sharding_${versions.scala.major}:${versions.akkaKafkaStream}"
     }
 }
 

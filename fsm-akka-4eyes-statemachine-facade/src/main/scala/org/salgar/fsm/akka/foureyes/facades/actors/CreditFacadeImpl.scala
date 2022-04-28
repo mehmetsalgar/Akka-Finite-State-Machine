@@ -1,19 +1,23 @@
 package org.salgar.fsm.akka.foureyes.facades.actors
 
-import akka.actor.typed.scaladsl.AskPattern.Askable
+import akka.cluster.sharding.typed.scaladsl.ClusterSharding
 import org.salgar.fsm.akka.akkasystem.ActorService
 import org.salgar.fsm.akka.foureyes.credit.CreditSM.Response
-import org.salgar.fsm.akka.foureyes.credit.CreditSMGuardian
-import org.salgar.fsm.akka.foureyes.credit.CreditSMGuardian._
 import org.salgar.fsm.akka.foureyes.credit.facade.CreditSMFacade
-import org.salgar.fsm.akka.foureyes.slaves.SlaveStatemachineConstants.{ADDRESS_CHECK_SM, CUSTOMER_SCORE_SM, FRAUD_PREVENTION_SM, SOURCE_SLAVE_SM_TAG}
+import org.salgar.fsm.akka.foureyes.credit.{CreditSM, CreditSMGuardian}
+import org.salgar.fsm.akka.kafka.sharding.FsmAkkaKafkaClusterSharding
 import org.salgar.fsm.akka.statemachine.facade.StateMachineFacade
 import org.springframework.context.annotation.DependsOn
 import org.springframework.stereotype.Component
 
-import java.util
 import javax.annotation.PostConstruct
 import scala.concurrent.Future
+import scala.concurrent.duration.DurationInt
+import scala.util.Success
+
+object CreditFacadeImpl {
+
+}
 
 @Component
 @DependsOn(Array("actorService"))
@@ -22,7 +26,23 @@ class CreditFacadeImpl(actorService: ActorService)
     actorService, "creditSMGuardian",
     CreditSMGuardian()(actorService.sharding()))
     with CreditSMFacade {
-  import ActorService._
+
+  def clusterSharding(): ClusterSharding = {
+    val future : Future[FsmAkkaKafkaClusterSharding.KafkaShardingNoEnvelopeExtractor[CreditSM.CreditSMEvent]] =
+      FsmAkkaKafkaClusterSharding(actorService.actorSystem())
+        .messageExtractorNoEnvelope(
+          timeout = 10.seconds,
+          topic = "test",
+          entityIdExtractor = (event : CreditSM.CreditSMEvent) => event.useCaseKey.getKey,
+          shardIdExtractor=  entityId => entityId,
+          settings = _
+        )
+
+        future.onComplete(
+          case Success(extractor) =>
+        )
+      })
+  }
 
   def currentState(payload: java.util.Map[String, AnyRef]) : Future[Response] = {
     actorRef.ask[Response](ref => CreditSMGuardian.onReportState(payload, ref))
