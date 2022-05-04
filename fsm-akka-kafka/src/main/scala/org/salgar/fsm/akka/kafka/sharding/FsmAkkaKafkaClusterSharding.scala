@@ -18,13 +18,13 @@ final class FsmAkkaKafkaClusterSharding(system: ExtendedActorSystem) extends Ext
                                       topic: String,
                                       timeout: Timeout,
                                       entityIdExtractor: M => String,
-                                      shardIdExtractor: String => String,
+                                      shardIdExtractor: (String, Int) => String,
                                       settings: ConsumerSettings[_, _]
                                     ): Future[KafkaShardingNoEnvelopeExtractor[M]] =
     getPartitionCount(topic, timeout, settings)
       .map(partitions => new KafkaShardingNoEnvelopeExtractor[M](
         partitions,
-        s => shardIdExtractor.apply(s),
+        (s, partitions) => shardIdExtractor.apply(s, partitions),
         e => entityIdExtractor.apply(e))
       )
 
@@ -58,14 +58,14 @@ object FsmAkkaKafkaClusterSharding extends ExtensionId[FsmAkkaKafkaClusterShardi
 
   sealed trait KafkaClusterShardingContract {
     def kafkaPartitions: Int
-    def shardIdExtractor: String => String
-    def shardId(entityId: String): String = shardIdExtractor.apply(entityId)
+    def shardIdExtractor: (String, Int) => String
+    def shardId(entityId: String): String = shardIdExtractor.apply(entityId, kafkaPartitions)
   }
 
   final class KafkaShardingNoEnvelopeExtractor[M] private[kafka](
                                                                   val kafkaPartitions: Int,
-                                                                  val shardIdExtractor: String => String,
-                                                                  entityIdExtractor: M => String
+                                                                  val shardIdExtractor: (String, Int) => String,
+                                                                  val entityIdExtractor: M => String
                                                                 )
     extends ShardingMessageExtractor[M, M]
       with KafkaClusterShardingContract {

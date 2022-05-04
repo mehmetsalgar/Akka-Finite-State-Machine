@@ -595,18 +595,6 @@ project(':fsm-akka-4eyes-event-adapter') {
     }
 }
 
-project(':fsm-akka-4eyes-statemachine-facade') {
-    apply plugin: 'java-library'
-    apply plugin: 'scala'
-
-    dependencies {
-        api project(':fsm-akka-4eyes-event-adapter'),
-                project(':fsm-akka-statemachine-facade'),
-                project(':fsm-akka-akkasystem')
-        implementation project(':fsm-akka-kafka')
-    }
-}
-
 project(':fsm-akka-4eyes-actionguard-impl') {
     apply plugin: 'java'
     apply plugin: 'java-library'
@@ -927,21 +915,13 @@ project(':fsm-akka-4eyes-kafka') {
     }
 
     dependencies {
-        implementation project(':fsm-akka-kafka'),
-                project(':fsm-akka-4eyes-protobuf'),
+        api project(':fsm-akka-kafka'),
                 project(':fsm-akka-4eyes-command'),
-                project(':fsm-akka-akkasystem'),
-                project(':fsm-akka-4eyes-statemachine-facade'),
-                project(':fsm-akka-4eyes-statemachine'),
-                project(':fsm-akka-4eyes-actionguard-impl'),
                 project(':fsm-akka-4eyes-converter'),
-                project(':fsm-akka-4eyes-advice'),
-                project(':fsm-akka-api'),
-                project(':4eyes-address-check-impl'),
-                project(':4eyes-credit-score-impl'),
-                project(':4eyes-fraud-prevention-impl'),
-                project(':customer-relationship-adapter'),
-                project(':customer-relationship-adapter-impl')
+                project(':fsm-akka-4eyes-protobuf')
+        implementation project(':fsm-akka-4eyes-statemachine'),
+                project(':fsm-akka-akkasystem'),
+                project(':fsm-akka-api')
         implementation "org.scala-lang:scala-library:${versions.scala.current}"
         implementation 'org.springframework.boot:spring-boot-autoconfigure'
         implementation 'org.springframework.kafka:spring-kafka'
@@ -954,6 +934,14 @@ project(':fsm-akka-4eyes-kafka') {
         api "io.confluent:kafka-streams-protobuf-serde:${versions.confluent}"
         implementation "org.projectlombok:lombok:${versions.lombok}"
         annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+        testImplementation project(':fsm-akka-4eyes-statemachine-facade'),
+                project(':fsm-akka-4eyes-actionguard-impl'),
+                project(':4eyes-address-check-impl'),
+                project(':4eyes-credit-score-impl'),
+                project(':4eyes-fraud-prevention-impl'),
+                project(':customer-relationship-adapter'),
+                project(':customer-relationship-adapter-impl'),
+                project(':fsm-akka-4eyes-advice')
         testImplementation 'org.springframework.boot:spring-boot-starter'
         testImplementation('org.springframework.boot:spring-boot-starter-test') {
             exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
@@ -1203,6 +1191,21 @@ project(':fsm-akka-4eyes-projections') {
         //implementation "org.scalikejdbc:scalikejdbc_${versions.scala.major}:${versions.scalikeJdbcVersion}"
         //implementation "org.scalikejdbc:scalikejdbc-config_${versions.scala.major}:${versions.scalikeJdbcVersion}"
         annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+    }
+}
+
+project(':fsm-akka-4eyes-statemachine-facade') {
+    apply plugin: 'java-library'
+    apply plugin: 'scala'
+
+    dependencies {
+        api project(':fsm-akka-4eyes-event-adapter'),
+                project(':fsm-akka-statemachine-facade'),
+                project(':fsm-akka-akkasystem')
+        implementation project(':fsm-akka-kafka'),
+                project(':fsm-akka-4eyes-kafka'),
+                project(':fsm-akka-4eyes-protobuf')
+        implementation "com.typesafe.akka:akka-stream-kafka-cluster-sharding_${versions.scala.major}:${versions.akkaKafkaStream}"
     }
 }
 

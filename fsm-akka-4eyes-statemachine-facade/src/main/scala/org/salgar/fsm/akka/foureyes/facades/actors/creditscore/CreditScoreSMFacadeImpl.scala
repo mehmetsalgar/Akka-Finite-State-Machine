@@ -1,25 +1,62 @@
 package org.salgar.fsm.akka.foureyes.facades.actors.creditscore
 
-import akka.actor.typed.ActorRef
+import akka.NotUsed
 import akka.actor.typed.scaladsl.AskPattern.Askable
+import akka.actor.typed.{ActorRef, ActorSystem}
 import org.salgar.akka.fsm.api.UseCaseKey
 import org.salgar.fsm.akka.akkasystem.ActorService
+import org.salgar.fsm.akka.foureyes.credit.kafka.config.TopicProperties
 import org.salgar.fsm.akka.foureyes.creditscore.CreditScoreSM.{CreditScoreSMEvent, Response}
 import org.salgar.fsm.akka.foureyes.creditscore.CreditScoreSMGuardian._
 import org.salgar.fsm.akka.foureyes.creditscore.facade.CreditScoreSMFacade
+import org.salgar.fsm.akka.foureyes.creditscore.protobuf.CreditScoreSMCommand
 import org.salgar.fsm.akka.foureyes.creditscore.{CreditScoreSM, CreditScoreSMGuardian}
+import org.salgar.fsm.akka.foureyes.facades.actors.creditscore.CreditScoreSMFacadeImpl.messageExtractor
+import org.salgar.fsm.akka.foureyes.facades.utility.ShardIdUUtility
+import org.salgar.fsm.akka.kafka.config.ConsumerConfig
+import org.salgar.fsm.akka.kafka.sharding.FsmAkkaKafkaClusterSharding
 import org.salgar.fsm.akka.statemachine.facade.StateMachineFacade
 import org.springframework.context.annotation.DependsOn
 import org.springframework.stereotype.Service
 
 import java.util
 import javax.annotation.PostConstruct
-import scala.concurrent.Future
+import scala.concurrent.duration.DurationInt
+import scala.concurrent.{Await, Future}
+
+object CreditScoreSMFacadeImpl {
+  def messageExtractor(
+                        actorSystem: ActorSystem[NotUsed],
+                        creditSMConsumerConfig: ConsumerConfig[String, CreditScoreSMCommand],
+                        topicProperties: TopicProperties): FsmAkkaKafkaClusterSharding.KafkaShardingNoEnvelopeExtractor[CreditScoreSM.CreditScoreSMEvent] = {
+    val numOfShards: Int = actorSystem.settings.config.getInt("akka.fsm.numberOfShards")
+    val future: Future[FsmAkkaKafkaClusterSharding.KafkaShardingNoEnvelopeExtractor[CreditScoreSM.CreditScoreSMEvent]] =
+      FsmAkkaKafkaClusterSharding(actorSystem)
+        .messageExtractorNoEnvelope(
+          timeout = 10.seconds,
+          topic = topicProperties.getCreditScoreSM,
+          entityIdExtractor = (event: CreditScoreSM.CreditScoreSMEvent) => event.useCaseKey.getKey,
+          shardIdExtractor = (entityId, partitions) => ShardIdUUtility.calculateShardId(entityId, partitions, numOfShards),
+          settings = creditSMConsumerConfig.consumerSettings()
+        )
+
+    Await.result(future, 5.seconds)
+  }
+}
 
 @Service
 @DependsOn(Array("actorService"))
-class CreditScoreSMFacadeImpl(actorService: ActorService)
-  extends StateMachineFacade[CreditScoreSMGuardianEvent, Response] (actorService, "creditScoreSMGuardian", CreditScoreSMGuardian()(actorService.sharding(), actorService.actorSystem()))
+class CreditScoreSMFacadeImpl(actorService: ActorService,
+                              creditScoreSMConsumerConfig: ConsumerConfig[String, CreditScoreSMCommand],
+                              topicProperties: TopicProperties)
+  extends StateMachineFacade[CreditScoreSMGuardianEvent, Response](
+      actorService, "creditScoreSMGuardian",
+      CreditScoreSMGuardian(
+        messageExtractor(
+          actorService.actorSystem(),
+          creditScoreSMConsumerConfig,
+          topicProperties),
+        externalAllocationStrategy = true)(actorService.actorSystem(), actorService.sharding()))
     with CreditScoreSMFacade{
   import ActorService._
 

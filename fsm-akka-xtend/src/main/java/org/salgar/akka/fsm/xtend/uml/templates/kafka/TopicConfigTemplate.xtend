@@ -15,7 +15,7 @@ class TopicConfigTemplate {
     }
 
     def generate(org.eclipse.uml2.uml.StateMachine masterSm, Resource input)'''
-        package «packageName(masterSm)».kafka.config;
+        package «packageName(masterSm)».kafka.config
 
         import org.apache.kafka.common.serialization.{Serde, Serdes}
         «FOR org.eclipse.uml2.uml.StateMachine sm : input.allContents.toIterable.filter(org.eclipse.uml2.uml.StateMachine).filter[i|i.active]»

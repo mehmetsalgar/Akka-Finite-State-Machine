@@ -17,9 +17,11 @@ class GuardianTemplate {
     private def generate (org.eclipse.uml2.uml.StateMachine it) '''
         package «packageName»
 
+        import akka.NotUsed
         import akka.actor.typed.receptionist.{Receptionist, ServiceKey}
         import akka.actor.typed.scaladsl.Behaviors
-        import akka.actor.typed.{ActorRef, Behavior, SupervisorStrategy}
+        import akka.actor.typed.{ActorRef, ActorSystem, Behavior, SupervisorStrategy}
+        import akka.cluster.sharding.external.ExternalShardAllocationStrategy
         import akka.cluster.sharding.typed.{HashCodeNoEnvelopeMessageExtractor, ShardingMessageExtractor}
         import akka.cluster.sharding.typed.scaladsl.{ClusterSharding, Entity, EntityTypeKey}
         import akka.persistence.typed.{EventAdapter, PersistenceId, SnapshotAdapter, SnapshotSelectionCriteria}
@@ -35,6 +37,9 @@ class GuardianTemplate {
             private val «name.toLowerCase()»TypeKey = EntityTypeKey[«name»Event]("«name.toLowerCase()»")
             private var _snapshotAdapter: SnapshotAdapter[State] = _
             private var _eventAdapter: EventAdapter[PersistEvent, PersistEvent] = _
+            private var _defaultMessageExtractor: ShardingMessageExtractor[«name»Event, «name»Event] = _
+            private var _externalShardAllocationStrategy:  ExternalShardAllocationStrategy = _
+
 
             sealed trait «name»GuardianEvent
             final case class onReportState(payload: java.util.Map[String, AnyRef], replyTo : ActorRef[«name».Response]) extends «name»GuardianEvent
@@ -55,24 +60,92 @@ class GuardianTemplate {
 
             var listing: Receptionist.Listing = _
 
-            def apply() (implicit sharding: ClusterSharding): Behavior[CreditSMGuardianEvent] =
-                apply(«name»SnapshotAdapter, NoOpEventAdapter.instance[PersistEvent, PersistEvent])(sharding)
+            def apply() (implicit actorSystem: ActorSystem[NotUsed], sharding: ClusterSharding): Behavior[«name»GuardianEvent] =
+                apply(
+                    «name»SnapshotAdapter,
+                    NoOpEventAdapter.instance[PersistEvent, PersistEvent],
+                    externalAllocationStrategy = false
+                )(actorSystem, sharding)
 
-            def apply(snapshotAdapter: SnapshotAdapter[State]) (implicit sharding: ClusterSharding): Behavior[«name»GuardianEvent] =
-                apply(snapshotAdapter, NoOpEventAdapter.instance[PersistEvent, PersistEvent])(sharding)
+            def apply(
+                       shardingMessageExtractor : ShardingMessageExtractor[«name»Event, «name»Event]
+                     )
+                     (implicit actorSystem: ActorSystem[NotUsed], sharding: ClusterSharding): Behavior[«name»GuardianEvent] =
+                apply(
+                    «name»SnapshotAdapter,
+                    NoOpEventAdapter.instance[PersistEvent, PersistEvent],
+                    shardingMessageExtractor,
+                    externalAllocationStrategy = false
+                )(actorSystem, sharding)
 
-            def apply(eventAdapter: EventAdapter[PersistEvent, PersistEvent]) (implicit sharding: ClusterSharding): Behavior[«name»GuardianEvent] =
-                apply(«name»SnapshotAdapter, eventAdapter)(sharding)
+            def apply(
+                       shardingMessageExtractor : ShardingMessageExtractor[«name»Event, «name»Event],
+                       externalAllocationStrategy: Boolean)
+                     (implicit actorSystem: ActorSystem[NotUsed], sharding: ClusterSharding): Behavior[«name»GuardianEvent] =
+                apply(
+                    «name»SnapshotAdapter,
+                    NoOpEventAdapter.instance[PersistEvent, PersistEvent],
+                    shardingMessageExtractor,
+                    externalAllocationStrategy = externalAllocationStrategy
+                )(actorSystem, sharding)
 
-            def apply(snapshotAdapter: SnapshotAdapter[State], eventAdapter: EventAdapter[PersistEvent, PersistEvent])(implicit sharding: ClusterSharding): Behavior[«name»GuardianEvent] = {
+            def apply(snapshotAdapter: SnapshotAdapter[State])
+                     (implicit actorSystem: ActorSystem[NotUsed], sharding: ClusterSharding): Behavior[«name»GuardianEvent] =
+                apply(
+                    snapshotAdapter,
+                    NoOpEventAdapter.instance[PersistEvent, PersistEvent],
+                    externalAllocationStrategy = false
+                )(actorSystem, sharding)
+
+            def apply(eventAdapter: EventAdapter[PersistEvent, PersistEvent])
+                     (implicit actorSystem: ActorSystem[NotUsed], sharding: ClusterSharding): Behavior[«name»GuardianEvent] =
+                apply(
+                    «name»SnapshotAdapter,
+                    eventAdapter,
+                    externalAllocationStrategy = false
+                )(actorSystem, sharding)
+
+            def apply(
+                       snapshotAdapter: SnapshotAdapter[State],
+                       eventAdapter: EventAdapter[PersistEvent, PersistEvent],
+                       shardingMessageExtractor : ShardingMessageExtractor[«name»Event, «name»Event])
+                     (implicit actorSystem: ActorSystem[NotUsed], sharding: ClusterSharding): Behavior[«name»GuardianEvent] =
+                apply(
+                    snapshotAdapter,
+                    eventAdapter,
+                    shardingMessageExtractor,
+                    externalAllocationStrategy = false
+                )(actorSystem, sharding)
+
+            def apply(
+                       snapshotAdapter: SnapshotAdapter[State],
+                       eventAdapter: EventAdapter[PersistEvent, PersistEvent],
+                       externalAllocationStrategy: Boolean)
+                     (implicit actorSystem: ActorSystem[NotUsed], sharding: ClusterSharding): Behavior[«name»GuardianEvent] = {
+                apply(
+                    snapshotAdapter,
+                    eventAdapter,
+                    new HashCodeNoEnvelopeMessageExtractor[«name»Event](numberOfShards = actorSystem.settings.config.getInt("akka.fsm.numberOfShards")) {
+                                                 override def entityId(message: «name»Event): String = message.useCaseKey.getKey
+                                             },
+                    externalAllocationStrategy = false
+                )(actorSystem, sharding)
+            }
+
+            def apply(
+                       snapshotAdapter: SnapshotAdapter[State],
+                       eventAdapter: EventAdapter[PersistEvent, PersistEvent],
+                       shardingMessageExtractor : ShardingMessageExtractor[«name»Event, «name»Event],
+                       externalAllocationStrategy: Boolean
+                     )(implicit actorSystem: ActorSystem[NotUsed], sharding: ClusterSharding): Behavior[«name»GuardianEvent] = {
                 _snapshotAdapter = snapshotAdapter
                 _eventAdapter = eventAdapter
+                _externalShardAllocationStrategy = new ExternalShardAllocationStrategy(actorSystem, «name.toLowerCase()»TypeKey.name)
+                _defaultMessageExtractor = shardingMessageExtractor
                 Behaviors
                     .setup[«name»GuardianEvent] {
                         context =>
-                            val messageExtractor = new HashCodeNoEnvelopeMessageExtractor[«name»Event](numberOfShards = context.system.settings.config.getInt("akka.fsm.numberOfShards")) {
-                                override def entityId(message: «name»Event): String = message.useCaseKey.getKey
-                            }
+
                     val responseWrapper : ActorRef[Response] =
                         context.messageAdapter(response => WrappedReportStateResponse(response))
 
@@ -86,7 +159,7 @@ class GuardianTemplate {
                             case (ctx, onReportState(payload, replyTo)) =>
                                 ctx.log.debug("We are processing onReportState(payload, replyto): {}, {}", payload.toString, replyTo.toString)
                                 val useCaseKey = «name»ServiceLocator.getInstance.useCaseKeyStrategy.getKey(payload)
-                                getActor(payload, messageExtractor) ! «name».onReport(() => useCaseKey, replyTo)
+                                getActor(payload, externalAllocationStrategy) ! «name».onReport(() => useCaseKey, replyTo)
                                 Behaviors.same
                             case (ctx, WrappedReportStateResponse(response)) =>
                                 ctx.log.debug("We are processing WrappedReportStateResponse(response: {}", response.toString)
@@ -95,7 +168,7 @@ class GuardianTemplate {
                                 case (ctx, «trigger.name»(payload, replyTo)) =>
                                     ctx.log.debug("We are processing «trigger.name»(payload): {}", payload.toString)
                                     val useCaseKey = «name»ServiceLocator.getInstance.useCaseKeyStrategy.getKey(payload)
-                                    getActor(payload, messageExtractor) ! «name».«trigger.name»(() => useCaseKey, payload, replyTo)
+                                    getActor(payload, externalAllocationStrategy) ! «name».«trigger.name»(() => useCaseKey, payload, replyTo)
                                     Behaviors.same
                             «ENDFOR»
 
@@ -106,19 +179,33 @@ class GuardianTemplate {
                     }
          }.narrow
 
-        private def getActor(payload: java.util.Map[String, AnyRef], messageExtractor: ShardingMessageExtractor[«name»Event, «name»Event])(implicit sharding: ClusterSharding): ActorRef[«name»Event] = {
+         private def getActor(
+                               payload: java.util.Map[String, AnyRef],
+                               externalAllocationStrategy: Boolean
+                             )
+                             (implicit actorSystem: ActorSystem[NotUsed], sharding: ClusterSharding): ActorRef[«name»Event] = {
             val «name.toLowerCase()»RefOption: Option[ActorRef[«name»Event]] = findActor(payload)
             if («name.toLowerCase()»RefOption.isDefined) {
                 «name.toLowerCase()»RefOption.get
             } else {
-                val shardRegion = prepare(messageExtractor)
+                val shardRegion = prepare(externalAllocationStrategy)
                 shardRegion
             }
-         }
+        }
 
-        private def prepare(messageExtractor: ShardingMessageExtractor[«name»Event, «name»Event])(implicit sharding: ClusterSharding): ActorRef[«name»Event] = {
-            sharding
-                .init(Entity(«name.toLowerCase()»TypeKey)(createBehavior = entityContext =>
+        private def prepare(externalAllocationStrategy: Boolean)
+                    (implicit actorSystem: ActorSystem[NotUsed], sharding: ClusterSharding): ActorRef[«name»Event] = {
+            val entity: Entity[«name»Event, «name»Event] = createEntity()
+            if(externalAllocationStrategy) {
+                entity.withAllocationStrategy(_externalShardAllocationStrategy)
+            }
+            val actorRef: ActorRef[«name»Event] = sharding
+                .init(entity)
+            actorRef
+        }
+
+        private def createEntity(): Entity[«name»Event, «name»Event] = {
+            Entity(«name.toLowerCase()»TypeKey)(createBehavior = entityContext =>
                 Behaviors
                     .supervise(
                         Behaviors.setup[«name»Event] {
@@ -157,7 +244,7 @@ class GuardianTemplate {
                  )
                 .onFailure[Exception](
                     SupervisorStrategy.restartWithBackoff(minBackoff = 5.seconds, maxBackoff = 1.minute, randomFactor = 0.2)
-                )).withMessageExtractor(messageExtractor))
+                )).withMessageExtractor(_defaultMessageExtractor)
         }
 
         private def findActor(payload: java.util.Map[String, AnyRef]): Option[ActorRef[«name»Event]] = {
