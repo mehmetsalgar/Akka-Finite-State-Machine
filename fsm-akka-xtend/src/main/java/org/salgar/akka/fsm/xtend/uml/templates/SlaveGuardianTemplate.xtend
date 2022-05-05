@@ -62,22 +62,22 @@ class SlaveGuardianTemplate {
             var listing: Receptionist.Listing = _
 
             def apply()
-                    (implicit sharding: ClusterSharding, actorSystem: ActorSystem[NotUsed]): Behavior[«name»GuardianEvent] = {
+                    (implicit actorSystem: ActorSystem[NotUsed], sharding: ClusterSharding): Behavior[«name»GuardianEvent] = {
                 apply(
                 «name»SnapshotAdapter,
                 NoOpEventAdapter.instance[PersistEvent, PersistEvent],
-                externalAllocationStrategy = false)(sharding, actorSystem)
+                externalAllocationStrategy = false)(actorSystem, sharding)
             }
 
             def apply(
                         shardingMessageExtractor : ShardingMessageExtractor[«name»Event, «name»Event]
                     )
-                    (implicit sharding: ClusterSharding, actorSystem: ActorSystem[NotUsed]): Behavior[«name»GuardianEvent] = {
+                    (implicit actorSystem: ActorSystem[NotUsed], sharding: ClusterSharding): Behavior[«name»GuardianEvent] = {
                 apply(
                 «name»SnapshotAdapter,
                 NoOpEventAdapter.instance[PersistEvent, PersistEvent],
                 shardingMessageExtractor,
-                externalAllocationStrategy = false)(sharding, actorSystem)
+                externalAllocationStrategy = false)(actorSystem, sharding)
             }
 
             def apply(
@@ -89,35 +89,35 @@ class SlaveGuardianTemplate {
                     NoOpEventAdapter.instance[PersistEvent, PersistEvent],
                     shardingMessageExtractor,
                     externalAllocationStrategy = externalAllocationStrategy
-                )(sharding, actorSystem)
+                )(actorSystem, sharding)
             }
 
             def apply(
                         snapshotAdapter: SnapshotAdapter[State])
-                    (implicit sharding: ClusterSharding, actorSystem: ActorSystem[NotUsed]): Behavior[«name»GuardianEvent] = {
+                    (implicit actorSystem: ActorSystem[NotUsed], sharding: ClusterSharding): Behavior[«name»GuardianEvent] = {
                 apply(
                         snapshotAdapter,
                         NoOpEventAdapter.instance[PersistEvent, PersistEvent],
                         externalAllocationStrategy = false
-                    )(sharding, actorSystem)
+                    )(actorSystem, sharding)
             }
 
             def apply(
                         eventAdapter: EventAdapter[PersistEvent, PersistEvent]
                     )
-                    (implicit sharding: ClusterSharding, actorSystem: ActorSystem[NotUsed]): Behavior[«name»GuardianEvent] = {
+                    (implicit actorSystem: ActorSystem[NotUsed], sharding: ClusterSharding): Behavior[«name»GuardianEvent] = {
                 apply(
                         «name»SnapshotAdapter,
                         eventAdapter,
                         externalAllocationStrategy = false
-                     )(sharding, actorSystem)
+                     )(actorSystem, sharding)
             }
 
             def apply(
                        snapshotAdapter: SnapshotAdapter[State],
                        eventAdapter: EventAdapter[PersistEvent, PersistEvent],
                        externalAllocationStrategy: Boolean)
-                     (implicit sharding: ClusterSharding, actorSystem: ActorSystem[NotUsed]): Behavior[«name»GuardianEvent] = {
+                     (implicit actorSystem: ActorSystem[NotUsed], sharding: ClusterSharding): Behavior[«name»GuardianEvent] = {
                 apply(
                     snapshotAdapter,
                     eventAdapter,
@@ -125,7 +125,7 @@ class SlaveGuardianTemplate {
                         override def entityId(message: «name»Event): String = message.useCaseKey.getKey
                     },
                     externalAllocationStrategy = false
-                )(sharding, actorSystem)
+                )(actorSystem, sharding)
             }
 
             def apply(
@@ -133,7 +133,7 @@ class SlaveGuardianTemplate {
                         eventAdapter: EventAdapter[PersistEvent, PersistEvent],
                         shardingMessageExtractor : ShardingMessageExtractor[«name»Event, «name»Event],
                         externalAllocationStrategy: Boolean)
-                    (implicit sharding: ClusterSharding, actorSystem: ActorSystem[NotUsed]): Behavior[«name»GuardianEvent] = {
+                    (implicit actorSystem: ActorSystem[NotUsed], sharding: ClusterSharding): Behavior[«name»GuardianEvent] = {
                 _snapshotAdapter = snapshotAdapter
                 _eventAdapter = eventAdapter
                 _externalShardAllocationStrategy = new ExternalShardAllocationStrategy(actorSystem, «name.toLowerCase()»TypeKey.name)

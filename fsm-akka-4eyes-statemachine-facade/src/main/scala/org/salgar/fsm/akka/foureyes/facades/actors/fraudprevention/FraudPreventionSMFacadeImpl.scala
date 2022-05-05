@@ -1,49 +1,23 @@
 package org.salgar.fsm.akka.foureyes.facades.actors.fraudprevention
 
-
-import akka.NotUsed
+import akka.actor.typed.ActorRef
 import akka.actor.typed.scaladsl.AskPattern.Askable
-import akka.actor.typed.{ActorRef, ActorSystem}
 import org.salgar.akka.fsm.api.UseCaseKey
 import org.salgar.fsm.akka.akkasystem.ActorService
 import org.salgar.fsm.akka.foureyes.credit.kafka.config.TopicProperties
-import org.salgar.fsm.akka.foureyes.facades.actors.fraudprevention.FraudPreventionSMFacadeImpl.messageExtractor
-import org.salgar.fsm.akka.foureyes.facades.utility.ShardIdUUtility
 import org.salgar.fsm.akka.foureyes.fraudprevention.FraudPreventionSM.{FraudPreventionSMEvent, Response, onStartFraudPreventionEvaluation}
 import org.salgar.fsm.akka.foureyes.fraudprevention.FraudPreventionSMGuardian._
 import org.salgar.fsm.akka.foureyes.fraudprevention.facade.FraudPreventionSMFacade
 import org.salgar.fsm.akka.foureyes.fraudprevention.protobuf.FraudPreventionSMCommand
 import org.salgar.fsm.akka.foureyes.fraudprevention.{FraudPreventionSM, FraudPreventionSMGuardian}
 import org.salgar.fsm.akka.kafka.config.ConsumerConfig
-import org.salgar.fsm.akka.kafka.sharding.FsmAkkaKafkaClusterSharding
 import org.salgar.fsm.akka.statemachine.facade.StateMachineFacade
 import org.springframework.context.annotation.DependsOn
 import org.springframework.stereotype.Service
 
 import java.util
 import javax.annotation.PostConstruct
-import scala.concurrent.duration.DurationInt
-import scala.concurrent.{Await, Future}
-
-object FraudPreventionSMFacadeImpl {
-  def messageExtractor(
-                        actorSystem: ActorSystem[NotUsed],
-                        creditSMConsumerConfig: ConsumerConfig[String, FraudPreventionSMCommand],
-                        topicProperties: TopicProperties): FsmAkkaKafkaClusterSharding.KafkaShardingNoEnvelopeExtractor[FraudPreventionSM.FraudPreventionSMEvent] = {
-    val numOfShards: Int = actorSystem.settings.config.getInt("akka.fsm.numberOfShards")
-    val future: Future[FsmAkkaKafkaClusterSharding.KafkaShardingNoEnvelopeExtractor[FraudPreventionSM.FraudPreventionSMEvent]] =
-      FsmAkkaKafkaClusterSharding(actorSystem)
-        .messageExtractorNoEnvelope(
-          timeout = 10.seconds,
-          topic = topicProperties.getFraudPreventionSM,
-          entityIdExtractor = (event: FraudPreventionSM.FraudPreventionSMEvent) => event.useCaseKey.getKey,
-          shardIdExtractor = (entityId, partitions) => ShardIdUUtility.calculateShardId(entityId, partitions, numOfShards),
-          settings = creditSMConsumerConfig.consumerSettings()
-        )
-
-    Await.result(future, 5.seconds)
-  }
-}
+import scala.concurrent.Future
 
 @Service
 @DependsOn(Array("actorService"))
@@ -52,12 +26,7 @@ class FraudPreventionSMFacadeImpl(actorService: ActorService,
                                   topicProperties: TopicProperties)
   extends StateMachineFacade[FraudPreventionSMGuardianEvent, Response] (
     actorService, "fraudPreventionSMGuardian",
-    FraudPreventionSMGuardian(
-      messageExtractor(
-        actorService.actorSystem(),
-        fraudPreventionSMConsumerConfig,
-        topicProperties),
-      externalAllocationStrategy = true)(actorService.actorSystem(), actorService.sharding()))
+    FraudPreventionSMGuardian()(actorService.actorSystem(), actorService.sharding()))
     with FraudPreventionSMFacade {
   import ActorService._
 

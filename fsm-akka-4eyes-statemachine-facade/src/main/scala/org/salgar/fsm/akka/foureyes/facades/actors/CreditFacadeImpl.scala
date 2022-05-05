@@ -1,53 +1,22 @@
 package org.salgar.fsm.akka.foureyes.facades.actors
 
-import akka.NotUsed
-import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.AskPattern.Askable
 import org.salgar.fsm.akka.akkasystem.ActorService
 import org.salgar.fsm.akka.foureyes.credit.CreditSM.Response
+import org.salgar.fsm.akka.foureyes.credit.CreditSMGuardian
 import org.salgar.fsm.akka.foureyes.credit.CreditSMGuardian._
 import org.salgar.fsm.akka.foureyes.credit.facade.CreditSMFacade
 import org.salgar.fsm.akka.foureyes.credit.kafka.config.TopicProperties
 import org.salgar.fsm.akka.foureyes.credit.protobuf.CreditSMCommand
-import org.salgar.fsm.akka.foureyes.credit.{CreditSM, CreditSMGuardian}
-import org.salgar.fsm.akka.foureyes.facades.actors.CreditFacadeImpl.messageExtractor
-import org.salgar.fsm.akka.foureyes.facades.utility.ShardIdUUtility
 import org.salgar.fsm.akka.foureyes.slaves.SlaveStatemachineConstants.{ADDRESS_CHECK_SM, CUSTOMER_SCORE_SM, FRAUD_PREVENTION_SM, SOURCE_SLAVE_SM_TAG}
 import org.salgar.fsm.akka.kafka.config.ConsumerConfig
-import org.salgar.fsm.akka.kafka.sharding.FsmAkkaKafkaClusterSharding
 import org.salgar.fsm.akka.statemachine.facade.StateMachineFacade
 import org.springframework.context.annotation.DependsOn
 import org.springframework.stereotype.Component
 
 import java.util
 import javax.annotation.PostConstruct
-import scala.concurrent.duration.DurationInt
-import scala.concurrent.{Await, Future}
-
-object CreditFacadeImpl {
-  def messageExtractor(
-                        actorSystem: ActorSystem[NotUsed],
-                        creditSMConsumerConfig: ConsumerConfig[String, CreditSMCommand],
-                        topicProperties: TopicProperties): FsmAkkaKafkaClusterSharding.KafkaShardingNoEnvelopeExtractor[CreditSM.CreditSMEvent] = {
-    val numOfShards: Int = actorSystem.settings.config.getInt("akka.fsm.numberOfShards")
-    val future : Future[FsmAkkaKafkaClusterSharding.KafkaShardingNoEnvelopeExtractor[CreditSM.CreditSMEvent]] =
-      FsmAkkaKafkaClusterSharding(actorSystem)
-        .messageExtractorNoEnvelope(
-          timeout = 10.seconds,
-          topic = topicProperties.getCreditSM,
-          entityIdExtractor = (event : CreditSM.CreditSMEvent) => event.useCaseKey.getKey,
-          shardIdExtractor =  (entityId, partitions) => ShardIdUUtility.calculateShardId(entityId, partitions, numOfShards),
-          settings = creditSMConsumerConfig.consumerSettings()
-        )
-
-    Await.result(future, 5.seconds)
-    /*future.onComplete {
-      case Success(extractor) =>
-        ClusterSharding(actorService.actorSystem())
-      case Failure(exception) => actorService.actorSystem().log.error(exception.getMessage, exception)
-    }*/
-  }
-}
+import scala.concurrent.Future
 
 @Component
 @DependsOn(Array("actorService"))
@@ -56,7 +25,7 @@ class CreditFacadeImpl(actorService: ActorService,
                        topicProperties: TopicProperties)
   extends StateMachineFacade[CreditSMGuardian.CreditSMGuardianEvent, Response] (
     actorService, "creditSMGuardian",
-    CreditSMGuardian(messageExtractor(actorService.actorSystem(), creditSMConsumerConfig, topicProperties), externalAllocationStrategy = true)
+    CreditSMGuardian()
     (actorService.actorSystem(), actorService.sharding()))
     with CreditSMFacade {
   import ActorService._

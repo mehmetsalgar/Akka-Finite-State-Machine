@@ -1,8 +1,7 @@
 package org.salgar.fsm.akka.foureyes.facades.actors.adresscheck
 
-import akka.NotUsed
+import akka.actor.typed.ActorRef
 import akka.actor.typed.scaladsl.AskPattern.Askable
-import akka.actor.typed.{ActorRef, ActorSystem}
 import org.salgar.akka.fsm.api.UseCaseKey
 import org.salgar.fsm.akka.akkasystem.ActorService
 import org.salgar.fsm.akka.foureyes.addresscheck.AdressCheckSM.{AdressCheckSMEvent, Response}
@@ -11,38 +10,14 @@ import org.salgar.fsm.akka.foureyes.addresscheck.facade.AdressCheckSMFacade
 import org.salgar.fsm.akka.foureyes.addresscheck.protobuf.AdressCheckSMCommand
 import org.salgar.fsm.akka.foureyes.addresscheck.{AdressCheckSM, AdressCheckSMGuardian}
 import org.salgar.fsm.akka.foureyes.credit.kafka.config.TopicProperties
-import org.salgar.fsm.akka.foureyes.facades.actors.adresscheck.AddressCheckSMFacadeImpl.messageExtractor
-import org.salgar.fsm.akka.foureyes.facades.utility.ShardIdUUtility
 import org.salgar.fsm.akka.kafka.config.ConsumerConfig
-import org.salgar.fsm.akka.kafka.sharding.FsmAkkaKafkaClusterSharding
 import org.salgar.fsm.akka.statemachine.facade.StateMachineFacade
 import org.springframework.context.annotation.DependsOn
 import org.springframework.stereotype.Service
 
 import java.util
 import javax.annotation.PostConstruct
-import scala.concurrent.duration.DurationInt
-import scala.concurrent.{Await, Future}
-
-object AddressCheckSMFacadeImpl {
-  def messageExtractor(
-                        actorSystem: ActorSystem[NotUsed],
-                        creditSMConsumerConfig: ConsumerConfig[String, AdressCheckSMCommand],
-                        topicProperties: TopicProperties): FsmAkkaKafkaClusterSharding.KafkaShardingNoEnvelopeExtractor[AdressCheckSM.AdressCheckSMEvent] = {
-    val numOfShards: Int = actorSystem.settings.config.getInt("akka.fsm.numberOfShards")
-    val future: Future[FsmAkkaKafkaClusterSharding.KafkaShardingNoEnvelopeExtractor[AdressCheckSM.AdressCheckSMEvent]] =
-      FsmAkkaKafkaClusterSharding(actorSystem)
-        .messageExtractorNoEnvelope(
-          timeout = 10.seconds,
-          topic = topicProperties.getAdressCheckSM,
-          entityIdExtractor = (event: AdressCheckSM.AdressCheckSMEvent) => event.useCaseKey.getKey,
-          shardIdExtractor = (entityId, partitions) => ShardIdUUtility.calculateShardId(entityId, partitions, numOfShards),
-          settings = creditSMConsumerConfig.consumerSettings()
-        )
-
-    Await.result(future, 5.seconds)
-  }
-}
+import scala.concurrent.Future
 
 @Service
 @DependsOn(Array("actorService"))
@@ -51,14 +26,7 @@ class AddressCheckSMFacadeImpl(actorService: ActorService,
                                topicProperties: TopicProperties)
   extends StateMachineFacade[AdressCheckSMGuardianEvent, Response] (
     actorService, "addressCheckSMGuardian",
-    AdressCheckSMGuardian(
-      messageExtractor(
-        actorService.actorSystem(),
-        addressCheckSMConsumerConfig,
-        topicProperties
-      ),
-      externalAllocationStrategy = true
-    )(actorService.actorSystem(), actorService.sharding()))
+    AdressCheckSMGuardian()(actorService.actorSystem(), actorService.sharding()))
     with AdressCheckSMFacade {
   import ActorService._
 
