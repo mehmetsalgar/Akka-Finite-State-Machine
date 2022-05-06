@@ -23,7 +23,7 @@ import org.salgar.fsm.akka.foureyes.fraudprevention.actions.config.FraudPreventi
 import org.salgar.fsm.akka.foureyes.fraudprevention.guards.config.FraudPreventionSMGuardConfiguration;
 import org.salgar.fsm.akka.foureyes.fraudprevention.kafka.stream.FraudPreventionSMStreamConfig;
 import org.salgar.fsm.akka.foureyes.fraudprevention.protobuf.FraudPreventionSMCommand;
-import org.salgar.fsm.akka.foureyes.kafka.config.ConsumerConfig;
+import org.salgar.fsm.akka.kafka.config.ConsumerConfig;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

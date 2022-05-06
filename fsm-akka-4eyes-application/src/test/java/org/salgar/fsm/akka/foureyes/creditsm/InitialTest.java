@@ -51,7 +51,7 @@ import static org.salgar.fsm.akka.foureyes.slaves.SlaveStatemachineConstants.*;
 @ActiveProfiles({"itest"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @EmbeddedKafka(
-        partitions = 6,
+        partitions = 1,
         topics = {"creditSM", "creditScoreSM", "addressCheckSM", "fraudPreventionSM", "multiTenantScreditScoreSM"},
         brokerProperties = {"listeners=PLAINTEXT://localhost:9092", "port=9092"})
 @Slf4j
