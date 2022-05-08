@@ -3,6 +3,7 @@ package org.salgar.fsm.akka.foureyes.creditsm;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.salgar.akka.fsm.foureyes.addresscheck.AddressCheckService;
@@ -45,7 +46,7 @@ import static org.salgar.akka.fsm.foureyes.notifier.NotificationHelper.*;
 import static org.salgar.fsm.akka.foureyes.credit.CreditSM.*;
 import static org.salgar.fsm.akka.foureyes.slaves.SlaveStatemachineConstants.*;
 
-//@Disabled
+@Disabled
 @EnableElasticsearchRepositories("org.salgar.fsm.akka.foureyes.elasticsearch")
 @ActiveProfiles({"itest"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
@@ -259,9 +260,6 @@ public class InitialTest {
         final List<Customer> creditTenants = new ArrayList<>();
         creditTenants.add(customer);
         Map<String, Object> payload = preparePayload(creditUuid, creditTenants);
-
-        //final List<String> notificationList = Arrays.asList("relationshipmanager1@example.com", "relationshipmanager2@example.com");
-        //final List<String> salesManagerNotificationList = Arrays.asList("salesmanager1@example.com", "salesmanager2@example.com");
 
         creditSMFacade.submit(payload);
 

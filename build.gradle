@@ -866,7 +866,8 @@ project(':fsm-akka-kafka') {
         implementation 'org.springframework.boot:spring-boot-autoconfigure'
         api "io.confluent:kafka-protobuf-serializer:${versions.confluent}"
         api "io.confluent:kafka-streams-protobuf-serde:${versions.confluent}"
-        implementation "com.typesafe.akka:akka-stream-kafka-cluster-sharding_${versions.scala.major}:${versions.akkaKafkaStream}"
+        implementation "com.typesafe.akka:akka-cluster-sharding-typed_${versions.scala.major}:${versions.akka}"
+        implementation "com.typesafe.akka:akka-stream-kafka_${versions.scala.major}:${versions.akkaKafkaStream}"
     }
 }
 
@@ -930,6 +931,7 @@ project(':fsm-akka-4eyes-kafka') {
         implementation "com.typesafe.akka:akka-persistence-typed_${versions.scala.major}:${versions.akka}"
         implementation "com.typesafe.akka:akka-cluster-sharding-typed_${versions.scala.major}:${versions.akka}"
         implementation "com.typesafe.akka:akka-stream-kafka_${versions.scala.major}:${versions.akkaKafkaStream}"
+        implementation "com.typesafe.akka:akka-stream-kafka-cluster-sharding_${versions.scala.major}:${versions.akkaKafkaStream}"
         api "io.confluent:kafka-protobuf-serializer:${versions.confluent}"
         api "io.confluent:kafka-streams-protobuf-serde:${versions.confluent}"
         implementation "org.projectlombok:lombok:${versions.lombok}"
@@ -1205,7 +1207,7 @@ project(':fsm-akka-4eyes-statemachine-facade') {
         implementation project(':fsm-akka-kafka'),
                 project(':fsm-akka-4eyes-kafka'),
                 project(':fsm-akka-4eyes-protobuf')
-        implementation "com.typesafe.akka:akka-stream-kafka-cluster-sharding_${versions.scala.major}:${versions.akkaKafkaStream}"
+        implementation "com.typesafe.akka:akka-stream-kafka_${versions.scala.major}:${versions.akkaKafkaStream}"
     }
 }
 

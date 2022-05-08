@@ -18,7 +18,7 @@ class KafkaConfigTemplate {
                .filter(org.eclipse.uml2.uml.StateMachine).filter[i|i.active]
         val masterSm = sms.filter[s|!s.abstract].head
 	    val content = generate(sms, masterSm)
-        fsa.generateFile(packagePath(masterSm)+"/kafka/"+"KafkaConfig.java", content)
+        fsa.generateFile(packagePath(masterSm)+"/kafka/config/"+"KafkaConfig.java", content)
     }
 
     def generate(Iterable<org.eclipse.uml2.uml.StateMachine> sms, org.eclipse.uml2.uml.StateMachine masterSm)'''
@@ -28,6 +28,7 @@ class KafkaConfigTemplate {
         import org.springframework.boot.context.properties.ConfigurationProperties;
         import org.springframework.context.annotation.Bean;
         import org.springframework.context.annotation.Configuration;
+        import org.springframework.context.annotation.Primary;
 
         @Configuration
         public class KafkaConfig {
@@ -36,7 +37,6 @@ class KafkaConfigTemplate {
             public KafkaProperties.Consumer «masterSm.name.toFirstLower»Properties() {
                 return new KafkaProperties.Consumer();
             }
-
             «FOR sm : sms»
                 @Bean
                 @ConfigurationProperties("spring.kafka.consumer.«CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_HYPHEN, sm.name.substring(0, sm.name.length-1) + Character.toLowerCase(sm.name.charAt(sm.name.length-1)))»")

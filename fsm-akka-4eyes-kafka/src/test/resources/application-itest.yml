@@ -29,6 +29,8 @@ org:
 spring:
   kafka:
     bootstrap-servers: localhost:9092
+    properties:
+      "schema.registry.url": "cp-schema-registry:8081"
     consumer:
       autoOffsetReset: earliest
       group-id: "akka-fsm-foureyes"
@@ -74,4 +76,17 @@ spring:
     producer:
       batch-size: 1
       properties:
+        "schema.registry.url": "cp-schema-registry:8081"
         "linger.ms" : "1"
+    credit-score-sm:
+      bootstrap-servers: ${spring.kafka.bootstrap-servers}
+      properties:
+        "schema.registry.url": "cp-schema-registry:8081"
+      producer:
+        batch-size: 1
+        properties:
+          "schema.registry.url": "cp-schema-registry:8081"
+          "derive.type": "true"
+          "specific.protobuf.value.type": "org.salgar.fsm.akka.foureyes.credit.protobuf.CreditScoreSMCommand"
+          "linger.ms" : "1"
+          "partitioner.class" : "org.salgar.fsm.akka.foureyes.kafka.partitioner.FoureyesPartitioner"

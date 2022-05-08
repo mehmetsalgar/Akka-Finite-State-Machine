@@ -36,7 +36,7 @@ object CreditScoreSMFacadeImpl {
           timeout = 10.seconds,
           topic = topicProperties.getCreditScoreSM,
           entityIdExtractor = (event: CreditScoreSM.CreditScoreSMEvent) => event.useCaseKey.getKey,
-          shardIdExtractor = (entityId, partitions) => ShardIdUUtility.calculateShardId(entityId, partitions, numOfShards),
+          shardIdExtractor = (entityId, partitions) => ShardIdUUtility.calculateSlaveShardId(entityId, partitions, numOfShards),
           settings = creditSMConsumerConfig.consumerSettings()
         )
 

@@ -27,6 +27,7 @@ class TopicConfigTemplate {
         import org.springframework.beans.factory.annotation.Qualifier
         import org.springframework.boot.autoconfigure.kafka.KafkaProperties
         import org.springframework.stereotype.Component
+        import org.springframework.context.annotation.DependsOn
 
         import javax.annotation.PostConstruct
 

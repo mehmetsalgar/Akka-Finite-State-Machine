@@ -33,8 +33,8 @@ class GuardianTemplate {
         import scala.concurrent.duration._
 
         object «name»Guardian {
-            private val «name.toLowerCase()»Key = ServiceKey[«name»Event]("«name.toLowerCase()»Service")
-            private val «name.toLowerCase()»TypeKey = EntityTypeKey[«name»Event]("«name.toLowerCase()»")
+            private[akka] val «name.toLowerCase()»Key = ServiceKey[«name»Event]("«name.toLowerCase()»Service")
+            private[akka] val «name.toLowerCase()»TypeKey = EntityTypeKey[«name»Event]("«name.toLowerCase()»")
             private var _snapshotAdapter: SnapshotAdapter[State] = _
             private var _eventAdapter: EventAdapter[PersistEvent, PersistEvent] = _
             private var _defaultMessageExtractor: ShardingMessageExtractor[«name»Event, «name»Event] = _

@@ -28,6 +28,7 @@ class ConsumerConfigTemplate {
 
         import akka.kafka.ConsumerSettings
         import org.salgar.fsm.akka.akkasystem.ActorService
+        import «packageName(sm)».«sm.name»Guardian
         import org.salgar.fsm.akka.kafka.config.ConsumerConfig
         import «packageName(masterSm)».kafka.config.TopicConfig
         import «packageName(sm)».protobuf.«sm.name.toFirstUpper»Command
@@ -41,7 +42,7 @@ class ConsumerConfigTemplate {
         @Component
         class «sm.name.toFirstUpper»ConsumerConfig(actorService: ActorService,
                                      topicConfig: TopicConfig,
-                                     kafkaProperties: KafkaProperties,
+                                     @Qualifier("spring.kafka-org.springframework.boot.autoconfigure.kafka.KafkaProperties") kafkaProperties: KafkaProperties,
                                      @Qualifier("«sm.name.toFirstLower»Properties") consumerProperties: KafkaProperties.Consumer)
                                      extends ConsumerConfig[String, «sm.name.toFirstUpper»Command] {
         override val consumerSettings : ConsumerSettings[String, «sm.name.toFirstUpper»Command] =
@@ -56,7 +57,7 @@ class ConsumerConfigTemplate {
                 .collect(Collectors.joining(","))
             )
             .withClientId("akka-consumer-«CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_HYPHEN, sm.name).toLowerCase»")
-            .withGroupId(consumerProperties.getGroupId)
+            .withGroupId(«sm.name»Guardian.«sm.name.toLowerCase()»TypeKey.name) //advice from https://doc.akka.io/docs/alpakka-kafka/current/cluster-sharding.html use the same group id as we used in the `EntityTypeKey`
             .withProperties(consumerProperties.buildProperties().asInstanceOf[java.util.Map[String, String]])
             .withStopTimeout(0.seconds)
         }

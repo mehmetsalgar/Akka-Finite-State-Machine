@@ -27,14 +27,16 @@ class StreamConfigTemplate {
         package «packageName(sm)».kafka.stream
 
         import akka.Done
+        import akka.actor.typed.ActorRef
+        import akka.kafka.cluster.sharding.KafkaClusterSharding
         import akka.kafka.scaladsl.{Committer, Consumer}
-        import akka.kafka.{CommitterSettings, Subscriptions}
+        import akka.kafka.{CommitterSettings, ConsumerRebalanceEvent, Subscriptions}
         import akka.stream.Materializer
         import akka.stream.scaladsl.Sink
         import org.salgar.fsm.akka.akkasystem.ActorService
-        import «packageName(sm)».kafka.config.«sm.name.toFirstUpper»ConsumerConfig
         import «packageName(masterSm)».kafka.config.TopicProperties
         import «packageName(masterSm)».kafka.facade.AskFacade
+        import «packageName(sm)».«sm.name»Guardian
         import «packageName(sm)».protobuf.«sm.name.toFirstUpper»Command
         import org.salgar.fsm.akka.kafka.config.ConsumerConfig
 
@@ -47,11 +49,18 @@ class StreamConfigTemplate {
           ) = {
             implicit val materializer: Materializer = Materializer.createMaterializer(actorService.actorSystem())
 
+            val rebalanceListener: ActorRef[ConsumerRebalanceEvent] =
+              KafkaClusterSharding(actorService.actorSystem()).rebalanceListener(«sm.name»Guardian.«sm.name.toLowerCase»TypeKey)
+            import akka.actor.typed.scaladsl.adapter._
+            val rebalanceListenerClassic: akka.actor.ActorRef = rebalanceListener.toClassic
+
             val control: akka.kafka.scaladsl.Consumer.DrainingControl[Done] =
               Consumer
                 .sourceWithOffsetContext(
                     «sm.name.toFirstLower»ConsumerConfig.consumerSettings,
-                    Subscriptions.topics(topicProperties.get«sm.name.toFirstUpper»))
+                    Subscriptions
+                        .topics(topicProperties.get«sm.name.toFirstUpper»)
+                        .withRebalanceListener(rebalanceListenerClassic))
                 .mapAsync(Runtime.getRuntime.availableProcessors() * 2) { consumerRecord =>
                   {
                     actorService.actorSystem().log.info("-------------------------------------------")

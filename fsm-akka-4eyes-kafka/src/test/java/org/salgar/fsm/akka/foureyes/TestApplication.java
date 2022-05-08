@@ -8,7 +8,6 @@ import org.salgar.fsm.akka.foureyes.addresscheck.kafka.stream.AdressCheckSMStrea
 import org.salgar.fsm.akka.foureyes.addresscheck.protobuf.AdressCheckSMCommand;
 import org.salgar.fsm.akka.foureyes.credit.actions.config.CreditSMActionConfiguration;
 import org.salgar.fsm.akka.foureyes.credit.guards.config.CreditSMGuardConfiguration;
-import org.salgar.fsm.akka.foureyes.credit.kafka.config.TopicConfig;
 import org.salgar.fsm.akka.foureyes.credit.kafka.config.TopicProperties;
 import org.salgar.fsm.akka.foureyes.credit.kafka.facade.AskFacade;
 import org.salgar.fsm.akka.foureyes.credit.kafka.stream.CreditSMStreamConfig;
@@ -23,11 +22,9 @@ import org.salgar.fsm.akka.foureyes.fraudprevention.actions.config.FraudPreventi
 import org.salgar.fsm.akka.foureyes.fraudprevention.guards.config.FraudPreventionSMGuardConfiguration;
 import org.salgar.fsm.akka.foureyes.fraudprevention.kafka.stream.FraudPreventionSMStreamConfig;
 import org.salgar.fsm.akka.foureyes.fraudprevention.protobuf.FraudPreventionSMCommand;
-import org.salgar.fsm.akka.foureyes.kafka.config.ConsumerConfig;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.salgar.fsm.akka.kafka.config.ConsumerConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.event.EventListener;
@@ -47,18 +44,6 @@ import org.springframework.context.event.EventListener;
 @RequiredArgsConstructor
 public class TestApplication {
     private final ActorService actorService;
-    private final TopicConfig topicConfig;
-    private final KafkaProperties kafkaProperties;
-    @Qualifier("creditSMProperties")
-    private final KafkaProperties.Consumer creditSMProperties;
-    @Qualifier("creditScoreSMProperties")
-    private final KafkaProperties.Consumer creditScoreSMProperties;
-    @Qualifier("multiTenantCreditScoreSMProperties")
-    private final KafkaProperties.Consumer multiTenantCreditScoreSMProperties;
-    @Qualifier("adressCheckSMProperties")
-    private final KafkaProperties.Consumer adressCheckSMProperties;
-    @Qualifier("fraudPreventionSMProperties")
-    private final KafkaProperties.Consumer fraudPreventionSMProperties;
     private final TopicProperties topicProperties;
     private final AskFacade askFacade;
     private final ConsumerConfig<String, CreditSMCommand> creditSMConsumerConfig;
