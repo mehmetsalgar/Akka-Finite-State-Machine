@@ -104,7 +104,11 @@ subprojects {
     if(ext.flag) {
         ext.props = [
                 SEED_NODES: property('SEED_NODES'),
-                K8SSANDRA_PASSWORD: property('K8SSANDRA_PASSWORD')
+                K8SSANDRA_PASSWORD: property('K8SSANDRA_PASSWORD'),
+                DOCKER_HUB_USER: property('DOCKER_HUB_USER'),
+                DOCKER_HUB_PASSWORD: property('DOCKER_HUB_PASSWORD'),
+                DOCKER_UPLOAD_USER: property('DOCKER_UPLOAD_USER'),
+                DOCKER_UPLOAD_PASSWORD: property('DOCKER_UPLOAD_PASSWORD')
         ]
     }
 }
@@ -1279,15 +1283,15 @@ project(':fsm-akka-4eyes-application') {
                 }
             }
             auth {
-                username = "posthumecaver"
-                password = "nanimemo"
+                username = "${props.DOCKER_HUB_USER}"
+                password = "${props.DOCKER_HUB_PASSWORD}"
             }
         }
         to {
             image = "fsm-akka.registry:5555/fsmakka/${project.name}:${project.version}"
             auth {
-                username = 'fsm_akka_admin'
-                password = 'Fsm_akka_admin#1234'
+                username = "${props.DOCKER_UPLOAD_USER}"
+                password = "${props.DOCKER_UPLOAD_PASSWORD}"
             }
         }
         extraDirectories {

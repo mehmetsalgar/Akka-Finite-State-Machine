@@ -166,13 +166,16 @@ public class InitialTest {
         Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
 
         futureCreditSMState = creditSMFacade.currentState(payload);
-
         report =
                 (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
         assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_SALES_MANAGER_APPROVED_$_CREDITSCORE_RECEIVED.class));
-        Map<String, CreditTenantScoreResult> map = (Map<String, CreditTenantScoreResult>) report.state().controlObject().get(PayloadVariableConstants.CREDIT_SCORE_TENANT_RESULTS);
+        Map<String, CreditTenantScoreResult> map =
+                (Map<String, CreditTenantScoreResult>) report
+                        .state()
+                        .controlObject()
+                        .get(PayloadVariableConstants.CREDIT_SCORE_TENANT_RESULTS);
         assertEquals(73.72, map.get(customer.getPersonalId()).getCreditScore());
 
         Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
@@ -185,12 +188,12 @@ public class InitialTest {
         Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
 
         futureCreditSMState = creditSMFacade.currentState(payload);
-
         report =
                 (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_SALES_MANAGER_APPROVED_$_CREDITSCORE_FRAUDPREVENTION_RESULT_RECEIVED.class));
+        assertThat(report.state(),
+                instanceOf(CREDIT_APPLICATION_SUBMITTED_$_SALES_MANAGER_APPROVED_$_CREDITSCORE_FRAUDPREVENTION_RESULT_RECEIVED.class));
         assertEquals(true, report.state().controlObject().get(PayloadVariableConstants.FRAUD_PREVENTION_RESULT));
 
         Thread.sleep(WAIT_TIME_BETWEEN_STEPS);

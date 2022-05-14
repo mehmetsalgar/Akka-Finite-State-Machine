@@ -749,7 +749,7 @@
     <edges xmi:type="notation:Connector" xmi:id="_Enfc0OMMEeuvzPeHGzGr1A" type="Transition_Edge" source="_4yVMsOMLEeuvzPeHGzGr1A" target="_relesOMLEeuvzPeHGzGr1A">
       <children xmi:type="notation:DecorationNode" xmi:id="_EngD4OMMEeuvzPeHGzGr1A" type="Transition_NameLabel">
         <styles xmi:type="notation:BooleanValueStyle" xmi:id="_FaYSUOMMEeuvzPeHGzGr1A" name="IS_UPDATED_POSITION" booleanValue="true"/>
-        <layoutConstraint xmi:type="notation:Location" xmi:id="_EngD4eMMEeuvzPeHGzGr1A" x="9" y="-15"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_EngD4eMMEeuvzPeHGzGr1A" x="-51" y="-15"/>
       </children>
       <children xmi:type="notation:DecorationNode" xmi:id="_EngD4uMMEeuvzPeHGzGr1A" type="Transition_GuardLabel">
         <styles xmi:type="notation:BooleanValueStyle" xmi:id="_Fap_IOMMEeuvzPeHGzGr1A" name="IS_UPDATED_POSITION" booleanValue="true"/>
