@@ -3,7 +3,6 @@ package org.salgar.fsm.akka.foureyes.creditsm;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.salgar.akka.fsm.foureyes.addresscheck.AddressCheckService;
@@ -14,9 +13,7 @@ import org.salgar.akka.fsm.foureyes.faudprevention.FraudPreventionService;
 import org.salgar.akka.fsm.foureyes.notifier.NotifierService;
 import org.salgar.fsm.akka.foureyes.FSMAkka4EyesApplication;
 import org.salgar.fsm.akka.foureyes.credit.facade.CreditSMFacade;
-import org.salgar.fsm.akka.foureyes.credit.model.Address;
-import org.salgar.fsm.akka.foureyes.credit.model.CreditTenantScoreResult;
-import org.salgar.fsm.akka.foureyes.credit.model.Customer;
+import org.salgar.fsm.akka.foureyes.credit.model.*;
 import org.salgar.fsm.akka.foureyes.elasticsearch.CreditSMRepository;
 import org.salgar.fsm.akka.foureyes.elasticsearch.model.CreditSmEs;
 import org.salgar.fsm.akka.foureyes.usecasekey.CreditUseCaseKeyStrategy;
@@ -46,7 +43,7 @@ import static org.salgar.akka.fsm.foureyes.notifier.NotificationHelper.*;
 import static org.salgar.fsm.akka.foureyes.credit.CreditSM.*;
 import static org.salgar.fsm.akka.foureyes.slaves.SlaveStatemachineConstants.*;
 
-@Disabled
+//@Disabled
 @EnableElasticsearchRepositories("org.salgar.fsm.akka.foureyes.elasticsearch")
 @ActiveProfiles({"itest"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
@@ -109,7 +106,7 @@ public class InitialTest {
                         "customer1@test.info");
         final List<Customer> creditTenants = new ArrayList<>();
         creditTenants.add(customer);
-        Map<String, Object> payload = preparePayload(creditUuid, creditTenants);
+        Map<String, Object> payload = preparePayload(creditUuid, 100000.0, creditTenants);
 
         creditSMFacade.submit(payload);
 
@@ -120,7 +117,7 @@ public class InitialTest {
                 (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_WAITING_APPROVAL.class));
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_WAITING_APPROVAL_$_WAITING_MANAGER_APPROVAL.class));
         assertEquals(((List<Customer>)report.state().controlObject().get(PayloadVariableConstants.CREDIT_TENANTS)).get(0), customer);
         verify(notifierService, times(1)).notify(eq(relationShipNotificationList), anyString());
 
@@ -262,7 +259,7 @@ public class InitialTest {
                         "customer1@test.info");
         final List<Customer> creditTenants = new ArrayList<>();
         creditTenants.add(customer);
-        Map<String, Object> payload = preparePayload(creditUuid, creditTenants);
+        Map<String, Object> payload = preparePayload(creditUuid, 100000.0, creditTenants);
 
         //final List<String> notificationList = Arrays.asList("relationshipmanager1@example.com", "relationshipmanager2@example.com");
         //final List<String> salesManagerNotificationList = Arrays.asList("salesmanager1@example.com", "salesmanager2@example.com");
@@ -276,7 +273,7 @@ public class InitialTest {
                 (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_WAITING_APPROVAL.class));
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_WAITING_APPROVAL_$_WAITING_MANAGER_APPROVAL.class));
         assertEquals(((List<Customer>)report.state().controlObject().get(PayloadVariableConstants.CREDIT_TENANTS)).get(0), customer);
         verify(notifierService, times(1)).notify(eq(relationShipNotificationList), anyString());
 
@@ -411,7 +408,7 @@ public class InitialTest {
                         "customer1@test.info");
         final List<Customer> creditTenants = new ArrayList<>();
         creditTenants.add(customer);
-        Map<String, Object> payload = preparePayload(creditUuid, creditTenants);
+        Map<String, Object> payload = preparePayload(creditUuid, 100000.0, creditTenants);
 
         final List<String> notificationList = Arrays.asList("relationshipmanager1@example.com", "relationshipmanager2@example.com");
         final List<String> salesManagerNotificationList = Arrays.asList("salesmanager1@example.com", "salesmanager2@example.com");
@@ -425,7 +422,7 @@ public class InitialTest {
                 (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_WAITING_APPROVAL.class));
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_WAITING_APPROVAL_$_WAITING_MANAGER_APPROVAL.class));
         assertEquals(((List<Customer>)report.state().controlObject().get(PayloadVariableConstants.CREDIT_TENANTS)).get(0), customer);
         verify(notifierService, times(1)).notify(eq(notificationList), anyString());
 
@@ -482,7 +479,7 @@ public class InitialTest {
                         "customer1@test.info");
         final List<Customer> creditTenants = new ArrayList<>();
         creditTenants.add(customer);
-        Map<String, Object> payload = preparePayload(creditUuid, creditTenants);
+        Map<String, Object> payload = preparePayload(creditUuid, 100000.0, creditTenants);
 
         final List<String> notificationList = Arrays.asList("relationshipmanager1@example.com", "relationshipmanager2@example.com");
         final List<String> salesManagerNotificationList = Arrays.asList("salesmanager1@example.com", "salesmanager2@example.com");
@@ -496,7 +493,7 @@ public class InitialTest {
                 (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_WAITING_APPROVAL.class));
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_WAITING_APPROVAL_$_WAITING_MANAGER_APPROVAL.class));
         assertEquals(((List<Customer>)report.state().controlObject().get(PayloadVariableConstants.CREDIT_TENANTS)).get(0), customer);
         verify(notifierService, times(1)).notify(eq(notificationList), anyString());
 
@@ -650,7 +647,7 @@ public class InitialTest {
                         "customer1@test.info");
         final List<Customer> creditTenants = new ArrayList<>();
         creditTenants.add(customer);
-        Map<String, Object> payload = preparePayload(creditUuid, creditTenants);
+        Map<String, Object> payload = preparePayload(creditUuid, 100000.0, creditTenants);
 
         final List<String> notificationList = Arrays.asList("relationshipmanager1@example.com", "relationshipmanager2@example.com");
         payload.put(RELATIONSHIP_MANAGER_NOTIFICATION_LIST, notificationList);
@@ -664,7 +661,7 @@ public class InitialTest {
                 (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_WAITING_APPROVAL.class));
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_WAITING_APPROVAL_$_WAITING_MANAGER_APPROVAL.class));
         assertEquals(((List<Customer>)report.state().controlObject().get(PayloadVariableConstants.CREDIT_TENANTS)).get(0), customer);
         verify(notifierService, times(1)).notify(eq(notificationList), anyString());
 
@@ -781,7 +778,7 @@ public class InitialTest {
                         "customer1@test.info");
         final List<Customer> creditTenants = new ArrayList<>();
         creditTenants.add(customer);
-        Map<String, Object> payload = preparePayload(creditUuid, creditTenants);
+        Map<String, Object> payload = preparePayload(creditUuid, 100000.0, creditTenants);
 
         final List<String> notificationList = Arrays.asList("relationshipmanager1@example.com", "relationshipmanager2@example.com");
         final List<String> salesManagerNotificationList = Arrays.asList("salesmanager1@example.com", "salesmanager2@example.com");
@@ -795,7 +792,7 @@ public class InitialTest {
                 (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_WAITING_APPROVAL.class));
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_WAITING_APPROVAL_$_WAITING_MANAGER_APPROVAL.class));
         assertEquals(((List<Customer>)report.state().controlObject().get(PayloadVariableConstants.CREDIT_TENANTS)).get(0), customer);
         verify(notifierService, times(1)).notify(eq(notificationList), anyString());
 
@@ -928,7 +925,7 @@ public class InitialTest {
                         "customer1@test.info");
         final List<Customer> creditTenants = new ArrayList<>();
         creditTenants.add(customer);
-        Map<String, Object> payload = preparePayload(creditUuid, creditTenants);
+        Map<String, Object> payload = preparePayload(creditUuid, 100000.0, creditTenants);
 
         creditSMFacade.submit(payload);
 
@@ -939,7 +936,7 @@ public class InitialTest {
                 (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_WAITING_APPROVAL.class));
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_WAITING_APPROVAL_$_WAITING_MANAGER_APPROVAL.class));
         assertEquals(((List<Customer>)report.state().controlObject().get(PayloadVariableConstants.CREDIT_TENANTS)).get(0), customer);
         verify(notifierService, times(1)).notify(eq(relationShipNotificationList), anyString());
 
@@ -1076,6 +1073,22 @@ public class InitialTest {
         verify(addressCheckServiceMockBean).addressExist(anyString(), anyString(), anyString(), anyString());
         verify(notifierService, never()).notify(eq(seniorSalesManagerNotificationList), anyString());
         Thread.sleep(WAIT_TIME_ELASTIC);
+    }
+
+    private Map<String, Object> preparePayload(
+            String creditUuid,
+            Double creditAmount,
+            List<Customer> creditTenants) {
+
+        final Map<String, Object> payload = new HashMap<>();
+        CreditApplication creditApplication = new CreditApplication(
+                creditAmount,
+                new CreditTenants(creditTenants)
+        );
+        payload.put(CreditUseCaseKeyStrategy.CREDIT_UUID, creditUuid);
+        payload.put(PayloadVariableConstants.CREDIT_APPLICATION, creditApplication);
+
+        return payload;
     }
 
     private Map<String, Object> preparePayload(

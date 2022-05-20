@@ -312,7 +312,7 @@ public class KafkaITest {
                 (CreditSM.ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CreditSM.CREDIT_APPLICATION_SUBMITTED_$_WAITING_APPROVAL.class));
+        assertThat(report.state(), instanceOf(CreditSM.CREDIT_APPLICATION_SUBMITTED_$_WAITING_APPROVAL_$_WAITING_MANAGER_APPROVAL.class));
         assertEquals(
                 ((List<org.salgar.fsm.akka.foureyes.credit.model.Customer>)report.state().controlObject().get(PayloadVariableConstants.CREDIT_TENANTS)).get(0),
                 converterService.converter(PROTOBUF_PREFIX + customer1.getDescriptorForType().getFullName()).convert(customer1));

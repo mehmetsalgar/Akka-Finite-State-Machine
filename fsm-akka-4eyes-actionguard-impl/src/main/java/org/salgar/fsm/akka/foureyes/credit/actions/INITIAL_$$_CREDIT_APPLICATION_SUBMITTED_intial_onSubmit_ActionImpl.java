@@ -6,14 +6,16 @@ import org.salgar.akka.fsm.foureyes.cra.kafka.CustomerRelationshipAdapter;
 import org.salgar.akka.fsm.foureyes.cra.model.CRMCustomer;
 import org.salgar.akka.fsm.foureyes.notifier.NotifierService;
 import org.salgar.fsm.akka.foureyes.credit.CreditSM;
+import org.salgar.fsm.akka.foureyes.credit.model.CreditApplication;
 import org.salgar.fsm.akka.foureyes.credit.model.Customer;
 import org.salgar.fsm.akka.foureyes.usecasekey.CreditUseCaseKeyStrategy;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import static org.salgar.akka.fsm.foureyes.notifier.NotificationHelper.RELATIONSHIP_MANAGER_NOTIFICATION_LIST;
-import static org.salgar.fsm.akka.foureyes.variables.PayloadVariableConstants.CREDIT_TENANTS;
+import static org.salgar.fsm.akka.foureyes.variables.PayloadVariableConstants.*;
 
 @RequiredArgsConstructor
 public class INITIAL_$$_CREDIT_APPLICATION_SUBMITTED_intial_onSubmit_ActionImpl
@@ -30,12 +32,13 @@ public class INITIAL_$$_CREDIT_APPLICATION_SUBMITTED_intial_onSubmit_ActionImpl
         notifierService.notify(notificationList, "Credit Tenants applied for Credit. Please check!");
 
         String creditId = (String) payload.get(CreditUseCaseKeyStrategy.CREDIT_UUID);
-        List<Customer> customers = (List<Customer>) payload.get(CREDIT_TENANTS);
+        CreditApplication creditApplication = (CreditApplication) payload.get(CREDIT_APPLICATION);
 
         controlObject.put(CreditUseCaseKeyStrategy.CREDIT_UUID, creditId);
-        controlObject.put(CREDIT_TENANTS, customers);
+        controlObject.put(CREDIT_AMOUNT, creditApplication.getCreditAmount());
+        controlObject.put(CREDIT_TENANTS, creditApplication.getCreditTenants().getCreditTenants());
 
-        for (Customer customer: customers) {
+        for (Customer customer: creditApplication.getCreditTenants().getCreditTenants()) {
             CRMCustomer crmCustomer =
                     new CRMCustomer(
                             customer.getFirstName(),
@@ -43,6 +46,6 @@ public class INITIAL_$$_CREDIT_APPLICATION_SUBMITTED_intial_onSubmit_ActionImpl
             customerRelationshipAdapter.transferCustomerCreation(crmCustomer);
         }
 
-        return payload;
+        return Collections.emptyMap();
     }
 }

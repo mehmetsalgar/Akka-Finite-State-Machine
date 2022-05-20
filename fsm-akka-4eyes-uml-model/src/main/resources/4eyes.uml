@@ -92,7 +92,7 @@ Slave State Machines will asyncrhnously reply to Master State Machine, in this c
                       <body>This is the initial pseudo state for Creadit Approval process, while the following transition has no trigger on it, it will directly realise a transition to WAITING_APPROVAL state.</body>
                     </ownedComment>
                   </subvertex>
-                  <subvertex xmi:type="uml:State" xmi:id="_OR7w0N_2Eeudm_vjRKDtiA" name="WAITING_APPROVAL"/>
+                  <subvertex xmi:type="uml:State" xmi:id="_OR7w0N_2Eeudm_vjRKDtiA" name="WAITING_APPROVAL" submachine="_HGtxINdYEeyBoKz2hPLjXg"/>
                   <subvertex xmi:type="uml:State" xmi:id="_WsNOcN_2Eeudm_vjRKDtiA" name="RELATIONSHIP_MANAGER_APPROVED">
                     <ownedComment xmi:type="uml:Comment" xmi:id="_85160G4XEeyDm79Hj-X2dw">
                       <body>This state indicates the Releation Ship Mavager approved the credit application and Sales Managers are notified for further approval of the Credit Application.</body>
@@ -242,6 +242,33 @@ Slave State Machines will asyncrhnously reply to Master State Machine, in this c
                 </ownedAttribute>
               </packagedElement>
               <packagedElement xmi:type="uml:SignalEvent" xmi:id="_G_egMIp2EeyblZd49qNUpA" name="CustomerUpdatedEvent"/>
+              <packagedElement xmi:type="uml:Class" xmi:id="_xCvOoNXNEeyBoKz2hPLjXg" name="CreditApplication">
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_3TZ7cNXNEeyBoKz2hPLjXg" name="creditAmount">
+                  <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Real"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="__KqyoNXNEeyBoKz2hPLjXg" name="credittenants" type="_ZXi08FwZEeynMdx0NLQt4g" association="__KnvUNXNEeyBoKz2hPLjXg">
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="__KqyodXNEeyBoKz2hPLjXg"/>
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="__KqyotXNEeyBoKz2hPLjXg" value="1"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Association" xmi:id="__KnvUNXNEeyBoKz2hPLjXg" name="creditTenants" visibility="public" memberEnd="__KqyoNXNEeyBoKz2hPLjXg __Kqyo9XNEeyBoKz2hPLjXg">
+                <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="__KqLkNXNEeyBoKz2hPLjXg" source="org.eclipse.papyrus">
+                  <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="__KqLkdXNEeyBoKz2hPLjXg" key="nature" value="UML_Nature"/>
+                </eAnnotations>
+                <ownedEnd xmi:type="uml:Property" xmi:id="__Kqyo9XNEeyBoKz2hPLjXg" name="creditapplication" type="_xCvOoNXNEeyBoKz2hPLjXg" association="__KnvUNXNEeyBoKz2hPLjXg"/>
+              </packagedElement>
+              <packagedElement xmi:type="uml:StateMachine" xmi:id="_HGtxINdYEeyBoKz2hPLjXg" name="FourEyesRelationshipManagerSM" submachineState="_OR7w0N_2Eeudm_vjRKDtiA">
+                <region xmi:type="uml:Region" xmi:id="_RzutcNdYEeyBoKz2hPLjXg" name="FourEyesRegion">
+                  <transition xmi:type="uml:Transition" xmi:id="_c0J-4NdhEeyBoKz2hPLjXg" name="initial" source="_rBldANdYEeyBoKz2hPLjXg" target="_QgGzUNdhEeyBoKz2hPLjXg"/>
+                  <transition xmi:type="uml:Transition" xmi:id="_iKIvoNdiEeyBoKz2hPLjXg" name="waitingManagerApproval_onRelationshipManagerApproved" guard="_Gn00sNdjEeyBoKz2hPLjXg" source="_QgGzUNdhEeyBoKz2hPLjXg" target="_QgGzUNdhEeyBoKz2hPLjXg">
+                    <ownedRule xmi:type="uml:Constraint" xmi:id="_Gn00sNdjEeyBoKz2hPLjXg" name="relationshipManagerCreditAmountCriticalGuard"/>
+                    <trigger xmi:type="uml:Trigger" xmi:id="_zTVFMNdiEeyBoKz2hPLjXg" name="onRelationshipManagerApproved" event="_ymw6INdiEeyBoKz2hPLjXg"/>
+                  </transition>
+                  <subvertex xmi:type="uml:Pseudostate" xmi:id="_rBldANdYEeyBoKz2hPLjXg" name="Initial_FE"/>
+                  <subvertex xmi:type="uml:State" xmi:id="_QgGzUNdhEeyBoKz2hPLjXg" name="WAITING_MANAGER_APPROVAL"/>
+                </region>
+              </packagedElement>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_ymw6INdiEeyBoKz2hPLjXg" name="WaitingManagerApprovalRelationshipManagerPersistEvent"/>
             </packagedElement>
             <packagedElement xmi:type="uml:Package" xmi:id="_7WfA0OSSEeup6LjjOh4MjQ" name="creditscore">
               <packagedElement xmi:type="uml:StateMachine" xmi:id="_MYTEgOCMEeuquPi25eySzA" name="CreditScoreSM" isAbstract="true" isActive="true">

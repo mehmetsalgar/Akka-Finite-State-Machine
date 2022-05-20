@@ -44,18 +44,18 @@ class ConverterTemplate {
             «ENDFOR»
 
             @Override
-            public «calculateReturnType(property)» convert(«packageName».protobuf.«name» protobuf) {
+            public «calculateReturnType(property)» convert(«packageName».protobuf.«name» «name.toFirstLower») {
                 return
                         «IF property.upper === -1»
-                            protobuf
+                            «name.toFirstLower»
                                 .get«property.association.name.toFirstUpper»List()
                                 .stream()
                                 .map(«property.type.name.toLowerCase»Protobuf2PojoConverter::convert)
                                 .collect(java.util.stream.Collectors.toList())
                         «ELSEIF property.association === null»
-                            protobuf.get«property.name.toFirstUpper»()
+                            «name.toFirstLower».get«property.name.toFirstUpper»()
                         «ELSE»
-                            «property.type.name.toLowerCase»Protobuf2PojoConverter.convert(protobuf.get«property.association.name.toFirstUpper»())
+                            «property.type.name.toLowerCase»Protobuf2PojoConverter.convert(«name.toFirstLower».get«property.association.name.toFirstUpper»())
                         «ENDIF»
                     ;
             }
@@ -88,19 +88,21 @@ class ConverterTemplate {
             «ENDFOR»
 
             @Override
-            public «packageName».model.«name» convert(«packageName».protobuf.«name» protobuf) {
+            public «packageName».model.«name» convert(«packageName».protobuf.«name» «name.toFirstLower») {
                 return new «packageName».model.«name»(
                         «FOR org.eclipse.uml2.uml.Property property : getAllAttributes.filter(org.eclipse.uml2.uml.Property) SEPARATOR ","»
                             «IF property.upper === -1»
-                                protobuf
+                                «name.toFirstLower»
                                     .get«property.association.name.toFirstUpper»List()
                                     .stream()
                                     .map(«property.type.name.toLowerCase»Protobuf2PojoConverter::convert)
                                     .collect(java.util.stream.Collectors.toList())
                             «ELSEIF property.association === null»
-                                protobuf.get«property.name.toFirstUpper»()
+                                «name.toFirstLower».get«property.name.toFirstUpper»()
+                            «ELSEIF (property.association.getMemberEnds().head.type as org.eclipse.uml2.uml.Class).getAllAttributes().size === 1»
+                                new «packageName».model.«property.association.name.toFirstUpper»(«property.type.name.toLowerCase»Protobuf2PojoConverter.convert(«name.toFirstLower».get«property.association.name.toFirstUpper»()))
                             «ELSE»
-                                «property.type.name.toLowerCase»Protobuf2PojoConverter.convert(protobuf.get«property.association.name.toFirstUpper»())
+                                «property.type.name.toLowerCase»Protobuf2PojoConverter.convert(«name.toFirstLower».get«property.association.name.toFirstUpper»())
                             «ENDIF»
                         «ENDFOR»
                         );

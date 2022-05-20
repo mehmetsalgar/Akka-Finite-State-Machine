@@ -171,10 +171,12 @@ class StateMachineTemplate extends AbstractGenerator {
 
             def eventHandler(context: ActorContext[«name»Event], state: State, event: PersistEvent): State = {
                 state match {
+                    //1 Pseud0
                     «FOR state : allOwnedElements().filter(Pseudostate)»
                         «state.stateEventHandlerRecursive(new ArrayList<Transition>, new ArrayList<Vertex>, context)»
                     «ENDFOR»
 
+                    //1 Recursive
                     «FOR state : allOwnedElements().filter(State).sortWith([o1, o2 | o1.getName().compareTo(o2.getName())])»
                         «state.stateEventHandlerRecursive(new ArrayList<Transition>, new ArrayList<Vertex>, context)»
                     «ENDFOR»
@@ -242,6 +244,7 @@ class StateMachineTemplate extends AbstractGenerator {
         List<Transition> outgoings,
         List<State> parentStates,
         IGeneratorContext context) '''
+        //State Command Handler
         case «FOR parentState : parentStates»«parentState.name.toUpperCase()»«context.getGlobalVariable('submachineSeperator')»«ENDFOR»«state.name.toUpperCase()»(controlObject) =>
             base[«name»Event](cmd, state) {
                 «triggerCommandHandler(
@@ -316,9 +319,11 @@ class StateMachineTemplate extends AbstractGenerator {
             «IF state.getSubmachine() !== null»
                 «val parentStatesList = addStateToStateList(parentStates, state)»
                 «FOR pseudostate : state.getSubmachine().allOwnedElements().filter(Pseudostate).sortWith([o1, o2 | o1.getName().compareTo(o2.getName())])»
+                    //pseudo
                     «stateEventHandler(pseudostate, createRecursiveStateList(createRecursiveStateList(outgoings, pseudostate.getOutgoings()),state.getOutgoings()), parentStates, context)»
                 «ENDFOR»
                 «FOR subState : state.getSubmachine().allOwnedElements().filter(State).sortWith([o1, o2 | o1.getName().compareTo(o2.getName())])»
+                    //recursive
                     «stateEventHandlerRecursive(subState, createRecursiveStateList(outgoings, state.getOutgoings()), createRecursiveStateList(parentStatesList), context)»
                 «ENDFOR»
             «ELSE»
@@ -362,6 +367,9 @@ class StateMachineTemplate extends AbstractGenerator {
                         «ELSEIF transition.source.isSubmachineState && transition.target.isSubmachineState»
                             //Exit3 from Master State
                             «FOR parentState : removeLastSubmachineState(parentStates)»«parentState.name.toUpperCase()»«context.getGlobalVariable('submachineSeperator')»«ENDFOR»«transition.target.name.toUpperCase()»«transition.target.getFirstPseudoState»(«FOR parentState : parentStates»_«parentState.name.toLowerCase()»«ENDFOR»_«state.name.toLowerCase()».controlObject)
+                        «ELSEIF transition.source instanceof Pseudostate && transition.target.isFirstPseudoStateOrAnonymousTransitionState(context)»
+                            //Exit5 from Master State
+                            «FOR parentState : parentStates»«parentState.name.toUpperCase()»«context.getGlobalVariable('submachineSeperator')»«ENDFOR»«transition.target.name.toUpperCase()»«transition.target.getFirstPseudoStateOrAnonymousTransition(context)»(«FOR parentState : parentStates»_«parentState.name.toLowerCase()»«ENDFOR»_«state.name.toLowerCase()».controlObject)
                         «ELSE»
                             //Exit4 from Master State
                             «FOR parentState : parentStates»«parentState.name.toUpperCase()»«context.getGlobalVariable('submachineSeperator')»«ENDFOR»«transition.target.name.toUpperCase()»«transition.target.getFirstPseudoStateOrAnonymousTransition(context)»(«FOR parentState : parentStates»_«parentState.name.toLowerCase()»«ENDFOR»_«state.name.toLowerCase()».controlObject)
