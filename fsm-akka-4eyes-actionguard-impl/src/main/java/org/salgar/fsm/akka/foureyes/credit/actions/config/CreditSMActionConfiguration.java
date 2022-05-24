@@ -116,6 +116,10 @@ public class CreditSMActionConfiguration {
         return new INITIAL_FE_$$_WAITING_MANAGER_APPROVAL_initial_ActionImpl();
     }
     @Bean
+    public INITIAL_FE_SM_$$_WAITING_MANAGER_APPROVAL_intial_Action creditsm_initial_fe_sm_WAITING_MANAGER_APPROVAL_intialAction() {
+        return new INITIAL_FE_SM_$$_WAITING_MANAGER_APPROVAL_intial_ActionImpl();
+    }
+    @Bean
     public INITIAL_CSC_$$_ADRRESCHECK_RESULT_RECEIVED_initial_AddressCheckResultReceived_Action
         creditsm_initial_csc_ADRRESCHECK_RESULT_RECEIVED_initial_AddressCheckResultReceivedAction() {
         return new INITIAL_CSC_$$_ADRRESCHECK_RESULT_RECEIVED_initial_AddressCheckResultReceived_ActionImpl();
@@ -130,7 +134,11 @@ public class CreditSMActionConfiguration {
         creditsm_initial_csc_CREDITSCORE_RECEIVED_initial_creditScoreReceivedAction() {
         return new INITIAL_CSC_$$_CREDITSCORE_RECEIVED_initial_creditScoreReceived_ActionImpl();
     }
-
+    @Bean
+    public WAITING_MANAGER_APPROVAL_$$_WAITING_MANAGER_APPROVAL_waitingForApproval_onSalesManagerApproved_Action
+        creditsm_waiting_manager_approval_WAITING_MANAGER_APPROVAL_waitingForApproval_onSalesManagerApprovedAction() {
+        return new WAITING_MANAGER_APPROVAL_$$_WAITING_MANAGER_APPROVAL_waitingForApproval_onSalesManagerApproved_ActionImpl();
+    }
     @Bean
     public WAITING_MANAGER_APPROVAL_$$_WAITING_MANAGER_APPROVAL_waitingManagerApproval_onRelationshipManagerApproved_Action
         creditsm_waiting_manager_approval_WAITING_MANAGER_APPROVAL_waitingManagerApproval_onRelationshipManagerApprovedAction() {

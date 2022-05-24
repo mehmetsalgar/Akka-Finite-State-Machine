@@ -30,6 +30,7 @@ public class INITIAL_$$_CREDIT_APPLICATION_SUBMITTED_intial_onSubmit_ActionImpl
 
         List<String> notificationList = notifierService.calculateRecipientList(RELATIONSHIP_MANAGER_NOTIFICATION_LIST);
         notifierService.notify(notificationList, "Credit Tenants applied for Credit. Please check!");
+        controlObject.put(RELATIONSHIP_MANAGERS, notificationList);
 
         String creditId = (String) payload.get(CreditUseCaseKeyStrategy.CREDIT_UUID);
         CreditApplication creditApplication = (CreditApplication) payload.get(CREDIT_APPLICATION);

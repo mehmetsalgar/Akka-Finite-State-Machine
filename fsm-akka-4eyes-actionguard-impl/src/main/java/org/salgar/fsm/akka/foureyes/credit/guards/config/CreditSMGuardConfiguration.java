@@ -67,6 +67,13 @@ public class CreditSMGuardConfiguration {
         return new CREDIT_APPLICATION_SUBMITTED_$$_CREDIT_REJECTED_isScoreTooLowGuard_GuardImpl();
     }
     @Bean
+    public WAITING_MANAGER_APPROVAL_$$_WAITING_MANAGER_APPROVAL_salesManagerCreditAmountCriticalGuard_Guard
+    creditsm_waiting_manager_approval_WAITING_MANAGER_APPROVAL_waitingForApproval_onSalesManagerApprovedGuard() {
+        return new WAITING_MANAGER_APPROVAL_$$_WAITING_MANAGER_APPROVAL_salesManagerCreditAmountCriticalGuard_GuardImpl(
+
+        );
+    }
+    @Bean
     public WAITING_MANAGER_APPROVAL_$$_WAITING_MANAGER_APPROVAL_relationshipManagerCreditAmountCriticalGuard_Guard
     creditsm_waiting_manager_approval_WAITING_MANAGER_APPROVAL_waitingManagerApproval_onRelationshipManagerApprovedGuard() {
         return new WAITING_MANAGER_APPROVAL_$$_WAITING_MANAGER_APPROVAL_relationshipManagerCreditAmountCriticalGuard_GuardImpl();

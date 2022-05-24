@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.salgar.akka.fsm.foureyes.notifier.NotificationHelper.SALES_MANAGER_NOTIFICATION_LIST;
+import static org.salgar.fsm.akka.foureyes.variables.PayloadVariableConstants.SALES_MANAGERS;
 
 @RequiredArgsConstructor
 public class WAITING_APPROVAL_$$_RELATIONSHIP_MANAGER_APPROVED_waitingApproval_onRelationshipManagerApproved_ActionImpl
@@ -22,6 +23,7 @@ public class WAITING_APPROVAL_$$_RELATIONSHIP_MANAGER_APPROVED_waitingApproval_o
         List<String> notificationList = notifierService.calculateRecipientList(SALES_MANAGER_NOTIFICATION_LIST);
         notifierService.notify(notificationList,
                 "Relationship Manager Approved the Credit, Sales Manager you should proceed. Please check!");
+        controlObject.put(SALES_MANAGERS, notificationList);
 
         return payload;
     }

@@ -108,13 +108,13 @@ class SubStateMachineHelper {
         return false
     }
 
-    def dispatch getFirstPseudoState(State state) {
+    def dispatch getFirstPseudoState(State state, IGeneratorContext context) {
         if(state.getSubmachine()!==null) {
-            return "_" + state.getSubmachine().allOwnedElements().filter(Pseudostate).head.name.toUpperCase
+            return context.getGlobalVariable('submachineSeperator') + state.getSubmachine().allOwnedElements().filter(Pseudostate).head.name.toUpperCase
         }
     }
 
-    def dispatch getFirstPseudoState(Pseudostate pseudostate) {
+    def dispatch getFirstPseudoState(Pseudostate pseudostate, IGeneratorContext context) {
     }
 
     def dispatch giveParentStatesForMasterState(State state, List<Vertex> parentStates) {

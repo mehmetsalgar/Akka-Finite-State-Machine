@@ -360,13 +360,13 @@ class StateMachineTemplate extends AbstractGenerator {
                     «IF (transition.target != transition.source)»
                         «IF parentStates.contains(transition.source) && state!=transition.source»
                             //Exit1 from Master State
-                            «FOR parentState : transition.source.giveParentStatesForMasterState(parentStates)»«parentState.name.toUpperCase()»«context.getGlobalVariable('submachineSeperator')»«ENDFOR»«transition.target.name.toUpperCase()»«transition.target.getFirstPseudoState»(«FOR parentState : parentStates»_«parentState.name.toLowerCase()»«ENDFOR»_«state.name.toLowerCase()».controlObject)
+                            «FOR parentState : transition.source.giveParentStatesForMasterState(parentStates)»«parentState.name.toUpperCase()»«context.getGlobalVariable('submachineSeperator')»«ENDFOR»«transition.target.name.toUpperCase()»«transition.target.getFirstPseudoStateOrAnonymousTransition(context)»(«FOR parentState : parentStates»_«parentState.name.toLowerCase()»«ENDFOR»_«state.name.toLowerCase()».controlObject)
                         «ELSEIF transition.source.isSubmachineState && !transition.target.isSubmachineState»
                             //Exit2 from Master State
                             «FOR parentState : removeLastSubmachineState(parentStates)»«parentState.name.toUpperCase()»«context.getGlobalVariable('submachineSeperator')»«ENDFOR»«transition.target.name.toUpperCase()»(«FOR parentState : parentStates»_«parentState.name.toLowerCase()»«ENDFOR»_«state.name.toLowerCase()».controlObject)
                         «ELSEIF transition.source.isSubmachineState && transition.target.isSubmachineState»
                             //Exit3 from Master State
-                            «FOR parentState : removeLastSubmachineState(parentStates)»«parentState.name.toUpperCase()»«context.getGlobalVariable('submachineSeperator')»«ENDFOR»«transition.target.name.toUpperCase()»«transition.target.getFirstPseudoState»(«FOR parentState : parentStates»_«parentState.name.toLowerCase()»«ENDFOR»_«state.name.toLowerCase()».controlObject)
+                            «FOR parentState : removeLastSubmachineState(parentStates)»«parentState.name.toUpperCase()»«context.getGlobalVariable('submachineSeperator')»«ENDFOR»«transition.target.name.toUpperCase()»«transition.target.getFirstPseudoState(context)»(«FOR parentState : parentStates»_«parentState.name.toLowerCase()»«ENDFOR»_«state.name.toLowerCase()».controlObject)
                         «ELSEIF transition.source instanceof Pseudostate && transition.target.isFirstPseudoStateOrAnonymousTransitionState(context)»
                             //Exit5 from Master State
                             «FOR parentState : parentStates»«parentState.name.toUpperCase()»«context.getGlobalVariable('submachineSeperator')»«ENDFOR»«transition.target.name.toUpperCase()»«transition.target.getFirstPseudoStateOrAnonymousTransition(context)»(«FOR parentState : parentStates»_«parentState.name.toLowerCase()»«ENDFOR»_«state.name.toLowerCase()».controlObject)

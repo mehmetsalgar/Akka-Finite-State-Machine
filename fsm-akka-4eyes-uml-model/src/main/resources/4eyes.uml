@@ -93,7 +93,7 @@ Slave State Machines will asyncrhnously reply to Master State Machine, in this c
                     </ownedComment>
                   </subvertex>
                   <subvertex xmi:type="uml:State" xmi:id="_OR7w0N_2Eeudm_vjRKDtiA" name="WAITING_APPROVAL" submachine="_HGtxINdYEeyBoKz2hPLjXg"/>
-                  <subvertex xmi:type="uml:State" xmi:id="_WsNOcN_2Eeudm_vjRKDtiA" name="RELATIONSHIP_MANAGER_APPROVED">
+                  <subvertex xmi:type="uml:State" xmi:id="_WsNOcN_2Eeudm_vjRKDtiA" name="RELATIONSHIP_MANAGER_APPROVED" submachine="_gw6S0NqXEeyBoKz2hPLjXg">
                     <ownedComment xmi:type="uml:Comment" xmi:id="_85160G4XEeyDm79Hj-X2dw">
                       <body>This state indicates the Releation Ship Mavager approved the credit application and Sales Managers are notified for further approval of the Credit Application.</body>
                     </ownedComment>
@@ -269,6 +269,18 @@ Slave State Machines will asyncrhnously reply to Master State Machine, in this c
                 </region>
               </packagedElement>
               <packagedElement xmi:type="uml:SignalEvent" xmi:id="_ymw6INdiEeyBoKz2hPLjXg" name="WaitingManagerApprovalRelationshipManagerPersistEvent"/>
+              <packagedElement xmi:type="uml:StateMachine" xmi:id="_gw6S0NqXEeyBoKz2hPLjXg" name="FourEyesSalesManagerSM" submachineState="_WsNOcN_2Eeudm_vjRKDtiA">
+                <region xmi:type="uml:Region" xmi:id="_n6YP4NqXEeyBoKz2hPLjXg" name="FourEyesSalesManagerRegion">
+                  <transition xmi:type="uml:Transition" xmi:id="_V-W5wNqYEeyBoKz2hPLjXg" name="intial" source="_DnyyINqYEeyBoKz2hPLjXg" target="_MhG8MNqYEeyBoKz2hPLjXg"/>
+                  <transition xmi:type="uml:Transition" xmi:id="_qcIlgNqYEeyBoKz2hPLjXg" name="waitingForApproval_onSalesManagerApproved" guard="_ejJv4NqZEeyBoKz2hPLjXg" source="_MhG8MNqYEeyBoKz2hPLjXg" target="_MhG8MNqYEeyBoKz2hPLjXg">
+                    <ownedRule xmi:type="uml:Constraint" xmi:id="_ejJv4NqZEeyBoKz2hPLjXg" name="salesManagerCreditAmountCriticalGuard"/>
+                    <trigger xmi:type="uml:Trigger" xmi:id="_x6AFQNqYEeyBoKz2hPLjXg" name="onSalesManagerApproved" event="_VnDXkNqZEeyBoKz2hPLjXg"/>
+                  </transition>
+                  <subvertex xmi:type="uml:Pseudostate" xmi:id="_DnyyINqYEeyBoKz2hPLjXg" name="initial_FE_SM"/>
+                  <subvertex xmi:type="uml:State" xmi:id="_MhG8MNqYEeyBoKz2hPLjXg" name="WAITING_MANAGER_APPROVAL"/>
+                </region>
+              </packagedElement>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_VnDXkNqZEeyBoKz2hPLjXg" name="WaitingManagerApprovalSalesManagerApprovedPersistEvent"/>
             </packagedElement>
             <packagedElement xmi:type="uml:Package" xmi:id="_7WfA0OSSEeup6LjjOh4MjQ" name="creditscore">
               <packagedElement xmi:type="uml:StateMachine" xmi:id="_MYTEgOCMEeuquPi25eySzA" name="CreditScoreSM" isAbstract="true" isActive="true">

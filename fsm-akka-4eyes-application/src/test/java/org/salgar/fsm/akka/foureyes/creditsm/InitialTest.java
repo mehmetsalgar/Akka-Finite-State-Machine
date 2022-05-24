@@ -133,7 +133,7 @@ public class InitialTest {
                 (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED.class));
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED_$_WAITING_MANAGER_APPROVAL.class));
         verify(notifierService, times(1)).notify(eq(salesManagerNotificationList), anyString());
 
         payload = preparePayload(creditUuid, creditTenants);
@@ -290,7 +290,7 @@ public class InitialTest {
                 (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED.class));
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED_$_WAITING_MANAGER_APPROVAL.class));
         verify(notifierService, times(1)).notify(eq(salesManagerNotificationList), anyString());
 
         payload = preparePayload(creditUuid, creditTenants);
@@ -438,7 +438,7 @@ public class InitialTest {
                 (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED.class));
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED_$_WAITING_MANAGER_APPROVAL.class));
         verify(notifierService, times(1)).notify(eq(salesManagerNotificationList), anyString());
 
         payload = preparePayload(creditUuid, creditTenants);
@@ -509,7 +509,7 @@ public class InitialTest {
                 (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED.class));
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED_$_WAITING_MANAGER_APPROVAL.class));
         verify(notifierService, times(1)).notify(eq(salesManagerNotificationList), anyString());
 
         payload = preparePayload(creditUuid, creditTenants);
@@ -679,7 +679,7 @@ public class InitialTest {
                 (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED.class));
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED_$_WAITING_MANAGER_APPROVAL.class));
         verify(notifierService, times(1)).notify(eq(salesManagerNotificationList), anyString());
 
         payload = preparePayload(creditUuid, creditTenants);
@@ -808,7 +808,7 @@ public class InitialTest {
                 (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED.class));
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED_$_WAITING_MANAGER_APPROVAL.class));
         verify(notifierService, times(1)).notify(eq(salesManagerNotificationList), anyString());
 
         payload = preparePayload(creditUuid, creditTenants);
@@ -952,7 +952,7 @@ public class InitialTest {
                 (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED.class));
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED_$_WAITING_MANAGER_APPROVAL.class));
         verify(notifierService, times(1)).notify(eq(salesManagerNotificationList), anyString());
 
         payload = preparePayload(creditUuid, creditTenants);
@@ -1072,6 +1072,188 @@ public class InitialTest {
         verify(fraudPreventionServiceMockBean).reportFraudPrevention(anyString(), anyString(), anyString());
         verify(addressCheckServiceMockBean).addressExist(anyString(), anyString(), anyString(), anyString());
         verify(notifierService, never()).notify(eq(seniorSalesManagerNotificationList), anyString());
+        Thread.sleep(WAIT_TIME_ELASTIC);
+    }
+
+    @Test
+    @SneakyThrows
+    public void creditAmountHighCreditAcceptedTest() {
+        final String creditUuid = UUID.randomUUID().toString();
+        final Customer customer =
+                new Customer(
+                        "John",
+                        "Doe",
+                        "123456789X",
+                        new Address(
+                                "muster strasse 1",
+                                "11A",
+                                "city1",
+                                "country1"
+                        ),
+                        "customer1@test.info");
+        final List<Customer> creditTenants = new ArrayList<>();
+        creditTenants.add(customer);
+        Map<String, Object> payload = preparePayload(creditUuid, 20000000000.0, creditTenants);
+
+        creditSMFacade.submit(payload);
+
+        Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
+
+        Future<Response> futureCreditSMState = creditSMFacade.currentState(payload);
+        ReportResponse report =
+                (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
+
+        assertNotNull(report);
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_WAITING_APPROVAL_$_WAITING_MANAGER_APPROVAL.class));
+        assertEquals(((List<Customer>)report.state().controlObject().get(PayloadVariableConstants.CREDIT_TENANTS)).get(0), customer);
+        verify(notifierService, times(1)).notify(eq(relationShipNotificationList), anyString());
+
+        payload = preparePayload(creditUuid, creditTenants);
+
+        creditSMFacade.relationshipManagerApproved(payload);
+
+        Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
+
+        futureCreditSMState = creditSMFacade.currentState(payload);
+        report =
+                (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
+
+        assertNotNull(report);
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_WAITING_APPROVAL_$_WAITING_MANAGER_APPROVAL.class));
+        assertEquals(((List<Customer>)report.state().controlObject().get(PayloadVariableConstants.CREDIT_TENANTS)).get(0), customer);
+        verify(notifierService, times(1)).notify(eq(relationShipNotificationList), anyString());
+
+        payload = preparePayload(creditUuid, creditTenants);
+
+        creditSMFacade.relationshipManagerApproved(payload);
+
+        Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
+
+        futureCreditSMState = creditSMFacade.currentState(payload);
+
+        report =
+                (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
+
+        assertNotNull(report);
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED_$_WAITING_MANAGER_APPROVAL.class));
+        verify(notifierService, times(1)).notify(eq(salesManagerNotificationList), anyString());
+
+        payload = preparePayload(creditUuid, creditTenants);
+        creditSMFacade.salesManagerApproved(payload);
+
+        Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
+
+        futureCreditSMState = creditSMFacade.currentState(payload);
+
+        report =
+                (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
+
+        assertNotNull(report);
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED_$_WAITING_MANAGER_APPROVAL.class));
+        verify(notifierService, times(1)).notify(eq(salesManagerNotificationList), anyString());
+
+        payload = preparePayload(creditUuid, creditTenants);
+        creditSMFacade.salesManagerApproved(payload);
+
+        Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
+
+        futureCreditSMState = creditSMFacade.currentState(payload);
+
+        report =
+                (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
+
+        assertNotNull(report);
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_SALES_MANAGER_APPROVED_$_INITIAL_CSC.class));
+
+        Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
+
+        payload = preparePayload(creditUuid, creditTenants);
+        Map<String, CreditTenantScoreResult> creditTenantScoreResultMap = new HashMap<>();
+        creditTenantScoreResultMap.put(
+                customer.getPersonalId(),
+                new CreditTenantScoreResult(customer.getPersonalId(), 73.72));
+        payload.put(PayloadVariableConstants.CREDIT_SCORE_TENANT_RESULTS, creditTenantScoreResultMap);
+        payload.put(SOURCE_SLAVE_SM_TAG, CUSTOMER_SCORE_SM);
+        creditSMFacade.resultReceived(payload);
+
+        Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
+
+        futureCreditSMState = creditSMFacade.currentState(payload);
+        report =
+                (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
+
+        assertNotNull(report);
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_SALES_MANAGER_APPROVED_$_CREDITSCORE_RECEIVED.class));
+        Map<String, CreditTenantScoreResult> map =
+                (Map<String, CreditTenantScoreResult>) report
+                        .state()
+                        .controlObject()
+                        .get(PayloadVariableConstants.CREDIT_SCORE_TENANT_RESULTS);
+        assertEquals(73.72, map.get(customer.getPersonalId()).getCreditScore());
+
+        Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
+
+        payload = preparePayload(creditUuid, creditTenants);
+        payload.put(PayloadVariableConstants.FRAUD_PREVENTION_RESULT, true);
+        payload.put(SOURCE_SLAVE_SM_TAG, FRAUD_PREVENTION_SM);
+        creditSMFacade.resultReceived(payload);
+
+        Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
+
+        futureCreditSMState = creditSMFacade.currentState(payload);
+        report =
+                (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
+
+        assertNotNull(report);
+        assertThat(report.state(),
+                instanceOf(CREDIT_APPLICATION_SUBMITTED_$_SALES_MANAGER_APPROVED_$_CREDITSCORE_FRAUDPREVENTION_RESULT_RECEIVED.class));
+        assertEquals(true, report.state().controlObject().get(PayloadVariableConstants.FRAUD_PREVENTION_RESULT));
+
+        Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
+
+        payload = preparePayload(creditUuid, creditTenants);
+        payload.put(PayloadVariableConstants.ADDRESS_CHECK_RESULT, true);
+        payload.put(SOURCE_SLAVE_SM_TAG, ADDRESS_CHECK_SM);
+        creditSMFacade.resultReceived(payload);
+
+        Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
+
+        futureCreditSMState = creditSMFacade.currentState(payload);
+
+        report =
+                (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
+
+        assertNotNull(report);
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL.class));
+        assertEquals(true, report.state().controlObject().get(PayloadVariableConstants.ADDRESS_CHECK_RESULT));
+        verify(notifierService, times(1)).notify(eq(creditAnalystNotificationList), anyString());
+
+        Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
+
+        payload = preparePayload(creditUuid, creditTenants);
+        creditSMFacade.accepted(payload);
+
+        Thread.sleep(15000L);
+
+        Optional<CreditSmEs> creditSmEs = creditSMRepository.findById(creditUuid);
+
+        assertNotNull(creditSmEs);
+        assertEquals(creditSmEs.get().getState(), CREDIT_ACCEPTED.class.getSimpleName());
+        verify(notifierService, times(1)).notify(eq(List.of(customer.getEmail())), anyString());
+
+        Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
+
+        verify(creditScoreServiceMockBean).calculateCreditScore(anyString(), anyString(), anyString());
+        verify(fraudPreventionServiceMockBean).reportFraudPrevention(anyString(), anyString(), anyString());
+        verify(addressCheckServiceMockBean).addressExist(anyString(), anyString(), anyString(), anyString());
+        verify(notifierService, never()).notify(eq(seniorSalesManagerNotificationList), anyString());
+        verify(customerRelationshipAdapter).transferCustomerCreation(
+                eq(
+                        new CRMCustomer(
+                                customer.getFirstName(),
+                                customer.getLastName()
+                        )));
+
         Thread.sleep(WAIT_TIME_ELASTIC);
     }
 

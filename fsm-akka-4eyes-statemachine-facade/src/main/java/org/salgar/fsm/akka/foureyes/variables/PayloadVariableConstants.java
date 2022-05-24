@@ -10,4 +10,9 @@ public class PayloadVariableConstants {
     public static final String PERSONAL_ID = "personalId";
     public static final String FRAUD_PREVENTION_RESULT = "fraudPreventionResult";
     public static final String ADDRESS_CHECK_RESULT = "addressCheckResult";
+
+    public static final String RELATIONSHIP_MANAGERS ="rms";
+    public static final String SALES_MANAGERS ="sms";
+    public static final String NUMBER_OF_RELATIONSHIP_MANAGERS_APPROVED = "nofm_rm_a";
+    public static final String NUMBER_OF_SALES_MANAGERS_APPROVED = "nofm_sm_a";
 }
