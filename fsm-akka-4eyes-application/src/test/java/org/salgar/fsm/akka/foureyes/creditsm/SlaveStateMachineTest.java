@@ -3,7 +3,6 @@ package org.salgar.fsm.akka.foureyes.creditsm;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.salgar.akka.fsm.foureyes.addresscheck.AddressCheckService;
@@ -14,6 +13,8 @@ import org.salgar.fsm.akka.foureyes.addresscheck.facade.AdressCheckSMFacade;
 import org.salgar.fsm.akka.foureyes.credit.CreditSM;
 import org.salgar.fsm.akka.foureyes.credit.facade.CreditSMFacade;
 import org.salgar.fsm.akka.foureyes.credit.model.Address;
+import org.salgar.fsm.akka.foureyes.credit.model.CreditApplication;
+import org.salgar.fsm.akka.foureyes.credit.model.CreditTenants;
 import org.salgar.fsm.akka.foureyes.credit.model.Customer;
 import org.salgar.fsm.akka.foureyes.creditscore.facade.CreditScoreSMFacade;
 import org.salgar.fsm.akka.foureyes.elasticsearch.CreditSMRepository;
@@ -44,7 +45,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 import static org.salgar.akka.fsm.foureyes.notifier.NotificationHelper.*;
 
-@Disabled
+//@Disabled
 @EnableElasticsearchRepositories("org.salgar.fsm.akka.foureyes.elasticsearch")
 @ActiveProfiles({"itest"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
@@ -129,7 +130,7 @@ public class SlaveStateMachineTest {
         creditTenants.add(customer1);
         creditTenants.add(customer2);
 
-        Map<String, Object> payload = preparePayload(creditUuid, creditTenants);
+        Map<String, Object> payload = preparePayload(creditUuid, 100000.0, creditTenants);
 
         /* Mock Preparation */
 
@@ -239,17 +240,7 @@ public class SlaveStateMachineTest {
 
         assertNotNull(creditSmEs);
         assertEquals(
-                CreditSM.CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL
-                        .class
-                        .getSimpleName()
-                        .substring(
-                                CreditSM.CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL
-                                .class
-                                .getSimpleName()
-                                        .indexOf("_$_") + 3,
-                                CreditSM.CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL
-                                        .class
-                                        .getSimpleName().length()),
+                "WAITING_CREDIT_ANALYST_APPROVAL",
                 creditSmEs.get().getState());
 
         verify(creditScoreServiceMockBean, times(2)).calculateCreditScore(anyString(), anyString(), anyString());
@@ -261,7 +252,23 @@ public class SlaveStateMachineTest {
         Thread.sleep(WAIT_TIME_ELASTIC);
     }
 
-    private Map<String, Object> preparePayload (
+    private Map<String, Object> preparePayload(
+            String creditUuid,
+            Double creditAmount,
+            List<Customer> creditTenants) {
+
+        final Map<String, Object> payload = new HashMap<>();
+        CreditApplication creditApplication = new CreditApplication(
+                creditAmount,
+                new CreditTenants(creditTenants)
+        );
+        payload.put(CreditUseCaseKeyStrategy.CREDIT_UUID, creditUuid);
+        payload.put(PayloadVariableConstants.CREDIT_APPLICATION, creditApplication);
+
+        return payload;
+    }
+
+    private Map<String, Object> preparePayload(
             String creditUuid,
             List<Customer> creditTenants) {
 

@@ -4,7 +4,6 @@ import com.google.protobuf.Any;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.salgar.akka.fsm.foureyes.addresscheck.AddressCheckService;
@@ -24,10 +23,7 @@ import org.salgar.fsm.akka.foureyes.credit.command.CreditSMCommandConstants;
 import org.salgar.fsm.akka.foureyes.credit.facade.CreditSMFacade;
 import org.salgar.fsm.akka.foureyes.credit.guards.config.CreditSMGuardConfiguration;
 import org.salgar.fsm.akka.foureyes.credit.kafka.config.TopicProperties;
-import org.salgar.fsm.akka.foureyes.credit.protobuf.CreditSMCommand;
-import org.salgar.fsm.akka.foureyes.credit.protobuf.CreditTenants;
-import org.salgar.fsm.akka.foureyes.credit.protobuf.CreditUUID;
-import org.salgar.fsm.akka.foureyes.credit.protobuf.Customer;
+import org.salgar.fsm.akka.foureyes.credit.protobuf.*;
 import org.salgar.fsm.akka.foureyes.creditscore.actions.config.CreditScoreSMActionConfiguration;
 import org.salgar.fsm.akka.foureyes.creditscore.command.CreditScoreSMCommandConstants;
 import org.salgar.fsm.akka.foureyes.creditscore.guards.config.CreditScoreSMGuardConfiguration;
@@ -65,7 +61,7 @@ import static org.mockito.Mockito.*;
 import static org.salgar.akka.fsm.foureyes.notifier.NotificationHelper.*;
 import static org.salgar.fsm.akka.converter.Protobuf2PojoConverter.PROTOBUF_PREFIX;
 
-@Disabled
+//@Disabled
 @ActiveProfiles({"itest"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @EmbeddedKafka(
@@ -183,6 +179,13 @@ public class KafkaITest {
         final CreditTenants creditTenants =
                 creditTenantsBuilder.build();
 
+        CreditApplication.Builder creditApplicationBuilder =
+                CreditApplication.getDefaultInstance().toBuilder();
+        creditApplicationBuilder.setCreditAmount(10000.0);
+        creditApplicationBuilder.setCreditTenants(creditTenants);
+
+        final CreditApplication creditApplication = creditApplicationBuilder.build();
+
         /* Mock Preparation */
 
         doAnswer(invocation -> {
@@ -293,8 +296,8 @@ public class KafkaITest {
                                 CreditUseCaseKeyStrategy.CREDIT_UUID,
                                 Any.pack(CreditUUID.newBuilder().setCreditUUID(creditUuid).build()))
                         .putPayload(
-                                PayloadVariableConstants.CREDIT_TENANTS,
-                                Any.pack(creditTenants))
+                                PayloadVariableConstants.CREDIT_APPLICATION,
+                                Any.pack(creditApplication))
                         .build();
 
         kafkaTemplateCreditSM.send(
@@ -384,7 +387,7 @@ public class KafkaITest {
                 (CreditSM.ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CreditSM.CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL.class));
+        assertThat(report.state(), instanceOf(CreditSM.CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL_$_WAITING_ANAYLIST_APPROVAL.class));
         verify(notifierService).notify(eq(creditAnalystNotificationList), anyString());
 
         verify(creditScoreServiceMockBean, times(2)).calculateCreditScore(anyString(), anyString(), anyString());

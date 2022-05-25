@@ -48,6 +48,8 @@ public class SALES_MANAGER_APPROVED_$$_WAITING_CREDIT_ANALYST_APPROVAL_salesMana
                 .notify(notificationList, "Sales Manager Approved the Credit and Partner Systems delivered results"
                 + " you should proceed. Please check!");
 
+        controlObject.put(CREDIT_ANALYSTS, notificationList);
+
         return payload;
     }
 

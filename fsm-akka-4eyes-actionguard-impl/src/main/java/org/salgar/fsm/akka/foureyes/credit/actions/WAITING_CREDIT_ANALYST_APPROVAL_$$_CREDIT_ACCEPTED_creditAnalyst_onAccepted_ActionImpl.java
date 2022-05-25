@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
-public class CREDIT_APPLICATION_SUBMITTED_$$_CREDIT_ACCEPTED_manager_onAccepted_ActionImpl
-        extends CREDIT_APPLICATION_SUBMITTED_$$_CREDIT_ACCEPTED_manager_onAccepted_Action {
+public class WAITING_CREDIT_ANALYST_APPROVAL_$$_CREDIT_ACCEPTED_creditAnalyst_onAccepted_ActionImpl
+    extends WAITING_CREDIT_ANALYST_APPROVAL_$$_CREDIT_ACCEPTED_creditAnalyst_onAccepted_Action {
     private final NotifierService notifierService;
 
     @Override

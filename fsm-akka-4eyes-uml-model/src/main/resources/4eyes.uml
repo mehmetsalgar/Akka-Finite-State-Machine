@@ -23,9 +23,6 @@ This will send to all interested parties an email (or other means of notificatio
                       </ownedComment>
                     </trigger>
                   </transition>
-                  <transition xmi:type="uml:Transition" xmi:id="_aXXM8OLoEeuvzPeHGzGr1A" name="manager_onAccepted" source="_DxDHYOLoEeuvzPeHGzGr1A" target="__FLssKVcEeyIw-xDSuxlAg">
-                    <trigger xmi:type="uml:Trigger" xmi:id="_O0Wu4OMLEeuvzPeHGzGr1A" name="onAccepted" event="_lco_0OMKEeuvzPeHGzGr1A"/>
-                  </transition>
                   <transition xmi:type="uml:Transition" xmi:id="_bQIoAOLoEeuvzPeHGzGr1A" name="managerRejected_onRejected" source="_DxDHYOLoEeuvzPeHGzGr1A" target="_0gnaYKVfEeyIw-xDSuxlAg">
                     <trigger xmi:type="uml:Trigger" xmi:id="_C3VjQOMLEeuvzPeHGzGr1A" name="onRejected" event="_Cu28sOMLEeuvzPeHGzGr1A"/>
                   </transition>
@@ -49,7 +46,6 @@ This will send to all interested parties an email (or other means of notificatio
                       <body>When are approval process starts, our State Machine until credit application accepted or rejected will be in this state. Complex workflows under it will be managed from underlying Nested Submachines. According Submachine theory, this State will delegate all the events that it can't deal to Sub State Machine</body>
                     </ownedComment>
                   </subvertex>
-                  <subvertex xmi:type="uml:FinalState" xmi:id="__FLssKVcEeyIw-xDSuxlAg" name="CREDIT_ACCEPTED"/>
                   <subvertex xmi:type="uml:FinalState" xmi:id="_0gnaYKVfEeyIw-xDSuxlAg" name="CREDIT_REJECTED"/>
                 </region>
               </packagedElement>
@@ -87,6 +83,9 @@ Slave State Machines will asyncrhnously reply to Master State Machine, in this c
                   <transition xmi:type="uml:Transition" xmi:id="_ZyB5MOChEeuFXrY5MUYDWw" name="waitingApprovalFromSeniorOfficier_onAcceptableScore" source="_5PlXIOCfEeuquPi25eySzA" target="_X6VH0OCNEeuquPi25eySzA">
                     <trigger xmi:type="uml:Trigger" xmi:id="_hjKpUOMJEeuvzPeHGzGr1A" name="onAcceptableScore" event="_hYylUOMJEeuvzPeHGzGr1A"/>
                   </transition>
+                  <transition xmi:type="uml:Transition" xmi:id="_KQqOYNtaEeyBoKz2hPLjXg" name="creditAnalyst_onAccepted" source="_X6VH0OCNEeuquPi25eySzA" target="_GStLENtaEeyBoKz2hPLjXg">
+                    <trigger xmi:type="uml:Trigger" xmi:id="_ggXKwNtaEeyBoKz2hPLjXg" name="onAccepted" event="_lco_0OMKEeuvzPeHGzGr1A"/>
+                  </transition>
                   <subvertex xmi:type="uml:Pseudostate" xmi:id="_J_JtAN_2Eeudm_vjRKDtiA" name="Initial_CA">
                     <ownedComment xmi:type="uml:Comment" xmi:id="_J0NU8G4XEeyDm79Hj-X2dw">
                       <body>This is the initial pseudo state for Creadit Approval process, while the following transition has no trigger on it, it will directly realise a transition to WAITING_APPROVAL state.</body>
@@ -99,8 +98,9 @@ Slave State Machines will asyncrhnously reply to Master State Machine, in this c
                     </ownedComment>
                   </subvertex>
                   <subvertex xmi:type="uml:State" xmi:id="_rs72QN_2Eeudm_vjRKDtiA" name="SALES_MANAGER_APPROVED" submachine="_-A334DivEeyPjN0PDF-AkA"/>
-                  <subvertex xmi:type="uml:State" xmi:id="_X6VH0OCNEeuquPi25eySzA" name="WAITING_CREDIT_ANALYST_APPROVAL"/>
+                  <subvertex xmi:type="uml:State" xmi:id="_X6VH0OCNEeuquPi25eySzA" name="WAITING_CREDIT_ANALYST_APPROVAL" submachine="_RCicwNtYEeyBoKz2hPLjXg"/>
                   <subvertex xmi:type="uml:State" xmi:id="_5PlXIOCfEeuquPi25eySzA" name="WAITING_APPROVAL_FROM_SENIOR_MANAGER"/>
+                  <subvertex xmi:type="uml:FinalState" xmi:id="_GStLENtaEeyBoKz2hPLjXg" name="CREDIT_ACCEPTED"/>
                 </region>
               </packagedElement>
               <packagedElement xmi:type="uml:SignalEvent" xmi:id="_24G_4OMEEeuvzPeHGzGr1A" name="RelationshipManagerApprovedPersistEvent" signal="_MZhDAEFkEey-7smbVHMbdw"/>
@@ -281,6 +281,17 @@ Slave State Machines will asyncrhnously reply to Master State Machine, in this c
                 </region>
               </packagedElement>
               <packagedElement xmi:type="uml:SignalEvent" xmi:id="_VnDXkNqZEeyBoKz2hPLjXg" name="WaitingManagerApprovalSalesManagerApprovedPersistEvent"/>
+              <packagedElement xmi:type="uml:StateMachine" xmi:id="_RCicwNtYEeyBoKz2hPLjXg" name="FourEyesCreditAnalystSM" submachineState="_X6VH0OCNEeuquPi25eySzA">
+                <region xmi:type="uml:Region" xmi:id="_V9f64NtYEeyBoKz2hPLjXg" name="FourEyesCreditAnalystRegion">
+                  <transition xmi:type="uml:Transition" xmi:id="_5PdMoNtYEeyBoKz2hPLjXg" name="initial" source="_i_6oUNtYEeyBoKz2hPLjXg" target="_wg9LcNtYEeyBoKz2hPLjXg"/>
+                  <transition xmi:type="uml:Transition" xmi:id="_B_NLANtZEeyBoKz2hPLjXg" name="waitingAnalystApproval_onCreditAccepted" guard="_ucPFMNtZEeyBoKz2hPLjXg" source="_wg9LcNtYEeyBoKz2hPLjXg" target="_wg9LcNtYEeyBoKz2hPLjXg">
+                    <ownedRule xmi:type="uml:Constraint" xmi:id="_ucPFMNtZEeyBoKz2hPLjXg" name="creditAnalystCreditAmountCritical"/>
+                    <trigger xmi:type="uml:Trigger" xmi:id="_INAxENtZEeyBoKz2hPLjXg" name="onAccepted" event="_lco_0OMKEeuvzPeHGzGr1A"/>
+                  </transition>
+                  <subvertex xmi:type="uml:Pseudostate" xmi:id="_i_6oUNtYEeyBoKz2hPLjXg" name="Initial_CA_SM"/>
+                  <subvertex xmi:type="uml:State" xmi:id="_wg9LcNtYEeyBoKz2hPLjXg" name="WAITING_ANAYLIST_APPROVAL"/>
+                </region>
+              </packagedElement>
             </packagedElement>
             <packagedElement xmi:type="uml:Package" xmi:id="_7WfA0OSSEeup6LjjOh4MjQ" name="creditscore">
               <packagedElement xmi:type="uml:StateMachine" xmi:id="_MYTEgOCMEeuquPi25eySzA" name="CreditScoreSM" isAbstract="true" isActive="true">

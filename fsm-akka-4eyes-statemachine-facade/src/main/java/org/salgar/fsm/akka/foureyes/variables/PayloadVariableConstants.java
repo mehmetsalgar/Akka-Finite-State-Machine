@@ -13,6 +13,8 @@ public class PayloadVariableConstants {
 
     public static final String RELATIONSHIP_MANAGERS ="rms";
     public static final String SALES_MANAGERS ="sms";
+    public static final String CREDIT_ANALYSTS ="cas";
     public static final String NUMBER_OF_RELATIONSHIP_MANAGERS_APPROVED = "nofm_rm_a";
     public static final String NUMBER_OF_SALES_MANAGERS_APPROVED = "nofm_sm_a";
+    public static final String NUMBER_OF_CREDIT_ANALYST_APPROVED = "nofm_ca_a";
 }

@@ -208,7 +208,7 @@ public class InitialTest {
                 (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL.class));
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL_$_WAITING_ANAYLIST_APPROVAL.class));
         assertEquals(true, report.state().controlObject().get(PayloadVariableConstants.ADDRESS_CHECK_RESULT));
         verify(notifierService, times(1)).notify(eq(creditAnalystNotificationList), anyString());
 
@@ -222,7 +222,7 @@ public class InitialTest {
         Optional<CreditSmEs> creditSmEs = creditSMRepository.findById(creditUuid);
 
         assertNotNull(creditSmEs);
-        assertEquals(creditSmEs.get().getState(), CREDIT_ACCEPTED.class.getSimpleName());
+        assertEquals("CREDIT_ACCEPTED", creditSmEs.get().getState());
         verify(notifierService, times(1)).notify(eq(List.of(customer.getEmail())), anyString());
 
         Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
@@ -362,7 +362,7 @@ public class InitialTest {
                 (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL.class));
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL_$_WAITING_ANAYLIST_APPROVAL.class));
         assertEquals(true, report.state().controlObject().get(PayloadVariableConstants.ADDRESS_CHECK_RESULT));
         verify(notifierService, times(1)).notify(eq(creditAnalystNotificationList), anyString());
 
@@ -377,7 +377,7 @@ public class InitialTest {
                 (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL.class));
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL_$_WAITING_ANAYLIST_APPROVAL.class));
         verify(notifierService, times(1)).notify(eq(creditAnalystNotificationList), anyString());
 
         Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
@@ -605,7 +605,7 @@ public class InitialTest {
                 (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL.class));
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL_$_WAITING_ANAYLIST_APPROVAL.class));
         verify(notifierService, times(1)).notify(eq(creditAnalystNotificationList), anyString());
 
         Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
@@ -618,7 +618,7 @@ public class InitialTest {
         Optional<CreditSmEs> creditSmEs = creditSMRepository.findById(creditUuid);
 
         assertNotNull(creditSmEs);
-        assertEquals(creditSmEs.get().getState(), CREDIT_ACCEPTED.class.getSimpleName());
+        assertEquals("CREDIT_ACCEPTED", creditSmEs.get().getState());
         verify(notifierService, times(1)).notify(eq(List.of(customer.getEmail())), anyString());
 
         Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
@@ -880,7 +880,7 @@ public class InitialTest {
                 (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL.class));
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL_$_WAITING_ANAYLIST_APPROVAL.class));
         assertEquals(true, report.state().controlObject().get(PayloadVariableConstants.FRAUD_PREVENTION_RESULT));
         verify(notifierService, times(1)).notify(eq(creditAnalystNotificationList), anyString());
 
@@ -894,7 +894,7 @@ public class InitialTest {
         Optional<CreditSmEs> creditSmEs = creditSMRepository.findById(creditUuid);
 
         assertNotNull(creditSmEs);
-        assertEquals(creditSmEs.get().getState(), CREDIT_ACCEPTED.class.getSimpleName());
+        assertEquals("CREDIT_ACCEPTED", creditSmEs.get().getState());
         assertEquals(true, creditSmEs.get().getAddressCheckResult());
         verify(notifierService, times(1)).notify(eq(List.of(customer.getEmail())), anyString());
 
@@ -1048,7 +1048,7 @@ public class InitialTest {
                 (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL.class));
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL_$_WAITING_ANAYLIST_APPROVAL.class));
         assertEquals(true, report.state().controlObject().get(PayloadVariableConstants.ADDRESS_CHECK_RESULT));
         verify(notifierService, times(1)).notify(eq(creditAnalystNotificationList), anyString());
 
@@ -1062,7 +1062,7 @@ public class InitialTest {
         Optional<CreditSmEs> creditSmEs = creditSMRepository.findById(creditUuid);
 
         assertNotNull(creditSmEs);
-        assertEquals(creditSmEs.get().getState(), CREDIT_ACCEPTED.class.getSimpleName());
+        assertEquals("CREDIT_ACCEPTED", creditSmEs.get().getState());
         assertEquals(true, creditSmEs.get().getFraudPreventionResult());
         verify(notifierService, times(1)).notify(eq(List.of(customer.getEmail())), anyString());
 
@@ -1224,7 +1224,7 @@ public class InitialTest {
                 (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL.class));
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL_$_WAITING_ANAYLIST_APPROVAL.class));
         assertEquals(true, report.state().controlObject().get(PayloadVariableConstants.ADDRESS_CHECK_RESULT));
         verify(notifierService, times(1)).notify(eq(creditAnalystNotificationList), anyString());
 
@@ -1238,7 +1238,7 @@ public class InitialTest {
         Optional<CreditSmEs> creditSmEs = creditSMRepository.findById(creditUuid);
 
         assertNotNull(creditSmEs);
-        assertEquals(creditSmEs.get().getState(), CREDIT_ACCEPTED.class.getSimpleName());
+        assertEquals("CREDIT_ACCEPTED", creditSmEs.get().getState());
         verify(notifierService, times(1)).notify(eq(List.of(customer.getEmail())), anyString());
 
         Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
