@@ -375,6 +375,7 @@ class StateMachineTemplate extends AbstractGenerator {
                             «FOR parentState : parentStates»«parentState.name.toUpperCase()»«context.getGlobalVariable('submachineSeperator')»«ENDFOR»«transition.target.name.toUpperCase()»«transition.target.getFirstPseudoStateOrAnonymousTransition(context)»(«FOR parentState : parentStates»_«parentState.name.toLowerCase()»«ENDFOR»_«state.name.toLowerCase()».controlObject)
                         «ENDIF»
                     «ELSE»
+                        //Exit6
                         «FOR parentState : parentStates»_«parentState.name.toLowerCase()»«ENDFOR»_«state.name.toLowerCase()»
                     «ENDIF»
             «ENDIF»

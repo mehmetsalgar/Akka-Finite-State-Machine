@@ -84,7 +84,7 @@ Slave State Machines will asyncrhnously reply to Master State Machine, in this c
                     <trigger xmi:type="uml:Trigger" xmi:id="_hjKpUOMJEeuvzPeHGzGr1A" name="onAcceptableScore" event="_hYylUOMJEeuvzPeHGzGr1A"/>
                   </transition>
                   <transition xmi:type="uml:Transition" xmi:id="_KQqOYNtaEeyBoKz2hPLjXg" name="creditAnalyst_onAccepted" source="_X6VH0OCNEeuquPi25eySzA" target="_GStLENtaEeyBoKz2hPLjXg">
-                    <trigger xmi:type="uml:Trigger" xmi:id="_ggXKwNtaEeyBoKz2hPLjXg" name="onAccepted" event="_lco_0OMKEeuvzPeHGzGr1A"/>
+                    <trigger xmi:type="uml:Trigger" xmi:id="_ggXKwNtaEeyBoKz2hPLjXg" name="onAccepted" event="_ejQQYN_lEeyBoKz2hPLjXg"/>
                   </transition>
                   <subvertex xmi:type="uml:Pseudostate" xmi:id="_J_JtAN_2Eeudm_vjRKDtiA" name="Initial_CA">
                     <ownedComment xmi:type="uml:Comment" xmi:id="_J0NU8G4XEeyDm79Hj-X2dw">
@@ -110,7 +110,7 @@ Slave State Machines will asyncrhnously reply to Master State Machine, in this c
               <packagedElement xmi:type="uml:SignalEvent" xmi:id="_AUznAOMJEeuvzPeHGzGr1A" name="PositiveResultPersistedEvent"/>
               <packagedElement xmi:type="uml:SignalEvent" xmi:id="_hYylUOMJEeuvzPeHGzGr1A" name="AcceptableScorePersistedEvent"/>
               <packagedElement xmi:type="uml:SignalEvent" xmi:id="_Vi3qwOMKEeuvzPeHGzGr1A" name="CreditAanlystApprovedPersistEvent"/>
-              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_lco_0OMKEeuvzPeHGzGr1A" name="CreditAcceptedPersistEvent"/>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_lco_0OMKEeuvzPeHGzGr1A" name="WaitingCreditAnalystApprovalCreditAcceptedPersistEvent"/>
               <packagedElement xmi:type="uml:SignalEvent" xmi:id="_0yQe8OMKEeuvzPeHGzGr1A" name="CreditScoreToLowPersistEvent"/>
               <packagedElement xmi:type="uml:SignalEvent" xmi:id="_Cu28sOMLEeuvzPeHGzGr1A" name="CreditRejectedPersistEvent"/>
               <packagedElement xmi:type="uml:SignalEvent" xmi:id="_b-2aQOMLEeuvzPeHGzGr1A" name="FraudPreventionFraudPersistEvent"/>
@@ -292,6 +292,7 @@ Slave State Machines will asyncrhnously reply to Master State Machine, in this c
                   <subvertex xmi:type="uml:State" xmi:id="_wg9LcNtYEeyBoKz2hPLjXg" name="WAITING_ANAYLIST_APPROVAL"/>
                 </region>
               </packagedElement>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_ejQQYN_lEeyBoKz2hPLjXg" name="CreditAcceptedPersistEvent"/>
             </packagedElement>
             <packagedElement xmi:type="uml:Package" xmi:id="_7WfA0OSSEeup6LjjOh4MjQ" name="creditscore">
               <packagedElement xmi:type="uml:StateMachine" xmi:id="_MYTEgOCMEeuquPi25eySzA" name="CreditScoreSM" isAbstract="true" isActive="true">

@@ -1224,8 +1224,24 @@ public class InitialTest {
                 (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL_$_WAITING_ANAYLIST_APPROVAL.class));
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_WAITING_APPROVAL_FROM_SENIOR_MANAGER.class));
         assertEquals(true, report.state().controlObject().get(PayloadVariableConstants.ADDRESS_CHECK_RESULT));
+        verify(notifierService, times(1)).notify(eq(seniorSalesManagerNotificationList), anyString());
+
+        Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
+
+        payload = preparePayload(creditUuid, creditTenants);
+        creditSMFacade.acceptableScore(payload);
+
+        Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
+
+        futureCreditSMState = creditSMFacade.currentState(payload);
+
+        report =
+                (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
+
+        assertNotNull(report);
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL_$_WAITING_ANAYLIST_APPROVAL.class));
         verify(notifierService, times(1)).notify(eq(creditAnalystNotificationList), anyString());
 
         Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
@@ -1246,7 +1262,6 @@ public class InitialTest {
         verify(creditScoreServiceMockBean).calculateCreditScore(anyString(), anyString(), anyString());
         verify(fraudPreventionServiceMockBean).reportFraudPrevention(anyString(), anyString(), anyString());
         verify(addressCheckServiceMockBean).addressExist(anyString(), anyString(), anyString(), anyString());
-        verify(notifierService, never()).notify(eq(seniorSalesManagerNotificationList), anyString());
         verify(customerRelationshipAdapter).transferCustomerCreation(
                 eq(
                         new CRMCustomer(

@@ -8,6 +8,7 @@ import org.salgar.fsm.akka.foureyes.variables.PayloadVariableConstants;
 import java.util.Map;
 
 import static org.salgar.fsm.akka.foureyes.slaves.SlaveStatemachineConstants.*;
+import static org.salgar.fsm.akka.foureyes.variables.PayloadVariableConstants.CREDIT_AMOUNT;
 
 public class SALES_MANAGER_APPROVED_$$_WAITING_APPROVAL_FROM_SENIOR_MANAGER_isCreditScoreNotSufficientGuard_GuardImpl
     implements SALES_MANAGER_APPROVED_$$_WAITING_APPROVAL_FROM_SENIOR_MANAGER_isCreditScoreNotSufficientGuard_Guard {
@@ -19,102 +20,90 @@ public class SALES_MANAGER_APPROVED_$$_WAITING_APPROVAL_FROM_SENIOR_MANAGER_isCr
         actorContext.log().debug("Evaluating SALES_MANAGER_APPROVED salesManagerApproved_onCreditScoreReceived Guard");
 
         String slaveSM = (String) payload.get(SOURCE_SLAVE_SM_TAG);
+        Double creditAmount = (Double) controlObject.get(CREDIT_AMOUNT);
 
         if(CUSTOMER_SCORE_SM.equals(slaveSM)) {
-            return checkResultCreditScore(
-                    actorContext,
-                    controlObject,
-                    payload
-            );
+            Object csr = payload.get(PayloadVariableConstants.CREDIT_SCORE_TENANT_RESULTS);
+            Object fpr = controlObject.get(PayloadVariableConstants.FRAUD_PREVENTION_RESULT);
+            Object acr = controlObject.get(PayloadVariableConstants.ADDRESS_CHECK_RESULT);
+            if(isAllResponsesCompleteCreditScore(csr, fpr, acr)) {
+                if(creditAmount >= 10000000.0) {
+                    return true;
+                } else {
+                    return checkCondition(csr, fpr, acr);
+                }
+            }
         } else if(FRAUD_PREVENTION_SM.equals(slaveSM)) {
-            return checkResultFraudPrevention(
-                    actorContext,
-                    controlObject,
-                    payload
-            );
+            Object csr = controlObject.get(PayloadVariableConstants.CREDIT_SCORE_TENANT_RESULTS);
+            Object fpr = payload.get(PayloadVariableConstants.FRAUD_PREVENTION_RESULT);
+            Object acr = controlObject.get(PayloadVariableConstants.ADDRESS_CHECK_RESULT);
+            if(isAllResponsesFP(csr, fpr, acr)) {
+                if(creditAmount >= 10000000.0) {
+                    return true;
+                } else {
+                    return checkCondition(csr, fpr, acr);
+                }
+            }
         } else if(ADDRESS_CHECK_SM.equals(slaveSM)) {
-            return checkResultFromAddressCheck(
-                    actorContext,
-                    controlObject,
-                    payload
-            );
+            Object csr = controlObject.get(PayloadVariableConstants.CREDIT_SCORE_TENANT_RESULTS);
+            Object fpr = controlObject.get(PayloadVariableConstants.FRAUD_PREVENTION_RESULT);
+            Object acr = payload.get(PayloadVariableConstants.ADDRESS_CHECK_RESULT);
+            if(isAllResponsesAC(csr, fpr, acr)) {
+                if(creditAmount >= 10000000.0) {
+                    return true;
+                } else {
+                    return checkCondition(csr, fpr, acr);
+                }
+            }
         }
 
         return false;
     }
 
-    private boolean checkResultCreditScore(ActorContext<CreditSM.CreditSMEvent> actorContext,
-                                           Map<String, Object> controlObject,
-                                           Map<String, Object> payload) {
-        Object csr = payload.get(PayloadVariableConstants.CREDIT_SCORE_TENANT_RESULTS);
+    private boolean isAllResponsesCompleteCreditScore(Object csr,
+                                                      Object fpr,
+                                                      Object acr) {
         if(csr == null) {
             return false;
         }
-        Map<String, CreditTenantScoreResult> creditTenantScoreResultMap =
-                (Map<String, CreditTenantScoreResult>) csr;
-
-        Object fpr = controlObject.get(PayloadVariableConstants.FRAUD_PREVENTION_RESULT);
         if(fpr == null) {
             return false;
         }
-        boolean fraudPreventionResult = (boolean) fpr;
-
-        Object acr = controlObject.get(PayloadVariableConstants.ADDRESS_CHECK_RESULT);
-        if(acr == null) {
-            return false;
-        }
-        boolean addressCheckResult = (boolean) acr;
-
-        return checkCondition(creditTenantScoreResultMap, fraudPreventionResult, addressCheckResult);
+        return acr != null;
     }
 
-    private boolean checkResultFraudPrevention(ActorContext<CreditSM.CreditSMEvent> actorContext,
-                                               Map<String, Object> controlObject,
-                                               Map<String, Object> payload) {
-        Object csr = controlObject.get(PayloadVariableConstants.CREDIT_SCORE_TENANT_RESULTS);
+    private boolean isAllResponsesFP(Object csr,
+                                     Object fpr,
+                                     Object acr) {
         if(csr == null) {
             return false;
         }
-        Map<String, CreditTenantScoreResult> creditTenantScoreResultMap =
-                (Map<String, CreditTenantScoreResult>) csr;
-
-        Object fpr = payload.get(PayloadVariableConstants.FRAUD_PREVENTION_RESULT);
         if(fpr == null) {
             return false;
         }
-        boolean fraudPreventionResult = (boolean) fpr;
-
-        Object acr = controlObject.get(PayloadVariableConstants.ADDRESS_CHECK_RESULT);
-        if(acr == null) {
-            return false;
-        }
-        boolean addressCheckResult = (boolean) acr;
-
-        return checkCondition(creditTenantScoreResultMap, fraudPreventionResult, addressCheckResult);
+        return acr != null;
     }
 
-    private boolean checkResultFromAddressCheck(ActorContext<CreditSM.CreditSMEvent> actorContext,
-                                                Map<String, Object> controlObject,
-                                                Map<String, Object> payload) {
-        Object csr = controlObject.get(PayloadVariableConstants.CREDIT_SCORE_TENANT_RESULTS);
+    private boolean isAllResponsesAC(Object csr,
+                                     Object fpr,
+                                     Object acr) {
         if(csr == null) {
             return false;
         }
-        Map<String, CreditTenantScoreResult> creditTenantScoreResultMap =
-                (Map<String, CreditTenantScoreResult>) csr;
-
-        Object fpr = controlObject.get(PayloadVariableConstants.FRAUD_PREVENTION_RESULT);
         if(fpr == null) {
             return false;
         }
+        return acr != null;
+    }
+
+    private boolean checkCondition(
+            Object csr,
+            Object fpr,
+            Object acr) {
+        Map<String, CreditTenantScoreResult> creditTenantScoreResultMap =
+                (Map<String, CreditTenantScoreResult>) csr;
         boolean fraudPreventionResult = (boolean) fpr;
-
-        Object acr = payload.get(PayloadVariableConstants.ADDRESS_CHECK_RESULT);
-        if(acr == null) {
-            return false;
-        }
         boolean addressCheckResult = (boolean) acr;
-
         return checkCondition(creditTenantScoreResultMap, fraudPreventionResult, addressCheckResult);
     }
 
