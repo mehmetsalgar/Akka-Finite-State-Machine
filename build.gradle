@@ -595,7 +595,8 @@ project(':fsm-akka-4eyes-event-adapter') {
     apply plugin: 'scala'
 
     dependencies {
-        api project(':fsm-akka-4eyes-statemachine')
+        api project(':fsm-akka-4eyes-statemachine'),
+                project(':fsm-akka-4eyes-model')
     }
 }
 
