@@ -51,6 +51,7 @@ class StateMachineHelper {
                 )
             }
         }
+        findSubMachinePersistEventsRecursiveV1(it, result)
         result
     }
 
