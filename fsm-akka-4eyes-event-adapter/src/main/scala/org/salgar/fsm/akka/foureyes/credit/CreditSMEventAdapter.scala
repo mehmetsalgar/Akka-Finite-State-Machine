@@ -2,6 +2,7 @@ package org.salgar.fsm.akka.foureyes.credit
 
 import akka.persistence.typed.{EventAdapter, EventSeq}
 import org.salgar.fsm.akka.foureyes.credit.CreditSM.{SalesManagerApprovalV2PersistEvent, SomeAdditionalManagerApprovedPersistEvent}
+import org.salgar.fsm.akka.foureyes.credit.model._
 
 import java.util
 import java.util.UUID
@@ -44,13 +45,11 @@ object CreditSMEventAdapter
               customer.getPersonalId,
               customer.getFirstName,
               customer.getLastName,
+              "customer1@test.org",
+              java.util.List.of(customer.getAddress),
               java.util.List.of(identificationInformation),
               java.util.List.of(incomeProof),
-              util.Arrays.asList(expanseRent, expanseCarCredit),
-              java.util.List.of(customer.getAddress),
-              "customer1@test.org"
-            )
-
+              util.Arrays.asList(expanseRent, expanseCarCredit))
           customerV2Tenants.add(customerV2)
         })
 
