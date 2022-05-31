@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.salgar.akka.fsm.foureyes.notifier.NotificationHelper.CREDIT_ANALYST_NOTIFICATION_LIST;
+import static org.salgar.fsm.akka.foureyes.variables.PayloadVariableConstants.CREDIT_ANALYSTS;
 
 @RequiredArgsConstructor
 public class WAITING_APPROVAL_FROM_SENIOR_MANAGER_$$_WAITING_CREDIT_ANALYST_APPROVAL_waitingApprovalFromSeniorOfficier_onAcceptableScore_ActionImpl
@@ -23,6 +24,8 @@ public class WAITING_APPROVAL_FROM_SENIOR_MANAGER_$$_WAITING_CREDIT_ANALYST_APPR
         notifierService
                 .notify(notificationList, "Sales Manager Approved the Credit and Partner Systems delivered results"
                         + " you should proceed. Please check!");
+
+        controlObject.put(CREDIT_ANALYSTS, notificationList);
 
         return payload;
     }

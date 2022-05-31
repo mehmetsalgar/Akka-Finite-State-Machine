@@ -22,6 +22,7 @@ public class WAITING_APPROVAL_$$_RELATIONSHIP_MANAGER_APPROVED_waitingApproval_o
         List<String> notificationList = notifierService.calculateRecipientList(SOME_OTHER_MANAGER_NOTIFICATION_LIST);
         notifierService.notify(notificationList,
                 "Relationship Manager Approved the Credit, Some Other Manager you should proceed. Please check!");
+        //controlObject.put(SALES_MANAGERS, notificationList);
 
         return payload;
     }

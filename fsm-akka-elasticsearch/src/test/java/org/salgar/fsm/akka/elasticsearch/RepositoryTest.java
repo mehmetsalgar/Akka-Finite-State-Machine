@@ -2,12 +2,14 @@ package org.salgar.fsm.akka.elasticsearch;
 
 import lombok.RequiredArgsConstructor;
 import org.junit.Assert;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.salgar.fsm.akka.elasticsearch.model.Book;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
+@Disabled
 @ActiveProfiles("itest")
 @RequiredArgsConstructor
 @SpringBootTest(classes = {TestApplication.class})

@@ -8,11 +8,13 @@ import org.eclipse.xtext.generator.IGeneratorContext
 
 class ScalaKafkaGenerator extends AbstractGenerator {
     @Inject TopicConfigTemplate topicConfigTemplate
+    @Inject ConsumerConfigTemplate consumerConfigTemplate
     @Inject StreamConfigTemplate streamConfigTemplate
     @Inject AskFacadeTemplate askFacadeTemplate
 
     override doGenerate(Resource input, IFileSystemAccess2 fsa, IGeneratorContext context) {
         topicConfigTemplate.doGenerate(input, fsa)
+        consumerConfigTemplate.doGenerate(input, fsa)
         streamConfigTemplate.doGenerate(input, fsa)
         askFacadeTemplate.doGenerate(input, fsa)
     }

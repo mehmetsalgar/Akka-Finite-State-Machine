@@ -33,7 +33,11 @@ class StateMachineHelper {
             if(state.getSubmachine() !== null) {
                 result.putAll(
                     giveTransitionWithTriggerRecursive(
-                        state.getSubmachine().allOwnedElements().filter(Transition).sortWith([o1, o2 | o1.getName().compareTo(o2.getName())])
+                        state
+                            .getSubmachine()
+                            .allOwnedElements()
+                            .filter(Transition)
+                            .sortWith([o1, o2 | (o1.getName() !== null && o2.getName() !== null)? o1.getName().compareTo(o2.getName()):throw new IllegalArgumentException("Transition must have a name: first Transition: " + o1.toString() + " second Transition: " + o2.toString() + " ")])
                     )
                 )
             }
@@ -181,8 +185,9 @@ class StateMachineHelper {
     def void findSubMachinePersistEventsRecursiveV1(
         org.eclipse.uml2.uml.StateMachine it,
         Map<String, Event> eventsMap) {
-        for(signalEvent : nearestPackage.allOwnedElements().filter(SignalEvent).sortWith([o1, o2 | o1.getName().compareTo(o2.getName())])) {
-            eventsMap.put(signalEvent.name, signalEvent)
+        val map = new HashMap<String, Event>
+        for(signalEvent : nearestPackage.allOwnedElements().filter(SignalEvent).sortWith([o1, o2 | (o1.getName() !== null && o2.getName() !== null) ? o1.getName().compareTo(o2.getName()):throw new IllegalArgumentException("Transition must have a name: first Transition: " + o1.toString() + " second Transition: " + o2.toString() + " ")])) {
+            map.put(signalEvent.name, signalEvent)
         }
     }
 

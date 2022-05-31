@@ -152,6 +152,13 @@ public class KafkaITest {
         final CreditTenants creditTenants =
                 creditTenantsBuilder.build();
 
+        CreditApplication.Builder creditApplicationBuilder =
+                CreditApplication.getDefaultInstance().toBuilder();
+        creditApplicationBuilder.setCreditAmount(10000.0);
+        creditApplicationBuilder.setCreditTenants(creditTenants);
+
+        final CreditApplication creditApplication = creditApplicationBuilder.build();
+
         /* Mock Preparation */
 
         doAnswer(invocation -> {
@@ -169,7 +176,10 @@ public class KafkaITest {
                                         PayloadVariableConstants.CREDIT_SCORE_RESULT,
                                         Any.pack(CreditScoreResult.newBuilder().setCreditScore(84.21).build()))
                                 .build();
-                kafkaTemplateCreditScoreSM.send(topicProperties.getCreditScoreSM(), creditScoreSMCommand);
+                kafkaTemplateCreditScoreSM.send(
+                        topicProperties.getCreditScoreSM(),
+                        creditUuid + "_" + customer1.getCustomerId(),
+                        creditScoreSMCommand);
 
             } else if(invocation.getArgument(2).equals(customer2.getCustomerId())) {
                 log.info("Sending Credit Score Result customer2");
@@ -185,7 +195,10 @@ public class KafkaITest {
                                         PayloadVariableConstants.CREDIT_SCORE_RESULT,
                                         Any.pack(CreditScoreResult.newBuilder().setCreditScore(97.45).build()))
                                 .build();
-                kafkaTemplateCreditScoreSM.send(topicProperties.getCreditScoreSM(), creditScoreSMCommand);
+                kafkaTemplateCreditScoreSM.send(
+                        topicProperties.getCreditScoreSM(),
+                        creditUuid + "_" + customer2.getCustomerId(),
+                        creditScoreSMCommand);
             } else {
                 String personalId = invocation.getArgument(2);
                 log.warn("Unkown customer: {}", personalId);
@@ -211,7 +224,10 @@ public class KafkaITest {
                                     PayloadVariableConstants.FRAUD_PREVENTION_RESULT,
                                     Any.pack(FraudPreventionResult.newBuilder().setFraudPreventionResult(true).build()))
                             .build();
-            kafkaTemplateFraudPreventionSM.send(topicProperties.getFraudPreventionSM(), fraudPreventionSMCommand);
+            kafkaTemplateFraudPreventionSM.send(
+                    topicProperties.getFraudPreventionSM(),
+                    creditUuid,
+                    fraudPreventionSMCommand);
 
             return null;
         }).when(fraudPreventionServiceMockBean).reportFraudPrevention(
@@ -232,7 +248,10 @@ public class KafkaITest {
                             PayloadVariableConstants.ADDRESS_CHECK_RESULT,
                             Any.pack(AddressCheckResult.newBuilder().setAddressCheckResult(true).build()))
                     .build();
-            kafkaTemplateAddressCheckSM.send(topicProperties.getAdressCheckSM(),adressCheckSMCommand);
+            kafkaTemplateAddressCheckSM.send(
+                    topicProperties.getAdressCheckSM(),
+                    creditUuid,
+                    adressCheckSMCommand);
 
             return null;
         }).when(addressCheckServiceMockBean).addressExist(
@@ -250,11 +269,14 @@ public class KafkaITest {
                                 CreditUseCaseKeyStrategy.CREDIT_UUID,
                                 Any.pack(CreditUUID.newBuilder().setCreditUUID(creditUuid).build()))
                         .putPayload(
-                                PayloadVariableConstants.CREDIT_TENANTS,
-                                Any.pack(creditTenants))
+                                PayloadVariableConstants.CREDIT_APPLICATION,
+                                Any.pack(creditApplication))
                         .build();
 
-        kafkaTemplateCreditSM.send(topicProperties.getCreditSM(), creditSMSubmitCommand);
+        kafkaTemplateCreditSM.send(
+                topicProperties.getCreditSM(),
+                creditUuid,
+                creditSMSubmitCommand);
 
         Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
 
@@ -266,7 +288,7 @@ public class KafkaITest {
                 (CreditSM.ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CreditSM.CREDIT_APPLICATION_SUBMITTED_$_WAITING_APPROVAL.class));
+        assertThat(report.state(), instanceOf(CreditSM.CREDIT_APPLICATION_SUBMITTED_$_WAITING_APPROVAL_$_WAITING_MANAGER_APPROVAL.class));
         assertEquals(
                 ((List<org.salgar.fsm.akka.foureyes.credit.model.Customer>)report.state().controlObject().get(PayloadVariableConstants.CREDIT_TENANTS)).get(0),
                 converterService.converter(PROTOBUF_PREFIX + customer1.getDescriptorForType().getFullName()).convert(customer1));
@@ -290,7 +312,10 @@ public class KafkaITest {
                                 Any.pack(creditTenants))
                         .build();
 
-        kafkaTemplateCreditSM.send(topicProperties.getCreditSM(), creditSMRelationshipManagerApprovedCommand);
+        kafkaTemplateCreditSM.send(
+                topicProperties.getCreditSM(),
+                creditUuid,
+                creditSMRelationshipManagerApprovedCommand);
 
         Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
 
@@ -302,7 +327,7 @@ public class KafkaITest {
                 (CreditSM.ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CreditSM.CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED.class));
+        assertThat(report.state(), instanceOf(CreditSM.CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED_$_WAITING_MANAGER_APPROVAL.class));
         verify(notifierService).notify(eq(someOtherManagerNotificationList), anyString());
 
         Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
@@ -333,6 +358,7 @@ public class KafkaITest {
 
         assertNotNull(report);
         assertThat(report.state(), instanceOf(CreditSM.CREDIT_APPLICATION_SUBMITTED_$_SOME_ADDITIONAL_MANAGER_APPROVED.class));
+        assertThat(report.state(), instanceOf(CreditSM.CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED_$_WAITING_MANAGER_APPROVAL.class));
         verify(notifierService).notify(eq(salesManagerNotificationList), anyString());
 
         Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
@@ -350,7 +376,10 @@ public class KafkaITest {
                                 Any.pack(creditTenants))
                         .build();
 
-        kafkaTemplateCreditSM.send(topicProperties.getCreditSM(), creditSMSalesipManagerApprovedCommand);
+        kafkaTemplateCreditSM.send(
+                topicProperties.getCreditSM(),
+                creditUuid,
+                creditSMSalesipManagerApprovedCommand);
 
         Thread.sleep(TimeUnit.SECONDS.toMillis(10));
 
@@ -362,7 +391,7 @@ public class KafkaITest {
                 (CreditSM.ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CreditSM.CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL.class));
+        assertThat(report.state(), instanceOf(CreditSM.CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL_$_WAITING_ANAYLIST_APPROVAL.class));
         verify(notifierService).notify(eq(creditAnalystNotificationList), anyString());
 
         verify(creditScoreServiceMockBean, times(2)).calculateCreditScore(anyString(), anyString(), anyString());

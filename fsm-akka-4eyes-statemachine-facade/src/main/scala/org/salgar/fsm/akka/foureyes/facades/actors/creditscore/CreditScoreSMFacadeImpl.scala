@@ -4,10 +4,14 @@ import akka.actor.typed.ActorRef
 import akka.actor.typed.scaladsl.AskPattern.Askable
 import org.salgar.akka.fsm.api.UseCaseKey
 import org.salgar.fsm.akka.akkasystem.ActorService
+import org.salgar.fsm.akka.foureyes.credit.kafka.config.TopicProperties
 import org.salgar.fsm.akka.foureyes.creditscore.CreditScoreSM.{CreditScoreSMEvent, Response}
 import org.salgar.fsm.akka.foureyes.creditscore.CreditScoreSMGuardian._
 import org.salgar.fsm.akka.foureyes.creditscore.facade.CreditScoreSMFacade
 import org.salgar.fsm.akka.foureyes.creditscore.{CreditScoreSM, CreditScoreSMEventAdapter, CreditScoreSMGuardian}
+import org.salgar.fsm.akka.foureyes.creditscore.protobuf.CreditScoreSMCommand
+import org.salgar.fsm.akka.foureyes.creditscore.{CreditScoreSM, CreditScoreSMGuardian}
+import org.salgar.fsm.akka.kafka.config.ConsumerConfig
 import org.salgar.fsm.akka.statemachine.facade.StateMachineFacade
 import org.springframework.context.annotation.DependsOn
 import org.springframework.stereotype.Service
@@ -18,10 +22,12 @@ import scala.concurrent.Future
 
 @Service
 @DependsOn(Array("actorService"))
-class CreditScoreSMFacadeImpl(actorService: ActorService)
-  extends StateMachineFacade[CreditScoreSMGuardianEvent, Response] (
+class CreditScoreSMFacadeImpl(actorService: ActorService,
+                              creditScoreSMConsumerConfig: ConsumerConfig[String, CreditScoreSMCommand],
+                              topicProperties: TopicProperties)
+  extends StateMachineFacade[CreditScoreSMGuardianEvent, Response](
       actorService, "creditScoreSMGuardian",
-      CreditScoreSMGuardian(CreditScoreSMEventAdapter)(actorService.sharding(), actorService.actorSystem()))
+      CreditScoreSMGuardian(CreditScoreSMEventAdapter)(actorService.actorSystem(), actorService.sharding()))
     with CreditScoreSMFacade{
   import ActorService._
 

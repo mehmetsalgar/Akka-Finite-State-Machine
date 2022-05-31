@@ -1,5 +1,10 @@
 #!/bin/bash
 groupId=$(echo $2 | sed 's|\.|/|g')
+#fsm-akka-***-advice
+mkdir "fsm-akka-$1-advice"
+mkdir -p "fsm-akka-$1-advice/src/main/java/${groupId}/aspect"
+sedAspectJ="s|org.salgar.akka.fsm|$2|g;"
+sed "${sedAspectJ}" "fsm-akka-4eyes-advice/src/main/java/org/salgar/akka/fsm/aspect/FSMAspect.aj" > "fsm-akka-$1-advice/src/main/java/${groupId}/aspect/FSMAspect.aj"
 #fsm-akka-***-uml-model
 mkdir "fsm-akka-$1-uml-model"
 mkdir -p "fsm-akka-$1-uml-model/src/main/resources"
@@ -16,7 +21,7 @@ mkdir "fsm-akka-$1-actionguard-impl"
 mkdir -p "fsm-akka-$1-actionguard-impl/src/main/java/${groupId}"
 #fsm-akka-***-event-adapter
 mkdir "fsm-akka-$1-event-adapter"
-mkdir -p "fsm-akka-$1-statemachine-facade/src/main/scala/${groupId}"
+mkdir -p "fsm-akka-$1-event-adapter/src/main/scala/${groupId}"
 #fsm-akka-***-statemachine-facade
 mkdir "fsm-akka-$1-statemachine-facade"
 mkdir -p "fsm-akka-$1-statemachine-facade/src/main/java/${groupId}"
@@ -113,6 +118,7 @@ sed "s|foureyes|$1|g" "fsm-akka-4eyes-application/helm/Chart.yaml" > "fsm-akka-$
 
 #settings.gradle
 sedCommand="s|fsm-akka-4eyes-uml-model|fsm-akka-$1-uml-model|g;"
+sedCommand="${sedCommand}s|fsm-akka-4eyes-advice|fsm-akka-$1-advice|g;"
 sedCommand="${sedCommand}s|fsm-akka-4eyes-statemachine|fsm-akka-$1-statemachine|g;"
 sedCommand="${sedCommand}s|fsm-akka-4eyes-actionguard-impl|fsm-akka-$1-actionguard-impl|g;"
 sedCommand="${sedCommand}s|fsm-akka-4eyes-event-adapter|fsm-akka-$1-event-adapter|g;"
@@ -132,6 +138,7 @@ sed "${sedCommand}" settings.gradle > settings_fork.gradle
 
 #build.gradle
 sedBuildCommand="s|fsm-akka-4eyes-uml-model|fsm-akka-$1-uml-model|g;"
+sedBuildCommand="${sedBuildCommand}s|fsm-akka-4eyes-advice|fsm-akka-$1-advice|g;"
 sedBuildCommand="${sedBuildCommand}s|fsm-akka-4eyes-statemachine|fsm-akka-$1-statemachine|g;"
 sedBuildCommand="${sedBuildCommand}s|fsm-akka-4eyes-actionguard-impl|fsm-akka-$1-actionguard-impl|g;"
 sedBuildCommand="${sedBuildCommand}s|fsm-akka-4eyes-event-adapter|fsm-akka-$1-event-adapter|g;"

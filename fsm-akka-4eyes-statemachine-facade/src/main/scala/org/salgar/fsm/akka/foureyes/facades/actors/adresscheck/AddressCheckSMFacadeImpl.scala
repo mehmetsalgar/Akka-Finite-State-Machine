@@ -7,7 +7,10 @@ import org.salgar.fsm.akka.akkasystem.ActorService
 import org.salgar.fsm.akka.foureyes.addresscheck.AdressCheckSM.{AdressCheckSMEvent, Response}
 import org.salgar.fsm.akka.foureyes.addresscheck.AdressCheckSMGuardian._
 import org.salgar.fsm.akka.foureyes.addresscheck.facade.AdressCheckSMFacade
+import org.salgar.fsm.akka.foureyes.addresscheck.protobuf.AdressCheckSMCommand
 import org.salgar.fsm.akka.foureyes.addresscheck.{AdressCheckSM, AdressCheckSMGuardian}
+import org.salgar.fsm.akka.foureyes.credit.kafka.config.TopicProperties
+import org.salgar.fsm.akka.kafka.config.ConsumerConfig
 import org.salgar.fsm.akka.statemachine.facade.StateMachineFacade
 import org.springframework.context.annotation.DependsOn
 import org.springframework.stereotype.Service
@@ -18,8 +21,12 @@ import scala.concurrent.Future
 
 @Service
 @DependsOn(Array("actorService"))
-class AddressCheckSMFacadeImpl(actorService: ActorService)
-  extends StateMachineFacade[AdressCheckSMGuardianEvent, Response] (actorService, "addressCheckSMGuardian", AdressCheckSMGuardian()(actorService.sharding(), actorService.actorSystem()))
+class AddressCheckSMFacadeImpl(actorService: ActorService,
+                               addressCheckSMConsumerConfig: ConsumerConfig[String, AdressCheckSMCommand],
+                               topicProperties: TopicProperties)
+  extends StateMachineFacade[AdressCheckSMGuardianEvent, Response] (
+    actorService, "addressCheckSMGuardian",
+    AdressCheckSMGuardian()(actorService.actorSystem(), actorService.sharding()))
     with AdressCheckSMFacade {
   import ActorService._
 

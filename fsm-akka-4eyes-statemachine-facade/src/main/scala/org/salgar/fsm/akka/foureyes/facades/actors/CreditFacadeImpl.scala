@@ -5,8 +5,11 @@ import org.salgar.fsm.akka.akkasystem.ActorService
 import org.salgar.fsm.akka.foureyes.credit.CreditSM.Response
 import org.salgar.fsm.akka.foureyes.credit.CreditSMGuardian._
 import org.salgar.fsm.akka.foureyes.credit.facade.CreditSMFacade
+import org.salgar.fsm.akka.foureyes.credit.kafka.config.TopicProperties
+import org.salgar.fsm.akka.foureyes.credit.protobuf.CreditSMCommand
 import org.salgar.fsm.akka.foureyes.credit.{CreditSMEventAdapter, CreditSMGuardian}
 import org.salgar.fsm.akka.foureyes.slaves.SlaveStatemachineConstants.{ADDRESS_CHECK_SM, CUSTOMER_SCORE_SM, FRAUD_PREVENTION_SM, SOURCE_SLAVE_SM_TAG}
+import org.salgar.fsm.akka.kafka.config.ConsumerConfig
 import org.salgar.fsm.akka.statemachine.facade.StateMachineFacade
 import org.springframework.context.annotation.DependsOn
 import org.springframework.stereotype.Component
@@ -17,10 +20,13 @@ import scala.concurrent.Future
 
 @Component
 @DependsOn(Array("actorService"))
-class CreditFacadeImpl(actorService: ActorService)
+class CreditFacadeImpl(actorService: ActorService,
+                       creditSMConsumerConfig: ConsumerConfig[String, CreditSMCommand],
+                       topicProperties: TopicProperties)
   extends StateMachineFacade[CreditSMGuardian.CreditSMGuardianEvent, Response] (
     actorService, "creditSMGuardian",
-    CreditSMGuardian(CreditSMEventAdapter)(actorService.sharding()))
+    CreditSMGuardian(CreditSMEventAdapter)
+    (actorService.actorSystem(), actorService.sharding()))
     with CreditSMFacade {
   import ActorService._
 

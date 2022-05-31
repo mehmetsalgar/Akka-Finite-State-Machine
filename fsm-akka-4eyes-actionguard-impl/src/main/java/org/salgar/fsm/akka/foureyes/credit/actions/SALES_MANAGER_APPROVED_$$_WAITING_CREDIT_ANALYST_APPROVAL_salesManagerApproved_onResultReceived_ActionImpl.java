@@ -24,7 +24,6 @@ public class SALES_MANAGER_APPROVED_$$_WAITING_CREDIT_ANALYST_APPROVAL_salesMana
                                                         Map<String, Object> payload) {
 
         String slaveSM = (String) payload.get(SOURCE_SLAVE_SM_TAG);
-
         if(CUSTOMER_SCORE_SM.equals(slaveSM)) {
             processCreditScoreResult(
                     actorContext,
@@ -44,11 +43,12 @@ public class SALES_MANAGER_APPROVED_$$_WAITING_CREDIT_ANALYST_APPROVAL_salesMana
                     payload
             );
         }
-
         List<String> notificationList = notifierService.calculateRecipientList(CREDIT_ANALYST_NOTIFICATION_LIST);
         notifierService
                 .notify(notificationList, "Sales Manager Approved the Credit and Partner Systems delivered results"
                 + " you should proceed. Please check!");
+
+        controlObject.put(CREDIT_ANALYSTS, notificationList);
 
         return payload;
     }

@@ -12,7 +12,10 @@ import org.salgar.akka.fsm.foureyes.notifier.NotifierService;
 import org.salgar.fsm.akka.foureyes.addresscheck.facade.AdressCheckSMFacade;
 import org.salgar.fsm.akka.foureyes.credit.CreditSM;
 import org.salgar.fsm.akka.foureyes.credit.facade.CreditSMFacade;
-import org.salgar.fsm.akka.foureyes.credit.model.*;
+import org.salgar.fsm.akka.foureyes.credit.model.Address;
+import org.salgar.fsm.akka.foureyes.credit.model.CreditApplication;
+import org.salgar.fsm.akka.foureyes.credit.model.CreditTenants;
+import org.salgar.fsm.akka.foureyes.credit.model.Customer;
 import org.salgar.fsm.akka.foureyes.creditscore.facade.CreditScoreSMFacade;
 import org.salgar.fsm.akka.foureyes.elasticsearch.CreditSMRepository;
 import org.salgar.fsm.akka.foureyes.elasticsearch.model.CreditSmEs;
@@ -42,6 +45,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 import static org.salgar.akka.fsm.foureyes.notifier.NotificationHelper.*;
 
+//@Disabled
 @EnableElasticsearchRepositories("org.salgar.fsm.akka.foureyes.elasticsearch")
 @ActiveProfiles({"itest"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
@@ -105,7 +109,7 @@ public class SlaveStateMachineTest {
         creditTenants.add(customer1);
         creditTenants.add(customer2);
 
-        Map<String, Object> payload = preparePayload(creditUuid, creditTenants);
+        Map<String, Object> payload = preparePayload(creditUuid, 100000.0, creditTenants);
 
         /* Mock Preparation */
 
@@ -187,9 +191,9 @@ public class SlaveStateMachineTest {
                 (CreditSM.ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CreditSM.CREDIT_APPLICATION_SUBMITTED_$_WAITING_APPROVAL.class));
-        assertEquals(((List<CustomerV2>)report.state().controlObject().get(PayloadVariableConstants.CREDIT_TENANTS)).get(0), customer1);
-        assertEquals(((List<CustomerV2>)report.state().controlObject().get(PayloadVariableConstants.CREDIT_TENANTS)).get(1), customer2);
+        assertThat(report.state(), instanceOf(CreditSM.CREDIT_APPLICATION_SUBMITTED_$_WAITING_APPROVAL_$_WAITING_MANAGER_APPROVAL.class));
+        assertEquals(((List<Customer>)report.state().controlObject().get(PayloadVariableConstants.CREDIT_TENANTS)).get(0), customer1);
+        assertEquals(((List<Customer>)report.state().controlObject().get(PayloadVariableConstants.CREDIT_TENANTS)).get(1), customer2);
         verify(notifierService, atLeastOnce()).notify(eq(relationShipNotificationList), anyString());
 
         payload = preparePayload(creditUuid, creditTenants);
@@ -203,42 +207,19 @@ public class SlaveStateMachineTest {
                 (CreditSM.ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CreditSM.CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED.class));
-        verify(notifierService, atLeastOnce()).notify(eq(someOtherManagerNotificationList), anyString());
-
-        payload = preparePayload(creditUuid, creditTenants);
-        creditSMFacade.someAdditionalManagerApproved(payload);
-
-        Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
-
-        futureCreditSMState = creditSMFacade.currentState(payload);
-
-        report =
-                (CreditSM.ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
-
-        assertNotNull(report);
-        assertThat(report.state(), instanceOf(CreditSM.CREDIT_APPLICATION_SUBMITTED_$_SOME_ADDITIONAL_MANAGER_APPROVED.class));
-        verify(notifierService, atLeastOnce()).notify(eq(salesManagerNotificationList), anyString());
+        assertThat(report.state(), instanceOf(CreditSM.CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED_$_WAITING_MANAGER_APPROVAL.class));
 
         payload = preparePayload(creditUuid, creditTenants);
         creditSMFacade.salesManagerApproved(payload);
 
         Thread.sleep(30000L);
-
+        verify(notifierService, atLeastOnce()).notify(eq(salesManagerNotificationList), anyString());
 
         Optional<CreditSmEs> creditSmEs = creditSMRepository.findById(creditUuid);
 
         assertNotNull(creditSmEs);
         assertEquals(
-                CreditSM.CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL
-                        .class
-                        .getSimpleName()
-                        .substring(
-                                CreditSM.CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL
-                                .class
-                                .getSimpleName()
-                                        .indexOf("_$_") + 3
-                        ),
+                "WAITING_CREDIT_ANALYST_APPROVAL",
                 creditSmEs.get().getState());
 
         verify(creditScoreServiceMockBean, times(2)).calculateCreditScore(anyString(), anyString(), anyString());
@@ -250,7 +231,23 @@ public class SlaveStateMachineTest {
         Thread.sleep(WAIT_TIME_ELASTIC);
     }
 
-    private Map<String, Object> preparePayload (
+    private Map<String, Object> preparePayload(
+            String creditUuid,
+            Double creditAmount,
+            List<Customer> creditTenants) {
+
+        final Map<String, Object> payload = new HashMap<>();
+        CreditApplication creditApplication = new CreditApplication(
+                creditAmount,
+                new CreditTenants(creditTenants)
+        );
+        payload.put(CreditUseCaseKeyStrategy.CREDIT_UUID, creditUuid);
+        payload.put(PayloadVariableConstants.CREDIT_APPLICATION, creditApplication);
+
+        return payload;
+    }
+
+    private Map<String, Object> preparePayload(
             String creditUuid,
             List<CustomerV2> creditTenants) {
 

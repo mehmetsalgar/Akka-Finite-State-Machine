@@ -102,7 +102,10 @@ public class RecoveryPostTest {
                 (CreditSM.ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CreditSM.CREDIT_APPLICATION_SUBMITTED_$_SALES_MANAGER_APPROVED_$_FRAUDPREVENTION_ADRESSCHECK_RESULT_RECEIVED.class));
+        assertThat(report.state(),
+                instanceOf(
+                        CreditSM.CREDIT_APPLICATION_SUBMITTED_$_SALES_MANAGER_APPROVED_$_FRAUDPREVENTION_ADRESSCHECK_RESULT_RECEIVED
+                        .class));
 
         Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
 
@@ -123,16 +126,16 @@ public class RecoveryPostTest {
 
         assertEquals(
                 CreditSM
-                        .CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL
+                        .CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL_$_WAITING_ANAYLIST_APPROVAL
                         .class
                         .getSimpleName()
                         .substring(
                                 CreditSM
-                                        .CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL
+                                        .CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL_$_WAITING_ANAYLIST_APPROVAL
                                         .class
                                         .getSimpleName().indexOf("_$_") + 3,
                                 CreditSM
-                                        .CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL
+                                        .CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL_$_WAITING_ANAYLIST_APPROVAL
                                         .class
                                         .getSimpleName().length()
                         ),
@@ -188,16 +191,16 @@ public class RecoveryPostTest {
         assertNotNull(creditSmEs);
         assertEquals(
                 CreditSM
-                        .CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL
+                        .CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL_$_WAITING_ANAYLIST_APPROVAL
                         .class
                         .getSimpleName()
                         .substring(
                                 CreditSM
-                                        .CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL
+                                        .CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL_$_WAITING_ANAYLIST_APPROVAL
                                         .class
                                         .getSimpleName().indexOf("_$_") + 3,
                                 CreditSM
-                                        .CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL
+                                        .CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL_$_WAITING_ANAYLIST_APPROVAL
                                         .class
                                         .getSimpleName().length()
                         ),

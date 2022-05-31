@@ -1,14 +1,16 @@
 package org.salgar.fsm.akka.foureyes.facades.actors.fraudprevention
 
-
 import akka.actor.typed.ActorRef
 import akka.actor.typed.scaladsl.AskPattern.Askable
 import org.salgar.akka.fsm.api.UseCaseKey
 import org.salgar.fsm.akka.akkasystem.ActorService
+import org.salgar.fsm.akka.foureyes.credit.kafka.config.TopicProperties
 import org.salgar.fsm.akka.foureyes.fraudprevention.FraudPreventionSM.{FraudPreventionSMEvent, Response, onStartFraudPreventionEvaluation}
 import org.salgar.fsm.akka.foureyes.fraudprevention.FraudPreventionSMGuardian._
 import org.salgar.fsm.akka.foureyes.fraudprevention.facade.FraudPreventionSMFacade
+import org.salgar.fsm.akka.foureyes.fraudprevention.protobuf.FraudPreventionSMCommand
 import org.salgar.fsm.akka.foureyes.fraudprevention.{FraudPreventionSM, FraudPreventionSMGuardian}
+import org.salgar.fsm.akka.kafka.config.ConsumerConfig
 import org.salgar.fsm.akka.statemachine.facade.StateMachineFacade
 import org.springframework.context.annotation.DependsOn
 import org.springframework.stereotype.Service
@@ -19,8 +21,12 @@ import scala.concurrent.Future
 
 @Service
 @DependsOn(Array("actorService"))
-class FraudPreventionSMFacadeImpl(actorService: ActorService)
-  extends StateMachineFacade[FraudPreventionSMGuardianEvent, Response] (actorService, "fraudPreventionSMGuardian", FraudPreventionSMGuardian()(actorService.sharding(), actorService.actorSystem()))
+class FraudPreventionSMFacadeImpl(actorService: ActorService,
+                                  fraudPreventionSMConsumerConfig: ConsumerConfig[String, FraudPreventionSMCommand],
+                                  topicProperties: TopicProperties)
+  extends StateMachineFacade[FraudPreventionSMGuardianEvent, Response] (
+    actorService, "fraudPreventionSMGuardian",
+    FraudPreventionSMGuardian()(actorService.actorSystem(), actorService.sharding()))
     with FraudPreventionSMFacade {
   import ActorService._
 
@@ -58,6 +64,6 @@ class FraudPreventionSMFacadeImpl(actorService: ActorService)
   }
 
   @PostConstruct
-  override protected def init() =
+  override protected def init =
     super.init
 }

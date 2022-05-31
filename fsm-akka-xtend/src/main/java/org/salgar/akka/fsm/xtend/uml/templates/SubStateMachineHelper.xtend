@@ -51,7 +51,12 @@ class SubStateMachineHelper {
             val Pseudostate pseudoState = state.getSubmachine().allOwnedElements().filter(Pseudostate).head
             for(Transition tr: pseudoState.outgoings) {
                 if(tr.getTriggers.empty) {
-                    return context.getGlobalVariable('submachineSeperator') + tr.target.name.toUpperCase
+                    if(isSubmachineState(tr.target)) {
+                        val result = getFirstPseudoStateOrAnonymousTransition(tr.target, context)
+                        return context.getGlobalVariable('submachineSeperator') + tr.target.name.toUpperCase + result
+                    } else {
+                        return context.getGlobalVariable('submachineSeperator') + tr.target.name.toUpperCase
+                    }
                 }
             }
             return context.getGlobalVariable('submachineSeperator') + state.getSubmachine().allOwnedElements().filter(Pseudostate).head.name.toUpperCase
@@ -61,13 +66,55 @@ class SubStateMachineHelper {
     def dispatch getFirstPseudoStateOrAnonymousTransition(Pseudostate pseudostate, IGeneratorContext context) {
     }
 
-    def dispatch getFirstPseudoState(State state) {
+    def dispatch Vertex getFirstPseudoStateOrAnonymousTransitionState(State state, IGeneratorContext context) {
         if(state.getSubmachine()!==null) {
-            return "_" + state.getSubmachine().allOwnedElements().filter(Pseudostate).head.name.toUpperCase
+            val Pseudostate pseudoState = state.getSubmachine().allOwnedElements().filter(Pseudostate).head
+            for(Transition tr: pseudoState.outgoings) {
+                if(tr.getTriggers.empty) {
+                    if(isSubmachineState(tr.target)) {
+                        return getFirstPseudoStateOrAnonymousTransitionState(tr.target, context)
+                    } else {
+                        return tr.target
+                    }
+                }
+            }
+            return state.getSubmachine().allOwnedElements().filter(Pseudostate).head
         }
     }
 
-    def dispatch getFirstPseudoState(Pseudostate pseudostate) {
+    def dispatch Vertex getFirstPseudoStateOrAnonymousTransitionState(Pseudostate pseudoState, IGeneratorContext context) {
+        for(Transition tr: pseudoState.outgoings) {
+            if(tr.getTriggers.empty) {
+                return tr.target
+            }
+        }
+    }
+
+    def dispatch boolean isFirstPseudoStateOrAnonymousTransitionState(State state, IGeneratorContext context) {
+        if(state.getSubmachine()!==null) {
+            val Pseudostate pseudoState = state.getSubmachine().allOwnedElements().filter(Pseudostate).head
+            for(Transition tr: pseudoState.outgoings) {
+                if(tr.getTriggers.empty) {
+                    if(isSubmachineState(tr.target)) {
+                        return true
+                    }
+                }
+            }
+        }
+        return false
+    }
+
+    def dispatch boolean isFirstPseudoStateOrAnonymousTransitionState(Pseudostate pseudoState, IGeneratorContext context) {
+        return false
+    }
+
+    def dispatch getFirstPseudoState(State state, IGeneratorContext context) {
+        if(state.getSubmachine()!==null) {
+            return context.getGlobalVariable('submachineSeperator') + state.getSubmachine().allOwnedElements().filter(Pseudostate).head.name.toUpperCase
+        }
+    }
+
+    def dispatch getFirstPseudoState(Pseudostate pseudostate, IGeneratorContext context) {
     }
 
     def dispatch giveParentStatesForMasterState(State state, List<Vertex> parentStates) {
