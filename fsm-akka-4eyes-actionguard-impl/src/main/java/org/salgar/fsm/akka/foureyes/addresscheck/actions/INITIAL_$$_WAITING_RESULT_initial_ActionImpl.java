@@ -25,7 +25,7 @@ public class INITIAL_$$_WAITING_RESULT_initial_ActionImpl
 
             //We should actually do Multi Tenant Fraud Prevention, but living that as exercise
             CustomerV2 customer = creditTenants.get(0);
-            Address address = customer.getAddresses().get(0);
+            Address address = customer.getAdresses().get(0);
             addressCheckService.addressExist(
                     address.getStreet(),
                     address.getHouseNo(),

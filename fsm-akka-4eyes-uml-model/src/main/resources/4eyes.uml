@@ -95,7 +95,7 @@ Slave State Machines will asyncrhnously reply to Master State Machine, in this c
                     </ownedComment>
                   </subvertex>
                   <subvertex xmi:type="uml:State" xmi:id="_OR7w0N_2Eeudm_vjRKDtiA" name="WAITING_APPROVAL" submachine="_HGtxINdYEeyBoKz2hPLjXg"/>
-                  <subvertex xmi:type="uml:State" xmi:id="_WsNOcN_2Eeudm_vjRKDtiA" name="RELATIONSHIP_MANAGER_APPROVED" submachine="_gw6S0NqXEeyBoKz2hPLjXg">
+                  <subvertex xmi:type="uml:State" xmi:id="_WsNOcN_2Eeudm_vjRKDtiA" name="RELATIONSHIP_MANAGER_APPROVED">
                     <ownedComment xmi:type="uml:Comment" xmi:id="_85160G4XEeyDm79Hj-X2dw">
                       <body>This state indicates the Releation Ship Mavager approved the credit application and Sales Managers are notified for further approval of the Credit Application.</body>
                     </ownedComment>
@@ -104,7 +104,7 @@ Slave State Machines will asyncrhnously reply to Master State Machine, in this c
                   <subvertex xmi:type="uml:State" xmi:id="_X6VH0OCNEeuquPi25eySzA" name="WAITING_CREDIT_ANALYST_APPROVAL" submachine="_RCicwNtYEeyBoKz2hPLjXg"/>
                   <subvertex xmi:type="uml:State" xmi:id="_5PlXIOCfEeuquPi25eySzA" name="WAITING_APPROVAL_FROM_SENIOR_MANAGER"/>
                   <subvertex xmi:type="uml:FinalState" xmi:id="_GStLENtaEeyBoKz2hPLjXg" name="CREDIT_ACCEPTED"/>
-                  <subvertex xmi:type="uml:State" xmi:id="_BVlwYOC2EeyySrYE97v9Cg" name="SOME_ADDITIONAL_MANAGER_APPROVED"/>
+                  <subvertex xmi:type="uml:State" xmi:id="_BVlwYOC2EeyySrYE97v9Cg" name="SOME_ADDITIONAL_MANAGER_APPROVED" submachine="_gw6S0NqXEeyBoKz2hPLjXg"/>
                 </region>
               </packagedElement>
               <packagedElement xmi:type="uml:SignalEvent" xmi:id="_24G_4OMEEeuvzPeHGzGr1A" name="RelationshipManagerApprovedPersistEvent" signal="_MZhDAEFkEey-7smbVHMbdw"/>
@@ -273,7 +273,7 @@ Slave State Machines will asyncrhnously reply to Master State Machine, in this c
                 </region>
               </packagedElement>
               <packagedElement xmi:type="uml:SignalEvent" xmi:id="_ymw6INdiEeyBoKz2hPLjXg" name="WaitingManagerApprovalRelationshipManagerPersistEvent"/>
-              <packagedElement xmi:type="uml:StateMachine" xmi:id="_gw6S0NqXEeyBoKz2hPLjXg" name="FourEyesSalesManagerSM" submachineState="_WsNOcN_2Eeudm_vjRKDtiA">
+              <packagedElement xmi:type="uml:StateMachine" xmi:id="_gw6S0NqXEeyBoKz2hPLjXg" name="FourEyesSalesManagerSM" submachineState="_BVlwYOC2EeyySrYE97v9Cg">
                 <region xmi:type="uml:Region" xmi:id="_n6YP4NqXEeyBoKz2hPLjXg" name="FourEyesSalesManagerRegion">
                   <transition xmi:type="uml:Transition" xmi:id="_V-W5wNqYEeyBoKz2hPLjXg" name="intial" source="_DnyyINqYEeyBoKz2hPLjXg" target="_MhG8MNqYEeyBoKz2hPLjXg"/>
                   <transition xmi:type="uml:Transition" xmi:id="_qcIlgNqYEeyBoKz2hPLjXg" name="waitingForApproval_onSalesManagerApproved" guard="_ejJv4NqZEeyBoKz2hPLjXg" source="_MhG8MNqYEeyBoKz2hPLjXg" target="_MhG8MNqYEeyBoKz2hPLjXg">

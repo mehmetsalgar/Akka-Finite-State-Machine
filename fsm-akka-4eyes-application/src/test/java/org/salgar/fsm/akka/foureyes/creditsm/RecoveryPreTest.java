@@ -383,16 +383,16 @@ public class RecoveryPreTest {
                 "123456789X",
                 "John",
                 "Doe",
-                List.of(identificationInformation),
-                List.of(incomeProof),
-                Arrays.asList(expanseRent, expanseCarCredit),
+                "customer1@test.org",
                 List.of(new Address(
                         "muster strasse 1",
                         "11A",
                         "city1",
                         "country1"
                 )),
-                "customer1@test.org"
+                List.of(identificationInformation),
+                List.of(incomeProof),
+                Arrays.asList(expanseRent, expanseCarCredit)
         );
     }
 
@@ -420,16 +420,16 @@ public class RecoveryPreTest {
                 "Z987654321",
                 "Max",
                 "Musterman",
-                List.of(identificationInformation),
-                List.of(incomeProof),
-                List.of(expanseCarCredit),
+                "customer1@test.org",
                 List.of(new Address(
                         "muster strasse 1",
                         "11A",
                         "city1",
                         "country1"
                 )),
-                "customer1@test.org"
+                List.of(identificationInformation),
+                List.of(incomeProof),
+                List.of(expanseCarCredit)
         );
     }
 

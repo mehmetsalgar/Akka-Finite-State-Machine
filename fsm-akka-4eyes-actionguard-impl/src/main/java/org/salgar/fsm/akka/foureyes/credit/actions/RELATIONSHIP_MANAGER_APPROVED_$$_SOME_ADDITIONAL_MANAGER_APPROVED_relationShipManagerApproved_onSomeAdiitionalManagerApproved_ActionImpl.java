@@ -12,7 +12,7 @@ import static org.salgar.akka.fsm.foureyes.notifier.NotificationHelper.SALES_MAN
 
 @RequiredArgsConstructor
 public class RELATIONSHIP_MANAGER_APPROVED_$$_SOME_ADDITIONAL_MANAGER_APPROVED_relationShipManagerApproved_onSomeAdiitionalManagerApproved_ActionImpl
-    extends RELATIONSHIP_MANAGER_APPROVED_$$_SOME_ADDITIONAL_MANAGER_APPROVED_relationShipManagerApproved_onSomeAdiitionalManagerApproved_Action {
+    extends RELATIONSHIP_MANAGER_APPROVED_$$_SOME_ADDITIONAL_MANAGER_APPROVED_relationshipManagerApproved_someAdditionalManagerApproved_Action {
     private final NotifierService notifierService;
 
     @Override

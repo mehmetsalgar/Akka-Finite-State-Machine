@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class CreditSMActionConfiguration {
     @Bean
-    public RELATIONSHIP_MANAGER_APPROVED_$$_SOME_ADDITIONAL_MANAGER_APPROVED_relationShipManagerApproved_onSomeAdiitionalManagerApproved_Action
+    public RELATIONSHIP_MANAGER_APPROVED_$$_SOME_ADDITIONAL_MANAGER_APPROVED_relationshipManagerApproved_someAdditionalManagerApproved_Action
         creditsm_relationship_manager_approved_SOME_ADDITIONAL_MANAGER_APPROVED_relationShipManagerApproved_onSomeAdiitionalManagerApprovedAction(
             NotifierService notifierService) {
         return new RELATIONSHIP_MANAGER_APPROVED_$$_SOME_ADDITIONAL_MANAGER_APPROVED_relationShipManagerApproved_onSomeAdiitionalManagerApproved_ActionImpl(

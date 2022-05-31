@@ -21,8 +21,8 @@ public class INITIAL_$$_WAITING_RESULT_initial_ActionImpl
         if(payload != null) {
             CustomerV2 customer = (CustomerV2) payload.get(PayloadVariableConstants.CUSTOMER);
             creditScoreService.calculateCreditScore(
-                    customer.getFirstname(),
-                    customer.getLastname(),
+                    customer.getFirstName(),
+                    customer.getLastName(),
                     customer.getCustomerId());
         }
 

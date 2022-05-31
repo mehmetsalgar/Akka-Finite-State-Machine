@@ -239,19 +239,19 @@ public class RecoveryPostTest {
                 );
 
         return new CustomerV2(
-                "123456789X",
-                "John",
-                "Doe",
-                List.of(identificationInformation),
-                List.of(incomeProof),
-                Arrays.asList(expanseRent, expanseCarCredit),
-                List.of(new Address(
-                        "muster strasse 1",
-                        "11A",
-                        "city1",
-                        "country1"
-                )),
-                "customer1@test.org"
+            "123456789X",
+            "John",
+            "Doe",
+            "customer1@test.org",
+            List.of(new Address(
+                    "muster strasse 1",
+                    "11A",
+                    "city1",
+                    "country1"
+            )),
+            List.of(identificationInformation),
+            List.of(incomeProof),
+            Arrays.asList(expanseRent, expanseCarCredit)
         );
     }
 
@@ -276,19 +276,19 @@ public class RecoveryPostTest {
 
 
         return new CustomerV2(
-                "Z987654321",
-                "Max",
-                "Musterman",
-                List.of(identificationInformation),
-                List.of(incomeProof),
-                List.of(expanseCarCredit),
-                List.of(new Address(
-                        "muster strasse 1",
-                        "11A",
-                        "city1",
-                        "country1"
-                )),
-                "customer1@test.org"
+            "Z987654321",
+            "Max",
+            "Musterman",
+            "customer1@test.org",
+            List.of(new Address(
+                    "muster strasse 1",
+                    "11A",
+                    "city1",
+                    "country1"
+            )),
+            List.of(identificationInformation),
+            List.of(incomeProof),
+            List.of(expanseCarCredit)
         );
     }
 

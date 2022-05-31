@@ -12,10 +12,7 @@ import org.salgar.akka.fsm.foureyes.notifier.NotifierService;
 import org.salgar.fsm.akka.foureyes.addresscheck.facade.AdressCheckSMFacade;
 import org.salgar.fsm.akka.foureyes.credit.CreditSM;
 import org.salgar.fsm.akka.foureyes.credit.facade.CreditSMFacade;
-import org.salgar.fsm.akka.foureyes.credit.model.Address;
-import org.salgar.fsm.akka.foureyes.credit.model.CreditApplication;
-import org.salgar.fsm.akka.foureyes.credit.model.CreditTenants;
-import org.salgar.fsm.akka.foureyes.credit.model.Customer;
+import org.salgar.fsm.akka.foureyes.credit.model.*;
 import org.salgar.fsm.akka.foureyes.creditscore.facade.CreditScoreSMFacade;
 import org.salgar.fsm.akka.foureyes.elasticsearch.CreditSMRepository;
 import org.salgar.fsm.akka.foureyes.elasticsearch.model.CreditSmEs;
@@ -234,7 +231,7 @@ public class SlaveStateMachineTest {
     private Map<String, Object> preparePayload(
             String creditUuid,
             Double creditAmount,
-            List<Customer> creditTenants) {
+            List<CustomerV2> creditTenants) {
 
         final Map<String, Object> payload = new HashMap<>();
         CreditApplication creditApplication = new CreditApplication(
@@ -287,16 +284,15 @@ public class SlaveStateMachineTest {
                 UUID.randomUUID().toString(),
                 "John",
                 "Doe",
+                "customer1@test.org",
+                List.of(new Address(
+                                "muster strasse 1",
+                                "11A",
+                                "city1",
+                                "country1")),
                 List.of(identificationInformation),
                 List.of(incomeProof),
-                Arrays.asList(expanseRent, expanseCarCredit),
-                List.of(new Address(
-                        "muster strasse 1",
-                        "11A",
-                        "city1",
-                        "country1"
-                )),
-                "customer1@test.org"
+                Arrays.asList(expanseRent, expanseCarCredit)
         );
     }
 
@@ -324,17 +320,16 @@ public class SlaveStateMachineTest {
                 UUID.randomUUID().toString(),
                 "Max",
                 "Musterman",
-                List.of(identificationInformation),
-                List.of(incomeProof),
-                List.of(expanseCarCredit),
+                "customer1@test.org",
                 List.of(new Address(
                         "muster strasse 1",
                         "11A",
                         "city1",
                         "country1"
                 )),
-                "customer1@test.org"
-        );
+                List.of(identificationInformation),
+                List.of(incomeProof),
+                List.of(expanseCarCredit));
     }
 
     private void prepareNotificationService() {
