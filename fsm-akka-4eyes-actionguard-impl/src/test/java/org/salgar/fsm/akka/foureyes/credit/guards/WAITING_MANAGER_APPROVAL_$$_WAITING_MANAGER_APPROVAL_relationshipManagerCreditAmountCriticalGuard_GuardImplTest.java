@@ -7,10 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.salgar.akka.fsm.foureyes.notifier.NotifierService;
 import org.salgar.fsm.akka.foureyes.credit.CreditSM;
-import org.salgar.fsm.akka.foureyes.credit.model.Address;
-import org.salgar.fsm.akka.foureyes.credit.model.CreditApplication;
-import org.salgar.fsm.akka.foureyes.credit.model.CreditTenants;
-import org.salgar.fsm.akka.foureyes.credit.model.Customer;
+import org.salgar.fsm.akka.foureyes.credit.model.*;
 import org.salgar.fsm.akka.foureyes.usecasekey.CreditUseCaseKeyStrategy;
 import org.slf4j.Logger;
 
@@ -39,19 +36,8 @@ public class WAITING_MANAGER_APPROVAL_$$_WAITING_MANAGER_APPROVAL_relationshipMa
         Map<String, Object> controlObject = new HashMap<>();
         Map<String, Object> payload = new HashMap<>();
 
-        final Customer customer =
-                new Customer(
-                        "John",
-                        "Doe",
-                        "123456789X",
-                        new Address(
-                                "muster strasse 1",
-                                "11A",
-                                "city1",
-                                "country1"
-                        ),
-                        "customer1@test.info");
-        final List<Customer> creditTenants = new ArrayList<>();
+        final CustomerV2 customer = prepareCustomer();
+        final List<CustomerV2> creditTenants = new ArrayList<>();
         creditTenants.add(customer);
         CreditApplication creditApplication = new CreditApplication(
                 20000000.0,
@@ -76,19 +62,8 @@ public class WAITING_MANAGER_APPROVAL_$$_WAITING_MANAGER_APPROVAL_relationshipMa
         Map<String, Object> controlObject = new HashMap<>();
         Map<String, Object> payload = new HashMap<>();
 
-        final Customer customer =
-                new Customer(
-                        "John",
-                        "Doe",
-                        "123456789X",
-                        new Address(
-                                "muster strasse 1",
-                                "11A",
-                                "city1",
-                                "country1"
-                        ),
-                        "customer1@test.info");
-        final List<Customer> creditTenants = new ArrayList<>();
+        final CustomerV2 customer = prepareCustomer();
+        final List<CustomerV2> creditTenants = new ArrayList<>();
         creditTenants.add(customer);
         CreditApplication creditApplication = new CreditApplication(
                 20000000.0,
@@ -115,19 +90,8 @@ public class WAITING_MANAGER_APPROVAL_$$_WAITING_MANAGER_APPROVAL_relationshipMa
         Map<String, Object> controlObject = new HashMap<>();
         Map<String, Object> payload = new HashMap<>();
 
-        final Customer customer =
-                new Customer(
-                        "John",
-                        "Doe",
-                        "123456789X",
-                        new Address(
-                                "muster strasse 1",
-                                "11A",
-                                "city1",
-                                "country1"
-                        ),
-                        "customer1@test.info");
-        final List<Customer> creditTenants = new ArrayList<>();
+        final CustomerV2 customer = prepareCustomer();
+        final List<CustomerV2> creditTenants = new ArrayList<>();
         creditTenants.add(customer);
         CreditApplication creditApplication = new CreditApplication(
                 20000000.0,
@@ -154,19 +118,8 @@ public class WAITING_MANAGER_APPROVAL_$$_WAITING_MANAGER_APPROVAL_relationshipMa
         Map<String, Object> controlObject = new HashMap<>();
         Map<String, Object> payload = new HashMap<>();
 
-        final Customer customer =
-                new Customer(
-                        "John",
-                        "Doe",
-                        "123456789X",
-                        new Address(
-                                "muster strasse 1",
-                                "11A",
-                                "city1",
-                                "country1"
-                        ),
-                        "customer1@test.info");
-        final List<Customer> creditTenants = new ArrayList<>();
+        final CustomerV2 customer = prepareCustomer();
+        final List<CustomerV2> creditTenants = new ArrayList<>();
         creditTenants.add(customer);
         CreditApplication creditApplication = new CreditApplication(
                 20000000.0,
@@ -193,19 +146,8 @@ public class WAITING_MANAGER_APPROVAL_$$_WAITING_MANAGER_APPROVAL_relationshipMa
         Map<String, Object> controlObject = new HashMap<>();
         Map<String, Object> payload = new HashMap<>();
 
-        final Customer customer =
-                new Customer(
-                        "John",
-                        "Doe",
-                        "123456789X",
-                        new Address(
-                                "muster strasse 1",
-                                "11A",
-                                "city1",
-                                "country1"
-                        ),
-                        "customer1@test.info");
-        final List<Customer> creditTenants = new ArrayList<>();
+        final CustomerV2 customer = prepareCustomer();
+        final List<CustomerV2> creditTenants = new ArrayList<>();
         creditTenants.add(customer);
         CreditApplication creditApplication = new CreditApplication(
                 20000000.0,
@@ -241,19 +183,8 @@ public class WAITING_MANAGER_APPROVAL_$$_WAITING_MANAGER_APPROVAL_relationshipMa
         Map<String, Object> controlObject = new HashMap<>();
         Map<String, Object> payload = new HashMap<>();
 
-        final Customer customer =
-                new Customer(
-                        "John",
-                        "Doe",
-                        "123456789X",
-                        new Address(
-                                "muster strasse 1",
-                                "11A",
-                                "city1",
-                                "country1"
-                        ),
-                        "customer1@test.info");
-        final List<Customer> creditTenants = new ArrayList<>();
+        final CustomerV2 customer = prepareCustomer();
+        final List<CustomerV2> creditTenants = new ArrayList<>();
         creditTenants.add(customer);
         CreditApplication creditApplication = new CreditApplication(
                 100000.0,
@@ -267,5 +198,49 @@ public class WAITING_MANAGER_APPROVAL_$$_WAITING_MANAGER_APPROVAL_relationshipMa
         when(actorContext.log()).thenReturn(log);
 
         assertFalse(guard.evaluate(actorContext, controlObject, payload));
+    }
+
+    private CustomerV2 prepareCustomer() {
+        IdentificationInformation identificationInformation =
+                new IdentificationInformation(
+                        UUID.randomUUID().toString(),
+                        "PASS"
+                );
+        IncomeProof incomeProof =
+                new IncomeProof(
+                        UUID.randomUUID().toString(),
+                        "ABC",
+                        "99999.99"
+                );
+        FixExpanse expanseRent =
+                new FixExpanse(
+                        UUID.randomUUID().toString(),
+                        "1500",
+                        "Rent"
+                );
+        FixExpanse expanseCarCredit =
+                new FixExpanse(
+                        UUID.randomUUID().toString(),
+                        "600",
+                        "Credit"
+                );
+
+        final CustomerV2 customer =
+                new CustomerV2(
+                        "John",
+                        "Doe",
+                        "123456789X",
+                        "customer1@test.info",
+                        List.of(new Address(
+                                "muster strasse 1",
+                                "11A",
+                                "city1",
+                                "country1"
+                        )),
+                        List.of(identificationInformation),
+                        List.of(incomeProof),
+                        Arrays.asList(expanseRent, expanseCarCredit));
+
+        return customer;
     }
 }

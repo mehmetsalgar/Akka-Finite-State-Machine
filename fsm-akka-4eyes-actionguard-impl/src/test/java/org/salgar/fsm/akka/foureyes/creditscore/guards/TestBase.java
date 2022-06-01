@@ -78,16 +78,60 @@ public abstract class TestBase {
                 customerId,
                 firstName,
                 lastName,
-                List.of(identificationInformation),
-                List.of(incomeProof),
-                Arrays.asList(expanseRent, expanseCarCredit),
+                email,
                 List.of(new Address(
                         "muster strasse 1",
                         "11A",
                         "city1",
                         "country1"
                 )),
-                email
+                List.of(identificationInformation),
+                List.of(incomeProof),
+                Arrays.asList(expanseRent, expanseCarCredit)
         );
+    }
+
+    private CustomerV2 prepareCustomer() {
+        IdentificationInformation identificationInformation =
+                new IdentificationInformation(
+                        UUID.randomUUID().toString(),
+                        "PASS"
+                );
+        IncomeProof incomeProof =
+                new IncomeProof(
+                        UUID.randomUUID().toString(),
+                        "ABC",
+                        "99999.99"
+                );
+        FixExpanse expanseRent =
+                new FixExpanse(
+                        UUID.randomUUID().toString(),
+                        "1500",
+                        "Rent"
+                );
+        FixExpanse expanseCarCredit =
+                new FixExpanse(
+                        UUID.randomUUID().toString(),
+                        "600",
+                        "Credit"
+                );
+
+        final CustomerV2 customer =
+                new CustomerV2(
+                        "John",
+                        "Doe",
+                        "123456789X",
+                        "customer1@test.info",
+                        List.of(new Address(
+                                "muster strasse 1",
+                                "11A",
+                                "city1",
+                                "country1"
+                        )),
+                        List.of(identificationInformation),
+                        List.of(incomeProof),
+                        Arrays.asList(expanseRent, expanseCarCredit));
+
+        return customer;
     }
 }
