@@ -7,7 +7,7 @@ import org.salgar.fsm.akka.foureyes.credit.CreditSMGuardian._
 import org.salgar.fsm.akka.foureyes.credit.facade.CreditSMFacade
 import org.salgar.fsm.akka.foureyes.credit.kafka.config.TopicProperties
 import org.salgar.fsm.akka.foureyes.credit.protobuf.CreditSMCommand
-import org.salgar.fsm.akka.foureyes.credit.{CreditSMEventAdapter, CreditSMGuardian}
+import org.salgar.fsm.akka.foureyes.credit.{CreditSMEventAdapter, CreditSMGuardian, CreditSMSnapshotAdapter}
 import org.salgar.fsm.akka.foureyes.slaves.SlaveStatemachineConstants.{ADDRESS_CHECK_SM, CUSTOMER_SCORE_SM, FRAUD_PREVENTION_SM, SOURCE_SLAVE_SM_TAG}
 import org.salgar.fsm.akka.kafka.config.ConsumerConfig
 import org.salgar.fsm.akka.statemachine.facade.StateMachineFacade
@@ -25,7 +25,7 @@ class CreditFacadeImpl(actorService: ActorService,
                        topicProperties: TopicProperties)
   extends StateMachineFacade[CreditSMGuardian.CreditSMGuardianEvent, Response] (
     actorService, "creditSMGuardian",
-    CreditSMGuardian(CreditSMEventAdapter)
+    CreditSMGuardian(CreditSMSnapshotAdapter, CreditSMEventAdapter, false)
     (actorService.actorSystem(), actorService.sharding()))
     with CreditSMFacade {
   import ActorService._
