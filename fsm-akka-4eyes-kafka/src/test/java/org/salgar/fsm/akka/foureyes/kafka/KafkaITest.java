@@ -327,7 +327,7 @@ public class KafkaITest {
                 (CreditSM.ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CreditSM.CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED_$_WAITING_MANAGER_APPROVAL.class));
+        assertThat(report.state(), instanceOf(CreditSM.CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED.class));
         verify(notifierService).notify(eq(someOtherManagerNotificationList), anyString());
 
         Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
@@ -357,8 +357,7 @@ public class KafkaITest {
                 (CreditSM.ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CreditSM.CREDIT_APPLICATION_SUBMITTED_$_SOME_ADDITIONAL_MANAGER_APPROVED.class));
-        assertThat(report.state(), instanceOf(CreditSM.CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED_$_WAITING_MANAGER_APPROVAL.class));
+        assertThat(report.state(), instanceOf(CreditSM.CREDIT_APPLICATION_SUBMITTED_$_SOME_ADDITIONAL_MANAGER_APPROVED_$_WAITING_MANAGER_APPROVAL.class));
         verify(notifierService).notify(eq(salesManagerNotificationList), anyString());
 
         Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
@@ -442,13 +441,13 @@ public class KafkaITest {
 
         return customer1V2Builder
                 .setCustomerId(UUID.randomUUID().toString())
-                .setFirstname( "John")
-                .setLastname("Doe")
+                .setFirstName( "John")
+                .setLastName("Doe")
                 .addIdentificationInformations(identificationInformationBuilder)
                 .addIncomeProofs(incomeProofBuilder)
                 .addExpanses(expanseRentBuilder)
                 .addExpanses(expanseCarCreditBuilder)
-                .addAddresses(addressBuilder)
+                .addAdresses(addressBuilder)
                 .setEmail("customer1@test.info")
                 .build();
     }
@@ -486,12 +485,12 @@ public class KafkaITest {
 
         return customer1V2Builder
                 .setCustomerId(UUID.randomUUID().toString())
-                .setFirstname( "Max")
-                .setLastname("Musterman")
+                .setFirstName( "Max")
+                .setLastName("Musterman")
                 .addIdentificationInformations(identificationInformationBuilder)
                 .addIncomeProofs(incomeProofBuilder)
                 .addExpanses(expanseCarCreditBuilder)
-                .addAddresses(addressBuilder)
+                .addAdresses(addressBuilder)
                 .setEmail("customer2@test.info")
                 .build();
     }

@@ -3,7 +3,6 @@ package org.salgar.fsm.akka.foureyes.creditsm;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.salgar.akka.fsm.foureyes.addresscheck.AddressCheckService;
@@ -48,7 +47,7 @@ import static org.salgar.akka.fsm.foureyes.notifier.NotificationHelper.*;
  * they are designed to run only once per day, if the continuous integration system would try to run multiple times
  * per day, they will fail.
  */
-@Disabled
+//@Disabled
 @EnableElasticsearchRepositories("org.salgar.fsm.akka.foureyes.elasticsearch")
 @ActiveProfiles({"itest"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
@@ -108,7 +107,7 @@ public class RecoveryPreTest {
         creditTenants.add(customer1);
         creditTenants.add(customer2);
 
-        Map<String, Object> payload = preparePayload(creditUuid, creditTenants);
+        Map<String, Object> payload = preparePayload(creditUuid, 100000.0, creditTenants);
 
         /* Mock Preparation */
         doAnswer(invocation -> {
@@ -173,7 +172,7 @@ public class RecoveryPreTest {
                 (CreditSM.ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CreditSM.CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED_$_WAITING_MANAGER_APPROVAL.class));
+        assertThat(report.state(), instanceOf(CreditSM.CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED.class));
         verify(notifierService, atLeastOnce()).notify(eq(someOtherManagerNotificationList), anyString());
 
         payload = preparePayload(creditUuid, creditTenants);
@@ -187,9 +186,8 @@ public class RecoveryPreTest {
                 (CreditSM.ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CreditSM.CREDIT_APPLICATION_SUBMITTED_$_SOME_ADDITIONAL_MANAGER_APPROVED.class));
+        assertThat(report.state(), instanceOf(CreditSM.CREDIT_APPLICATION_SUBMITTED_$_SOME_ADDITIONAL_MANAGER_APPROVED_$_WAITING_MANAGER_APPROVAL.class));
         verify(notifierService, atLeastOnce()).notify(eq(salesManagerNotificationList), anyString());
-        assertThat(report.state(), instanceOf(CreditSM.CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED_$_WAITING_MANAGER_APPROVAL.class));
 
         payload = preparePayload(creditUuid, creditTenants);
         creditSMFacade.salesManagerApproved(payload);
@@ -229,7 +227,7 @@ public class RecoveryPreTest {
         creditTenants.add(customer1);
         creditTenants.add(customer2);
 
-        Map<String, Object> payload = preparePayload(creditUuid, creditTenants);
+        Map<String, Object> payload = preparePayload(creditUuid, 100000.0, creditTenants);
 
         /* Mock Preparation */
         doAnswer(invocation -> {
@@ -312,7 +310,7 @@ public class RecoveryPreTest {
                 (CreditSM.ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CreditSM.CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED_$_WAITING_MANAGER_APPROVAL.class));
+        assertThat(report.state(), instanceOf(CreditSM.CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED.class));
         verify(notifierService, atLeastOnce()).notify(eq(someOtherManagerNotificationList), anyString());
 
         payload = preparePayload(creditUuid, creditTenants);
@@ -326,8 +324,7 @@ public class RecoveryPreTest {
                 (CreditSM.ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CreditSM.CREDIT_APPLICATION_SUBMITTED_$_SOME_ADDITIONAL_MANAGER_APPROVED.class));
-        assertThat(report.state(), instanceOf(CreditSM.CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED_$_WAITING_MANAGER_APPROVAL.class));
+        assertThat(report.state(), instanceOf(CreditSM.CREDIT_APPLICATION_SUBMITTED_$_SOME_ADDITIONAL_MANAGER_APPROVED_$_WAITING_MANAGER_APPROVAL.class));
         verify(notifierService, atLeastOnce()).notify(eq(salesManagerNotificationList), anyString());
 
         payload = preparePayload(creditUuid, creditTenants);
@@ -433,7 +430,23 @@ public class RecoveryPreTest {
         );
     }
 
-    private Map<String, Object> preparePayload (
+    private Map<String, Object> preparePayload(
+            String creditUuid,
+            Double creditAmount,
+            List<CustomerV2> creditTenants) {
+
+        final Map<String, Object> payload = new HashMap<>();
+        CreditApplication creditApplication = new CreditApplication(
+                creditAmount,
+                new CreditTenants(creditTenants)
+        );
+        payload.put(CreditUseCaseKeyStrategy.CREDIT_UUID, creditUuid);
+        payload.put(PayloadVariableConstants.CREDIT_APPLICATION, creditApplication);
+
+        return payload;
+    }
+
+    private Map<String, Object> preparePayload(
             String creditUuid,
             List<CustomerV2> creditTenants) {
 

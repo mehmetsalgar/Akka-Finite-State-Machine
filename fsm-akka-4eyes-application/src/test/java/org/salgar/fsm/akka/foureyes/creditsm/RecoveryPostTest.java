@@ -3,7 +3,6 @@ package org.salgar.fsm.akka.foureyes.creditsm;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.salgar.akka.fsm.foureyes.notifier.NotifierService;
@@ -45,7 +44,7 @@ import static org.salgar.akka.fsm.foureyes.notifier.NotificationHelper.*;
  * they are designed to run only once per day, if the continuous integration system would try to run multiple times
  * per day, they will fail.
  */
-@Disabled
+//@Disabled
 @EnableElasticsearchRepositories("org.salgar.fsm.akka.foureyes.elasticsearch")
 @ActiveProfiles({"itest"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
@@ -125,20 +124,7 @@ public class RecoveryPostTest {
         assertNotNull(creditSmEs);
 
         assertEquals(
-                CreditSM
-                        .CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL_$_WAITING_ANAYLIST_APPROVAL
-                        .class
-                        .getSimpleName()
-                        .substring(
-                                CreditSM
-                                        .CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL_$_WAITING_ANAYLIST_APPROVAL
-                                        .class
-                                        .getSimpleName().indexOf("_$_") + 3,
-                                CreditSM
-                                        .CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL_$_WAITING_ANAYLIST_APPROVAL
-                                        .class
-                                        .getSimpleName().length()
-                        ),
+                "WAITING_CREDIT_ANALYST_APPROVAL",
                 creditSmEs.get().getState()
         );
 
@@ -190,20 +176,7 @@ public class RecoveryPostTest {
         Optional<CreditSmEs> creditSmEs = creditSMRepository.findById(creditUuid);
         assertNotNull(creditSmEs);
         assertEquals(
-                CreditSM
-                        .CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL_$_WAITING_ANAYLIST_APPROVAL
-                        .class
-                        .getSimpleName()
-                        .substring(
-                                CreditSM
-                                        .CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL_$_WAITING_ANAYLIST_APPROVAL
-                                        .class
-                                        .getSimpleName().indexOf("_$_") + 3,
-                                CreditSM
-                                        .CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL_$_WAITING_ANAYLIST_APPROVAL
-                                        .class
-                                        .getSimpleName().length()
-                        ),
+                "WAITING_CREDIT_ANALYST_APPROVAL",
                 creditSmEs.get().getState()
         );
 

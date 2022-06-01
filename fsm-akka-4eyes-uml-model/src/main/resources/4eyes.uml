@@ -366,13 +366,13 @@ Slave State Machines will asyncrhnously reply to Master State Machine, in this c
                 </eAnnotations>
                 <ownedEnd xmi:type="uml:Property" xmi:id="_3A0zo-DDEeyySrYE97v9Cg" name="customerv2" type="_TAvmsOC6EeyySrYE97v9Cg" association="_3AzlgODDEeyySrYE97v9Cg"/>
               </packagedElement>
-              <packagedElement xmi:type="uml:Association" xmi:id="_JeHOUODEEeyySrYE97v9Cg" name="inconeProofs" memberEnd="_JeH1YuDEEeyySrYE97v9Cg _JeIccuDEEeyySrYE97v9Cg">
+              <packagedElement xmi:type="uml:Association" xmi:id="_JeHOUODEEeyySrYE97v9Cg" name="incomeProofs" memberEnd="_JeH1YuDEEeyySrYE97v9Cg _JeIccuDEEeyySrYE97v9Cg">
                 <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_JeH1YODEEeyySrYE97v9Cg" source="org.eclipse.papyrus">
                   <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_JeH1YeDEEeyySrYE97v9Cg" key="nature" value="UML_Nature"/>
                 </eAnnotations>
                 <ownedEnd xmi:type="uml:Property" xmi:id="_JeIccuDEEeyySrYE97v9Cg" name="customerv2" type="_TAvmsOC6EeyySrYE97v9Cg" association="_JeHOUODEEeyySrYE97v9Cg"/>
               </packagedElement>
-              <packagedElement xmi:type="uml:Association" xmi:id="_PqzaEODEEeyySrYE97v9Cg" name="fixExpanses" memberEnd="_Pq0BIuDEEeyySrYE97v9Cg _Pq0BJeDEEeyySrYE97v9Cg">
+              <packagedElement xmi:type="uml:Association" xmi:id="_PqzaEODEEeyySrYE97v9Cg" name="expanses" memberEnd="_Pq0BIuDEEeyySrYE97v9Cg _Pq0BJeDEEeyySrYE97v9Cg">
                 <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_Pq0BIODEEeyySrYE97v9Cg" source="org.eclipse.papyrus">
                   <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_Pq0BIeDEEeyySrYE97v9Cg" key="nature" value="UML_Nature"/>
                 </eAnnotations>

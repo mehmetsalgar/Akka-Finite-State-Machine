@@ -165,7 +165,7 @@ public class InitialTest {
                 (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED_$_WAITING_MANAGER_APPROVAL.class));
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED.class));
         verify(notifierService, times(1)).notify(eq(someOtherManagerNotificationList), anyString());
 
         payload = preparePayload(creditUuid, creditTenants);
@@ -179,7 +179,7 @@ public class InitialTest {
                 (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_SOME_ADDITIONAL_MANAGER_APPROVED.class));
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_SOME_ADDITIONAL_MANAGER_APPROVED_$_WAITING_MANAGER_APPROVAL.class));
         verify(notifierService, times(1)).notify(eq(salesManagerNotificationList), anyString());
 
         payload = preparePayload(creditUuid, creditTenants);
@@ -321,7 +321,7 @@ public class InitialTest {
                 (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED_$_WAITING_MANAGER_APPROVAL.class));
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED.class));
         verify(notifierService, times(1)).notify(eq(someOtherManagerNotificationList), anyString());
 
         payload = preparePayload(creditUuid, creditTenants);
@@ -335,7 +335,7 @@ public class InitialTest {
                 (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_SOME_ADDITIONAL_MANAGER_APPROVED.class));
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_SOME_ADDITIONAL_MANAGER_APPROVED_$_WAITING_MANAGER_APPROVAL.class));
         verify(notifierService, times(1)).notify(eq(salesManagerNotificationList), anyString());
 
         payload = preparePayload(creditUuid, creditTenants);
@@ -469,7 +469,7 @@ public class InitialTest {
                 (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED_$_WAITING_MANAGER_APPROVAL.class));
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED.class));
         verify(notifierService, times(1)).notify(eq(someOtherManagerNotificationList), anyString());
 
         payload = preparePayload(creditUuid, creditTenants);
@@ -526,7 +526,7 @@ public class InitialTest {
                 (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED_$_WAITING_MANAGER_APPROVAL.class));
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED.class));
         verify(notifierService, times(1)).notify(eq(someOtherManagerNotificationList), anyString());
 
         payload = preparePayload(creditUuid, creditTenants);
@@ -540,7 +540,7 @@ public class InitialTest {
                 (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_SOME_ADDITIONAL_MANAGER_APPROVED.class));
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_SOME_ADDITIONAL_MANAGER_APPROVED_$_WAITING_MANAGER_APPROVAL.class));
         verify(notifierService, times(1)).notify(eq(salesManagerNotificationList), anyString());
 
         payload = preparePayload(creditUuid, creditTenants);
@@ -696,7 +696,7 @@ public class InitialTest {
                 (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED_$_WAITING_MANAGER_APPROVAL.class));
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED.class));
         verify(notifierService, times(1)).notify(eq(someOtherManagerNotificationList), anyString());
 
         payload = preparePayload(creditUuid, creditTenants);
@@ -710,7 +710,7 @@ public class InitialTest {
                 (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_SOME_ADDITIONAL_MANAGER_APPROVED.class));
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_SOME_ADDITIONAL_MANAGER_APPROVED_$_WAITING_MANAGER_APPROVAL.class));
         verify(notifierService, times(1)).notify(eq(salesManagerNotificationList), anyString());
 
         payload = preparePayload(creditUuid, creditTenants);
@@ -825,7 +825,7 @@ public class InitialTest {
                 (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED_$_WAITING_MANAGER_APPROVAL.class));
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED.class));
         verify(notifierService, times(1)).notify(eq(someOtherManagerNotificationList), anyString());
 
         payload = preparePayload(creditUuid, creditTenants);
@@ -839,7 +839,7 @@ public class InitialTest {
                 (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_SOME_ADDITIONAL_MANAGER_APPROVED.class));
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_SOME_ADDITIONAL_MANAGER_APPROVED_$_WAITING_MANAGER_APPROVAL.class));
         verify(notifierService, times(1)).notify(eq(salesManagerNotificationList), anyString());
 
         payload = preparePayload(creditUuid, creditTenants);
@@ -972,7 +972,7 @@ public class InitialTest {
                 (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED_$_WAITING_MANAGER_APPROVAL.class));
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED.class));
         verify(notifierService, times(1)).notify(eq(someOtherManagerNotificationList), anyString());
 
         payload = preparePayload(creditUuid, creditTenants);
@@ -986,7 +986,7 @@ public class InitialTest {
                 (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_SOME_ADDITIONAL_MANAGER_APPROVED.class));
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_SOME_ADDITIONAL_MANAGER_APPROVED_$_WAITING_MANAGER_APPROVAL.class));
         verify(notifierService, times(1)).notify(eq(salesManagerNotificationList), anyString());
 
         payload = preparePayload(creditUuid, creditTenants);
@@ -1158,7 +1158,7 @@ public class InitialTest {
                 (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED_$_WAITING_MANAGER_APPROVAL.class));
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED.class));
         verify(notifierService, times(1)).notify(eq(someOtherManagerNotificationList), anyString());
 
         payload = preparePayload(creditUuid, creditTenants);
@@ -1171,7 +1171,7 @@ public class InitialTest {
                 (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_SOME_ADDITIONAL_MANAGER_APPROVED.class));
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_SOME_ADDITIONAL_MANAGER_APPROVED_$_WAITING_MANAGER_APPROVAL.class));
         verify(notifierService, times(1)).notify(eq(salesManagerNotificationList), anyString());
 
         payload = preparePayload(creditUuid, creditTenants);
@@ -1180,13 +1180,11 @@ public class InitialTest {
         Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
 
         futureCreditSMState = creditSMFacade.currentState(payload);
-
         report =
                 (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED_$_WAITING_MANAGER_APPROVAL.class));
-        verify(notifierService, times(1)).notify(eq(salesManagerNotificationList), anyString());
+        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_SOME_ADDITIONAL_MANAGER_APPROVED_$_WAITING_MANAGER_APPROVAL.class));
 
         payload = preparePayload(creditUuid, creditTenants);
         creditSMFacade.salesManagerApproved(payload);
@@ -1194,7 +1192,6 @@ public class InitialTest {
         Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
 
         futureCreditSMState = creditSMFacade.currentState(payload);
-
         report =
                 (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 

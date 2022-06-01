@@ -204,7 +204,22 @@ public class SlaveStateMachineTest {
                 (CreditSM.ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CreditSM.CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED_$_WAITING_MANAGER_APPROVAL.class));
+        assertThat(report.state(), instanceOf(CreditSM.CREDIT_APPLICATION_SUBMITTED_$_RELATIONSHIP_MANAGER_APPROVED.class));
+        verify(notifierService, atLeastOnce()).notify(eq(someOtherManagerNotificationList), anyString());
+
+        payload = preparePayload(creditUuid, creditTenants);
+        creditSMFacade.someAdditionalManagerApproved(payload);
+
+        Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
+
+        futureCreditSMState = creditSMFacade.currentState(payload);
+
+        report =
+                (CreditSM.ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
+
+        assertNotNull(report);
+        assertThat(report.state(), instanceOf(CreditSM.CREDIT_APPLICATION_SUBMITTED_$_SOME_ADDITIONAL_MANAGER_APPROVED_$_WAITING_MANAGER_APPROVAL.class));
+        verify(notifierService, atLeastOnce()).notify(eq(salesManagerNotificationList), anyString());
 
         payload = preparePayload(creditUuid, creditTenants);
         creditSMFacade.salesManagerApproved(payload);
