@@ -119,6 +119,20 @@ class GuardianTemplate {
 
             def apply(
                        snapshotAdapter: SnapshotAdapter[State],
+                       eventAdapter: EventAdapter[PersistEvent, PersistEvent])
+                     (implicit actorSystem: ActorSystem[NotUsed], sharding: ClusterSharding): Behavior[«name»GuardianEvent] = {
+                apply(
+                    snapshotAdapter,
+                    eventAdapter,
+                    new HashCodeNoEnvelopeMessageExtractor[«name»Event](numberOfShards = actorSystem.settings.config.getInt("akka.fsm.numberOfShards")) {
+                                                 override def entityId(message: «name»Event): String = message.useCaseKey.getKey
+                                             },
+                    externalAllocationStrategy = false
+                )(actorSystem, sharding)
+            }
+
+            def apply(
+                       snapshotAdapter: SnapshotAdapter[State],
                        eventAdapter: EventAdapter[PersistEvent, PersistEvent],
                        externalAllocationStrategy: Boolean)
                      (implicit actorSystem: ActorSystem[NotUsed], sharding: ClusterSharding): Behavior[«name»GuardianEvent] = {
@@ -128,7 +142,7 @@ class GuardianTemplate {
                     new HashCodeNoEnvelopeMessageExtractor[«name»Event](numberOfShards = actorSystem.settings.config.getInt("akka.fsm.numberOfShards")) {
                                                  override def entityId(message: «name»Event): String = message.useCaseKey.getKey
                                              },
-                    externalAllocationStrategy = false
+                    externalAllocationStrategy = externalAllocationStrategy
                 )(actorSystem, sharding)
             }
 
