@@ -39,8 +39,9 @@ class SnapshotAdapterTemplate {
                             «FOR state : allOwnedElements().filter(State).sortWith([o1, o2 | o1.getName().compareTo(o2.getName())])»
                                 «generateSubStates(name, state, state.name.toUpperCase(), context)»
                             «ENDFOR»
+                                case _und @ _ => throw new IllegalStateException("Unidentified Event for Snapshot, may be an Event/Schema evolution occurring  Type: " + _und.toString)
                         }
-                    case _unk @ _  => throw new IllegalStateException("Unkown Snapshot Type: " + _unk.toString)
+                    case _unk @ _  => throw new IllegalStateException("Unknown Snapshot Type: " + _unk.toString)
                 }
             }
         }
