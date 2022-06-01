@@ -3,7 +3,6 @@ package org.salgar.fsm.akka.foureyes.creditsm;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.salgar.akka.fsm.foureyes.addresscheck.AddressCheckService;
@@ -14,6 +13,8 @@ import org.salgar.fsm.akka.foureyes.addresscheck.facade.AdressCheckSMFacade;
 import org.salgar.fsm.akka.foureyes.credit.CreditSM;
 import org.salgar.fsm.akka.foureyes.credit.facade.CreditSMFacade;
 import org.salgar.fsm.akka.foureyes.credit.model.Address;
+import org.salgar.fsm.akka.foureyes.credit.model.CreditApplication;
+import org.salgar.fsm.akka.foureyes.credit.model.CreditTenants;
 import org.salgar.fsm.akka.foureyes.credit.model.Customer;
 import org.salgar.fsm.akka.foureyes.creditscore.facade.CreditScoreSMFacade;
 import org.salgar.fsm.akka.foureyes.fraudprevention.facade.FraudPreventionSMFacade;
@@ -49,7 +50,7 @@ import static org.salgar.akka.fsm.foureyes.notifier.NotificationHelper.*;
  * they are designed to run only once per day, if the continuous integration system would try to run multiple times
  * per day, they will fail.
  */
-@Disabled
+//@Disabled
 @EnableElasticsearchRepositories("org.salgar.fsm.akka.foureyes.elasticsearch")
 @ActiveProfiles({"itest"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
@@ -130,7 +131,7 @@ public class RecoveryPreTest {
         creditTenants.add(customer1);
         creditTenants.add(customer2);
 
-        Map<String, Object> payload = preparePayload(creditUuid, creditTenants);
+        Map<String, Object> payload = preparePayload(creditUuid, 100000.0, creditTenants);
 
         /* Mock Preparation */
         doAnswer(invocation -> {
@@ -257,7 +258,7 @@ public class RecoveryPreTest {
         creditTenants.add(customer1);
         creditTenants.add(customer2);
 
-        Map<String, Object> payload = preparePayload(creditUuid, creditTenants);
+        Map<String, Object> payload = preparePayload(creditUuid, 100000.0, creditTenants);
 
         /* Mock Preparation */
         doAnswer(invocation -> {
@@ -368,7 +369,23 @@ public class RecoveryPreTest {
         Thread.sleep(TimeUnit.SECONDS.toMillis(30));
     }
 
-    private Map<String, Object> preparePayload (
+    private Map<String, Object> preparePayload(
+            String creditUuid,
+            Double creditAmount,
+            List<Customer> creditTenants) {
+
+        final Map<String, Object> payload = new HashMap<>();
+        CreditApplication creditApplication = new CreditApplication(
+                creditAmount,
+                new CreditTenants(creditTenants)
+        );
+        payload.put(CreditUseCaseKeyStrategy.CREDIT_UUID, creditUuid);
+        payload.put(PayloadVariableConstants.CREDIT_APPLICATION, creditApplication);
+
+        return payload;
+    }
+
+    private Map<String, Object> preparePayload(
             String creditUuid,
             List<Customer> creditTenants) {
 
