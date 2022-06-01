@@ -25,7 +25,7 @@ class CreditFacadeImpl(actorService: ActorService,
                        topicProperties: TopicProperties)
   extends StateMachineFacade[CreditSMGuardian.CreditSMGuardianEvent, Response] (
     actorService, "creditSMGuardian",
-    CreditSMGuardian(CreditSMSnapshotAdapter, CreditSMEventAdapter, false)
+    CreditSMGuardian(CreditSMSnapshotAdapter, CreditSMEventAdapter)
     (actorService.actorSystem(), actorService.sharding()))
     with CreditSMFacade {
   import ActorService._
