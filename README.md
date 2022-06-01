@@ -1,4 +1,23 @@
-This is Proof of Concept project/repository to demonstrate how we can create a Cloud Ready application to run in 
-Kubernetes with Akka Behavioural Finite State Machine and Apache Kafka, Apache Cassandra and Elasticsearch.
+# Model Driven CQRS Proof of Concept Application with Akka Finite State Machine, Kafka, Cassandra, Elasticsearch
+## Features
+- Event Sourcing / Command Query Responsibility Segregation Pattern Implementation
+- Command part with Apache Kafka, Akka Finite State Machine, Apache Cassandra
+- Query part with Akka Projection, Elasticsearch
+- Code Generation with Eclipse XText, Xtend from Eclipse Papyrus UML Diagrams
+- Spring Boot Application
+- Docker / Helm packaging for deployment to Kubernetes
 
+## Business Case
+- Bank Credit Application Workflow implementation with Four Eyes Proofing principle
+
+## Target Use Cases
+- Credit Applications from Credit Tenants
+- Approval from Relationship Manager
+- Approval from Sales Manager
+- Inquiries for Credit Tenants credit scores
+- Inquiries for Fraud Prevention results
+- Inquiries for Address Check
+- Approval from Credit Analyst
+
+## Detail Explanations
 You can find the full story of the Proof of Concept in the following [Blog](https://mehmetsalgar.wordpress.com/2022/04/18/a-model-driven-event-sourced-cloud-ready-application-with-akka-finite-state-machine-using-kafka-cassandra-and-elasticsearch/) post.
