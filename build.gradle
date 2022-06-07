@@ -30,7 +30,7 @@ plugins {
     id 'java-library'
     id 'idea'
     id 'org.springframework.boot' version '2.6.7'
-    id 'com.google.cloud.tools.jib' version '3.2.0'
+    id 'com.google.cloud.tools.jib' version '3.2.1'
 }
 
 
@@ -108,7 +108,9 @@ subprojects {
                 DOCKER_HUB_USER: property('DOCKER_HUB_USER'),
                 DOCKER_HUB_PASSWORD: property('DOCKER_HUB_PASSWORD'),
                 DOCKER_UPLOAD_USER: property('DOCKER_UPLOAD_USER'),
-                DOCKER_UPLOAD_PASSWORD: property('DOCKER_UPLOAD_PASSWORD')
+                DOCKER_UPLOAD_PASSWORD: property('DOCKER_UPLOAD_PASSWORD'),
+                HELM_USER: property('HELM_USER'),
+                HELM_PASSWORD: property('HELM_PASSWORD')
         ]
     }
 }
@@ -1307,7 +1309,7 @@ project(':fsm-akka-4eyes-application') {
     helm {
         charts {
             foureyes {
-                publish = false
+                publish = true
                 chartName = 'fsm-akka-4eyes-application'
                 chartVersion = '1.1.4'
                 sourceDir = file('helm')
@@ -1315,10 +1317,10 @@ project(':fsm-akka-4eyes-application') {
         }
         repositories {
             fsmakka {
-                url 'http://localhost:55120/repository/fsmakka/'
+                url 'http://localhost:55120/repository/fsm-akka-helm/'
                 credentials {
-                    username = 'fsm_helm_user'
-                    password = 'foureyes#123'
+                    username = "${props.HELM_USER}"
+                    password = "${props.HELM_PASSWORD}"
                 }
             }
         }
@@ -1326,11 +1328,11 @@ project(':fsm-akka-4eyes-application') {
             repositories {
                 nexus {
                     url = uri('http://localhost:55120/')
-                    repository = 'fsmakka'
+                    repository = 'fsm-akka-helm'
                     apiVersion = 'v1'
                     credentials {
-                        username = 'fsm_helm_user'
-                        password = 'foureyes#123'
+                        username = "${props.HELM_USER}"
+                        password = "${props.HELM_PASSWORD}"
                     }
                 }
             }
