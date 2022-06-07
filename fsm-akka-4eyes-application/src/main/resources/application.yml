@@ -14,7 +14,7 @@ org:
                 fraudPreventionSM: 'fraudPreventionSM'
                 multiTenantCreditScoreSM: 'multiTenantScreditScoreSM'
           elasticsearch:
-            url: 'localhost:56677'
+            url: 'localhost:56350'
             batchSize: 1
             bulkSize: 512
             lingerMs: 10

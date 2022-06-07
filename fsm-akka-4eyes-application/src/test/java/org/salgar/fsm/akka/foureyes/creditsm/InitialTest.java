@@ -1242,7 +1242,8 @@ public class InitialTest {
                 (ReportResponse) Await.result(futureCreditSMState, Duration.create(20, TimeUnit.SECONDS));
 
         assertNotNull(report);
-        assertThat(report.state(), instanceOf(CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL_$_WAITING_ANAYLIST_APPROVAL.class));
+        assertThat(report.state(),
+                instanceOf(CREDIT_APPLICATION_SUBMITTED_$_WAITING_CREDIT_ANALYST_APPROVAL_$_WAITING_ANAYLIST_APPROVAL.class));
         verify(notifierService, times(1)).notify(eq(creditAnalystNotificationList), anyString());
 
         Thread.sleep(WAIT_TIME_BETWEEN_STEPS);
