@@ -43,6 +43,6 @@ dependencies:
   - name: fsm-akka-4eyes-application
     version: 1.1.2
     condition: fsm-akka-4eyes-application.enabled
-    repository: http://localhost:55120/repository/fsm-akka-helm/
+    repository: http://localhost:57198/repository/fsm-akka-helm/
     tags:
       - application
