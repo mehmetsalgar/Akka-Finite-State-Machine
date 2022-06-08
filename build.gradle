@@ -1317,7 +1317,7 @@ project(':fsm-akka-4eyes-application') {
         }
         repositories {
             fsmakka {
-                url 'http://localhost:55120/repository/fsm-akka-helm/'
+                url 'http://localhost:57198//repository/fsm-akka-helm/'
                 credentials {
                     username = "${props.HELM_USER}"
                     password = "${props.HELM_PASSWORD}"
@@ -1327,7 +1327,7 @@ project(':fsm-akka-4eyes-application') {
         publishing {
             repositories {
                 nexus {
-                    url = uri('http://localhost:55120/')
+                    url = uri('http://localhost:57198/')
                     repository = 'fsm-akka-helm'
                     apiVersion = 'v1'
                     credentials {
