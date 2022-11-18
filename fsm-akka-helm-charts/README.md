@@ -39,7 +39,8 @@ k3d cluster create poc-akka \
 --port "9142:32092@loadbalancer" \
 --port "8880:30080@loadbalancer" \
 --port "8881:30082@loadbalancer" \
---port "9200:32193@loadbalancer"
+--port "9200:32193@loadbalancer" \
+--servers-memory 16Gi
 
 # Traefik
 helm repo add traefik https://helm.traefik.io/traefik
