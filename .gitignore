@@ -17,3 +17,7 @@ xtend-gen/
 .settings
 *.tgz
 .DS_Store
+
+**/*.tgz
+**/*.lock
+.gradle/**/*
