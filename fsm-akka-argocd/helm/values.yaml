@@ -1,0 +1,33 @@
+argo-cd:
+  enabled: true
+  global:
+    image:
+      tag: "v2.5.2@sha256:d9bad4c5ed867bd59ea1954f75988f5d1c8491a4eef5bd75f47b13a4bd1a53dc"
+  dex:
+    enabled: false
+  controller:
+    extraArgs:
+      - --application-namespaces
+      - "*"
+  server:
+    extraArgs:
+      - --insecure
+      - --application-namespaces
+      - "*"
+    config:
+      repositories: |
+        - name: nexus-repository-manager
+          type: helm
+          url: "https://sonatype.github.io/helm3-charts/"
+        - name: k8ssandra
+          type: helm
+          url: "https://helm.k8ssandra.io/stable"
+        - name: traefik
+          type: helm
+          url: "https://helm.traefik.io/traefik"
+        - name: elasticsearch
+          type: helm
+          url: "https://helm.elastic.co/"
+        - name: metrics-server
+          type: helm
+          url: "https://kubernetes-sigs.github.io/metrics-server/"
