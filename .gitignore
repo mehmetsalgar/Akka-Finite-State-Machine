@@ -11,12 +11,16 @@ project/plugins/project/
 .lib/
 .idea
 .gradle
-/.metadata/
+.metadata/
 out/
 xtend-gen/
 .settings
 *.tgz
 .DS_Store
+.plugins/
+.log
+.ini
+.java-version
 
 **/*.tgz
 **/*.lock
