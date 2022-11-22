@@ -23,5 +23,5 @@ xtend-gen/
 .java-version
 
 **/*.tgz
-**/*.lock
+#**/*.lock
 .gradle/**/*
