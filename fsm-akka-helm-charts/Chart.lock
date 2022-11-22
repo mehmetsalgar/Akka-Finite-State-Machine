@@ -17,11 +17,5 @@ dependencies:
 - name: metrics-server
   repository: https://kubernetes-sigs.github.io/metrics-server/
   version: 3.8.2
-- name: zipkin
-  repository: https://ygqygq2.github.io/charts/
-  version: 2.1.0
-- name: fsm-akka-4eyes-application
-  repository: http://localhost:64866/repository/fsm-akka-helm/
-  version: 1.1.4
-digest: sha256:2bcc96c1faaccd831f3f22726f902dcf9b345c134f559e5dd7cb036a3d58a40a
-generated: "2022-07-12T15:35:09.345789+02:00"
+digest: sha256:0c1ed6fceba5d05660209f176c70955e06e68c16cb28ca18f00bfcfeeeb574ee
+generated: "2022-11-22T11:34:14.449254+01:00"
