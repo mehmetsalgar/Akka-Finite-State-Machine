@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: fsm-akka-4eyes-project
+  namespace: argocd
+spec:
+  description: "Project for FSM Akka Four Eyes Eventsourcing Application"
+  destinations:
+    - namespace: fsmakka
+      server: https://kubernetes.default.svc
+  sourceNamespaces:
+    - fsmakka
+  sourceRepos:
+    - "https://gitlab.devops.telekom.de/api/v4/projects/44895/packages/helm/no-story-maintenance-mode-channelid"
+  clusterResourceWhitelist:
+    - group: ''
+      kind: Namespace
+  namespaceResourceWhitelist:
+    - group: "*"
+      kind: "*"

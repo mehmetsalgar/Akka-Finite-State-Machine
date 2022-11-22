@@ -3,5 +3,5 @@ nexus:
 nexus-repository-manager:
   image:
     #For Apple M1 CPU
-    #repository: klo2k/nexus3
+    repository: klo2k/nexus3
     tag: latest

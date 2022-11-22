@@ -104,10 +104,22 @@ minikube start --memory 32768 --cpus 6 --driver=docker
 # ARM64 Kafka Images
 https://nxt.engineering/blog/kafka-docker-image/
 
-socat -d -d TCP-LISTEN:2375,reuseaddr,fork UNIX-CONNECT:/run/user/1000/podman/podman.sock &
+#socat -d -d TCP-LISTEN:2375,reuseaddr,fork UNIX-CONNECT:/run/user/1000/podman/podman.sock &
 
-jenv exec mvn clean package -DskipTests -Pdocker -Ddocker.registry=fsm-akka.registry:5555/nxt/
+
+https://stackoverflow.com/questions/71300031/docker-image-build-failed-on-mac-m1-chip
+socat TCP-LISTEN:2375,range=127.0.0.1/32,reuseaddr,fork UNIX-CLIENT:/var/run/docker.sock
+export DOCKER_HOST=tcp://127.0.0.1:2375
+
+docker run --rm -ti confluentinc/cp-base-new yum list available
+
+#jenv exec mvn clean package -DskipTests -Pdocker -Ddocker.registry=fsm-akka.registry:5555/nxt/
+
+git clone https://github.com/confluentinc/common-docker.git
+cd common-docker
 jenv exec mvn clean package -DskipTests -Pdocker -DCONFLUENT_PACKAGES_REPO='https://packages.confluent.io/rpm/6.2' -DCONFLUENT_VERSION=6.2.2 -Ddocker.registry=nxt/
+git clone https://github.com/confluentinc/kafka-images.git
+cd kafka-images
 jenv exec mvn clean package -DskipTests -Pdocker -DCONFLUENT_PACKAGES_REPO='https://packages.confluent.io/rpm/6.2' -DCONFLUENT_VERSION=6.2.2 -Ddocker.registry=nxt/
 
 docker tag nxt/confluentinc/cp-schema-registry:6.2.2-ubi8 fsm-akka.registry:5555/nxt/confluentinc/cp-schema-registry:6.2.2-ubi8
