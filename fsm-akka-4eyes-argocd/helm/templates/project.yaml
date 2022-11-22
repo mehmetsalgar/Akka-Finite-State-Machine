@@ -8,10 +8,14 @@ spec:
   destinations:
     - namespace: fsmakka
       server: https://kubernetes.default.svc
+    - namespace: nexus
+      server: https://kubernetes.default.svc
   sourceNamespaces:
     - fsmakka
+    - nexus
   sourceRepos:
-    - "https://gitlab.devops.telekom.de/api/v4/projects/44895/packages/helm/no-story-maintenance-mode-channelid"
+    - "https://github.com/mehmetsalgar/Akka-Finite-State-Machine.git"
+    - "https://sonatype.github.io/helm3-charts/"
   clusterResourceWhitelist:
     - group: ''
       kind: Namespace
