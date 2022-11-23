@@ -49,9 +49,9 @@ else use user-provided URL
 {{- .Values.kafka.bootstrapServers -}}
 {{- else -}}
 {{- if .Values.global.ssl -}}
-{{- printf "SSL://%s:9092" (include "kafka-rest.kafka-headless.fullname" .) -}}
+{{- printf "SSL://%s:9092" (include "kafka.fullname" .) -}}
 {{- else -}}
-{{- printf "PLAINTEXT://%s:9092" (include "kafka-rest.kafka-headless.fullname" .) -}}
+{{- printf "PLAINTEXT://%s:9092" (include "kafka.fullname" .) -}}
 {{- end -}}
 {{- end -}}
 {{- end -}}
