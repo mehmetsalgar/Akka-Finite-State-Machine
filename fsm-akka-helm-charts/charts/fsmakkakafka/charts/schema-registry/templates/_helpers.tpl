@@ -36,7 +36,7 @@ Create a default fully qualified kafka headless name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 */}}
 {{- define "kafka-rest.kafka-headless.fullname" -}}
-{{- $name := "kafka-headless" -}}
+{{- $name := "-headless" -}}
 {{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
@@ -49,9 +49,9 @@ else use user-provided URL
 {{- .Values.kafka.bootstrapServers -}}
 {{- else -}}
 {{- if .Values.global.ssl -}}
-{{- printf "SSL://%s:9092" (include "kafka.fullname" .) -}}
+{{- printf "SSL://%s:9092" (include "kafka-rest.kafka-headless.fullname" .) -}}
 {{- else -}}
-{{- printf "PLAINTEXT://%s:9092" (include "kafka.fullname" .) -}}
+{{- printf "PLAINTEXT://%s:9092" (include "kafka-rest.kafka-headless.fullname" .) -}}
 {{- end -}}
 {{- end -}}
 {{- end -}}
