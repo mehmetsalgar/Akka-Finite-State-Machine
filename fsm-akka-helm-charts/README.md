@@ -6,7 +6,11 @@ https://k3d.io/v5.0.2/
 
 # k8ssandra
 https://docs.k8ssandra.io/install/local/
+https://docs-v2.k8ssandra.io/install/local/single-cluster-helm/
 https://docs.k8ssandra.io/tasks/connect/ingress/k3d-deployment/
+
+helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --set installCRDs=true
+helm install k8ssandra-ops k8ssandra/k8ssandra-operator -n k8ssandra-operator --create-namespace
 
 #k3d registry
 https://k3d.io/v5.1.0/usage/registries/

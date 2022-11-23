@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: elasticsearch
+  name: k8ssandra
   namespace: fsmakka
   finalizers:
     - resources-finalizer.argocd.argoproj.io
@@ -15,7 +15,7 @@ spec:
     path: "fsm-akka-helm-charts"
     helm:
       valueFiles:
-        - values-elasticsearch.yaml
+        - values-k8ssandra.yaml
       version: v3
     targetRevision: argocd
   syncPolicy:

@@ -34,6 +34,15 @@ zookeeper:
     requests:
       cpu: 100m
       memory: 1G
+  prometheus:
+    jmx:
+      resources:
+        limits:
+          cpu: 100m
+          memory: 300M
+        requests:
+          cpu: 100m
+          memory: 300M
 
 ## ------------------------------------------------------
 ## Kafka
@@ -60,6 +69,15 @@ kafka:
       memory: 14G
   securityContext: 
     runAsUser: 0
+  prometheus:
+    jmx:
+      resources:
+        limits:
+          cpu: 100m
+          memory: 300M
+        requests:
+          cpu: 100m
+          memory: 300M
 
 ## ------------------------------------------------------
 ## Schema Registry
@@ -79,6 +97,15 @@ schema-registry:
     requests:
       cpu: 100m
       memory: 1G
+  prometheus:
+    jmx:
+      resources:
+        limits:
+          cpu: 100m
+          memory: 300M
+        requests:
+          cpu: 100m
+          memory: 300M
 
 ## ------------------------------------------------------
 ## Kafka Connect
@@ -97,3 +124,12 @@ kafka-connect:
     requests:
       cpu: 100m
       memory: 1G
+  prometheus:
+    jmx:
+      resources:
+        limits:
+          cpu: 100m
+          memory: 300M
+        requests:
+          cpu: 100m
+          memory: 300M

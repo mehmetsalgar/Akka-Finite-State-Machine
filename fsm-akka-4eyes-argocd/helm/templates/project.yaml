@@ -17,8 +17,8 @@ spec:
     - "https://github.com/mehmetsalgar/Akka-Finite-State-Machine.git"
     - "https://sonatype.github.io/helm3-charts/"
   clusterResourceWhitelist:
-    - group: ''
-      kind: Namespace
+    - group: "*"
+      kind: "*"
   namespaceResourceWhitelist:
     - group: "*"
       kind: "*"
