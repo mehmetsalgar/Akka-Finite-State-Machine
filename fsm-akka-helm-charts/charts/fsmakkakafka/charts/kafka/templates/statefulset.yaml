@@ -138,9 +138,9 @@ spec:
           value: "io.confluent.metrics.reporter.ConfluentMetricsReporter"
         - name: CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS
           {{- if .Values.global.ssl }}
-          value: {{ printf "SSL://%s:9092" (include "kafka.kafka-headless.fullname" .) | quote }}
+          value: {{ printf "SSL://%s:9092" (include "kafka.fullname" .) | quote }}
           {{- else }}
-          value: {{ printf "PLAINTEXT://%s:9092" (include "kafka.kafka-headless.fullname" .) | quote }}
+          value: {{ printf "PLAINTEXT://%s:9092" (include "kafka.fullname" .) | quote }}
           {{- end }}
         {{- range $key, $value := .Values.configurationOverrides }}
         - name: {{ printf "KAFKA_%s" $key | replace "." "_" | upper | quote }}

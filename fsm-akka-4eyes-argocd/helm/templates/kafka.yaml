@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: kafka
+  name: fsm-kafka
   namespace: fsmakka
   finalizers:
     - resources-finalizer.argocd.argoproj.io
