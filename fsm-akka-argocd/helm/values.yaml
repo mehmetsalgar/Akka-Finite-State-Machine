@@ -31,3 +31,14 @@ argo-cd:
         - name: metrics-server
           type: helm
           url: "https://kubernetes-sigs.github.io/metrics-server/"
+        - name: fsm-akka
+          type: helm
+          url: "http://localhost:53423/repository/fsm-akka-helm/"
+
+      credentialTemplates:
+        fsm-akka:
+          url: "http://localhost:53423/repository/fsm-akka-helm/"
+          username: "fsm_helm_user"
+          password: "start#123"
+
+

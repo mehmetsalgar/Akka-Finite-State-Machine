@@ -17,5 +17,8 @@ dependencies:
 - name: metrics-server
   repository: https://kubernetes-sigs.github.io/metrics-server/
   version: 3.8.2
-digest: sha256:0c1ed6fceba5d05660209f176c70955e06e68c16cb28ca18f00bfcfeeeb574ee
-generated: "2022-11-22T11:34:14.449254+01:00"
+- name: fsm-akka-4eyes-application
+  repository: http://localhost:53423/repository/fsm-akka-helm/
+  version: 1.1.4
+digest: sha256:9a17f57e12c9641fdf635081510391caff221642c2e85d8b2cf30d6e31fc344d
+generated: "2022-11-28T15:50:09.800024+01:00"

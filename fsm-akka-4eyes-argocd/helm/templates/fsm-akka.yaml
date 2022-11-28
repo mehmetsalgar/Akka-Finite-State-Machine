@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: fsm-akka-4eyes-application
+  namespace: fsmakka
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: fsmakka
+  project: fsm-akka-4eyes-project
+  source:
+    repoURL: "http://localhost:53423/repository/fsm-akka-helm/"
+    path: "fsm-akka-helm-charts"
+    helm:
+      parameters:
+        - name: fsm-akka-4eyes-application.enabled
+          value: true
+      version: v3
+    targetRevision: argocd
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true
+    syncOptions:
+      - CreateNamespace=true

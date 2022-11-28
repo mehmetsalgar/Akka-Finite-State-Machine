@@ -16,6 +16,7 @@ spec:
   sourceRepos:
     - "https://github.com/mehmetsalgar/Akka-Finite-State-Machine.git"
     - "https://sonatype.github.io/helm3-charts/"
+    - "http://localhost:53423/repository/fsm-akka-helm/"
   clusterResourceWhitelist:
     - group: "*"
       kind: "*"
