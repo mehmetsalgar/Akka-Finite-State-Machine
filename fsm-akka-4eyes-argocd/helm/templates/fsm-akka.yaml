@@ -11,7 +11,7 @@ spec:
     namespace: fsmakka
   project: fsm-akka-4eyes-project
   source:
-    repoURL: "http://localhost:53423/repository/fsm-akka-helm/"
+    repoURL: "https://github.com/mehmetsalgar/Akka-Finite-State-Machine.git"
     path: "fsm-akka-helm-charts"
     helm:
       parameters:
