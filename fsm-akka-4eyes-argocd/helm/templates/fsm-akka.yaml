@@ -15,8 +15,8 @@ spec:
     path: "fsm-akka-helm-charts"
     helm:
       parameters:
-        - name: fsm-akka-4eyes-application.enabled
-          value: true
+        - name: "fsm-akka-4eyes-application.enabled"
+          value: "true"
       version: v3
     targetRevision: argocd
   syncPolicy:
