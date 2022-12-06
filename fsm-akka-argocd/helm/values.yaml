@@ -15,23 +15,29 @@ argo-cd:
       - --application-namespaces
       - "*"
     config:
-      repositories: |
-        - name: nexus-repository-manager
+      repositories:
+        nexus-repository-manager:
+          name: nexus-repository-manager
           type: helm
           url: "https://sonatype.github.io/helm3-charts/"
-        - name: k8ssandra
+        k8ssandra:
+          name: k8ssandra
           type: helm
           url: "https://helm.k8ssandra.io/stable"
-        - name: traefik
+        traefik:
+          name: traefik
           type: helm
           url: "https://helm.traefik.io/traefik"
-        - name: elasticsearch
+        elasticsearch:
+          name: elasticsearch
           type: helm
           url: "https://helm.elastic.co/"
-        - name: metrics-server
+        metrics-server:
+          name: metrics-server
           type: helm
           url: "https://kubernetes-sigs.github.io/metrics-server/"
-        - name: fsm-akka
+        fsm-akka:
+          name: fsm-akka
           type: helm
           url: "http://localhost:53423/repository/fsm-akka-helm/"
 
