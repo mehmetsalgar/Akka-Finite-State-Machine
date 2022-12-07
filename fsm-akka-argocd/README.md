@@ -1,0 +1,1 @@
+helm upgrade --install argocd . --create-namespace -n argocd

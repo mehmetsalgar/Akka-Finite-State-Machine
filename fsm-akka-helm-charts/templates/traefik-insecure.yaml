@@ -1,0 +1,14 @@
+{{- if .Values.traefik.enabled -}}
+apiVersion: helm.cattle.io/v1
+kind: HelmChartConfig
+metadata:
+  name: traefik
+  namespace: kube-system
+spec:
+  valuesContent: |-
+    globalArguments:
+    - "--serversTransport.insecureSkipVerify=true"
+    logs:
+      access:
+        enabled: true
+{{- end -}}

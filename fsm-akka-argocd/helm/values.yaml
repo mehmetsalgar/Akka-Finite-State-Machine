@@ -39,12 +39,10 @@ argo-cd:
         fsm-akka:
           name: fsm-akka
           type: helm
-          url: "http://localhost:53423/repository/fsm-akka-helm/"
+          url: "http://fsmakka.salgar.org/repository/fsm-akka-helm/"
 
       credentialTemplates:
         fsm-akka:
-          url: "http://localhost:53423/repository/fsm-akka-helm/"
+          url: "http://fsmakka.salgar.org/repository/fsm-akka-helm/"
           username: "fsm_helm_user"
           password: "start#123"
-
-

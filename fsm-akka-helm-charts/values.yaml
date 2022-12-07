@@ -16,5 +16,7 @@ nexus:
   enabled: false
 metrics-server:
   enabled: false
+nginx-ingress:
+  enabled: false
 fsm-akka-4eyes-application:
   enabled: false

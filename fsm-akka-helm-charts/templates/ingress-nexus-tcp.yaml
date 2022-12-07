@@ -1,0 +1,18 @@
+{{- if false -}}
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRouteTCP
+metadata:
+  name: {{ .Release.Name }}-nexus-tcp
+  labels:
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/part-of: nexus-{{ .Release.Name }}-{{ .Release.Namespace }}
+spec:
+  entryPoints:
+    - nexus
+  routes:
+    - match: HostSNI(`*`)
+      services:
+        - name: nexus-nexus-repository-manager
+          port: 8081
+{{- end -}}

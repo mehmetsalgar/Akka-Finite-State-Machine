@@ -12,7 +12,7 @@ dependencies:
     tags:
       - infrastructure
   - name: traefik
-    version: 10.14.2
+    version: 20.6.0
     condition: traefik.enabled
     repository: https://helm.traefik.io/traefik
     tags:
@@ -40,9 +40,15 @@ dependencies:
     repository: https://kubernetes-sigs.github.io/metrics-server/
     tags:
       - infrastructure
+  - name: nginx-ingress
+    version: 0.15.2
+    condition: nginx-ingress.enabled
+    repository: https://helm.nginx.com/stable
+    tags:
+      - infrastructure
   - name: fsm-akka-4eyes-application
     version: 1.1.4
     condition: fsm-akka-4eyes-application.enabled
-    repository: http://localhost:53423/repository/fsm-akka-helm/
+    repository: http://fsmakka.salgar.org/repository/fsm-akka-helm/
     tags:
-      - application
+     - application

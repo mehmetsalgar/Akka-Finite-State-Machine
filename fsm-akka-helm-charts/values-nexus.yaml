@@ -1,7 +1,22 @@
 nexus:
   enabled: true
+
 nexus-repository-manager:
+  nexus:
+    env:
+      - name: INSTALL4J_ADD_VM_PARAMS
+        value: "-Xms2703M -Xmx2703M -XX:MaxDirectMemorySize=2703M -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
+      - name: NEXUS_SECURITY_RANDOMPASSWORD
+        value: "true"
+      - name: CONTEXT_PATH
+        value: /
   image:
     #For Apple M1 CPU
     repository: klo2k/nexus3
     tag: latest
+  ingress:
+    enabled: false
+    hostRepo: "fsmakka.salgar.org"
+    annotations:
+      nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+      ingress.kubernetes.io/ssl-redirect: "false"

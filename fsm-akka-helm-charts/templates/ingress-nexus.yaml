@@ -1,0 +1,19 @@
+{{- if .Values.nexus.enabled  -}}
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ .Release.Name }}-nexus
+  labels:
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/part-of: nexus-{{ .Release.Name }}-{{ .Release.Namespace }}
+spec:
+  entryPoints:
+    - web
+  routes:
+    - kind: Rule
+      match: Host(`fsmakka.salgar.org`)
+      services:
+        - name: nexus-nexus-repository-manager
+          port: 8081
+{{- end -}}

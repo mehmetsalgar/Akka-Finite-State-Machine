@@ -44,7 +44,10 @@ k3d cluster create poc-akka \
 --port "8880:30080@loadbalancer" \
 --port "8881:30082@loadbalancer" \
 --port "9200:32193@loadbalancer" \
+--port "8081:32181@loadbalancer" \
 --servers-memory 16Gi
+
+k3d cluster edit poc-akka --port-add "8081:32181@loadbalancer"
 
 # Traefik
 helm repo add traefik https://helm.traefik.io/traefik
@@ -82,7 +85,7 @@ https://github.com/jfrog/charts/issues/63
 kubectl -n artifactory delete pvc artifactory-volume-artifactory-artifactory-0
 
 # Add local Helm Repository to Helm
-helm repo add fsmAkka http://kubernetes.docker.internal:28015//artifactory/fsm_akka_helm --username fsm_akka_management --password fsm_akka_rest
+helm repo add fsmAkka http://kubernetes.docker.internal:28015/artifactory/fsm_akka_helm --username fsm_akka_management --password fsm_akka_rest
 
 # Kafka
 helm install fsm-akka . -n fsmakka --create-namespace -f values-kafka-k3d.yaml
@@ -109,7 +112,6 @@ minikube start --memory 32768 --cpus 6 --driver=docker
 https://nxt.engineering/blog/kafka-docker-image/
 
 #socat -d -d TCP-LISTEN:2375,reuseaddr,fork UNIX-CONNECT:/run/user/1000/podman/podman.sock &
-
 
 https://stackoverflow.com/questions/71300031/docker-image-build-failed-on-mac-m1-chip
 socat TCP-LISTEN:2375,range=127.0.0.1/32,reuseaddr,fork UNIX-CLIENT:/var/run/docker.sock

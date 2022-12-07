@@ -4,7 +4,7 @@ dependencies:
   version: 1.5.0-20220218064357-f72a8cb2
 - name: traefik
   repository: https://helm.traefik.io/traefik
-  version: 10.14.2
+  version: 20.6.0
 - name: fsmakkakafka
   repository: ""
   version: 1.0.0
@@ -17,8 +17,11 @@ dependencies:
 - name: metrics-server
   repository: https://kubernetes-sigs.github.io/metrics-server/
   version: 3.8.2
+- name: nginx-ingress
+  repository: https://helm.nginx.com/stable
+  version: 0.15.2
 - name: fsm-akka-4eyes-application
-  repository: http://localhost:53423/repository/fsm-akka-helm/
+  repository: http://fsmakka.salgar.org/repository/fsm-akka-helm/
   version: 1.1.4
-digest: sha256:9a17f57e12c9641fdf635081510391caff221642c2e85d8b2cf30d6e31fc344d
-generated: "2022-11-28T15:50:09.800024+01:00"
+digest: sha256:5e5edc5c3c0183952e42f6870704eee16b6ddfa97465176a09987837e6f24f4a
+generated: "2022-12-07T14:20:44.690128+01:00"
