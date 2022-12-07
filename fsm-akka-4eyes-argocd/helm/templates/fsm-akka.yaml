@@ -12,11 +12,8 @@ spec:
   project: fsm-akka-4eyes-project
   source:
     repoURL: "https://github.com/mehmetsalgar/Akka-Finite-State-Machine.git"
-    path: "fsm-akka-helm-charts"
+    path: "fsm-akka-4eyes-application/helm"
     helm:
-      parameters:
-        - name: "fsm-akka-4eyes-application.enabled"
-          value: "true"
       version: v3
     targetRevision: argocd_noinfrastructure
   syncPolicy:

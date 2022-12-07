@@ -9,40 +9,30 @@ argo-cd:
     extraArgs:
       - --application-namespaces
       - "*"
+  repoServer:
+    containerPort: 8981
+    service:
+      port: 8981
   server:
     extraArgs:
       - --insecure
       - --application-namespaces
       - "*"
     config:
-      repositories:
-        nexus-repository-manager:
-          name: nexus-repository-manager
+      repositories: |
+        - name: nexus-repository-manager
           type: helm
           url: "https://sonatype.github.io/helm3-charts/"
-        k8ssandra:
-          name: k8ssandra
+        - name: k8ssandra
           type: helm
           url: "https://helm.k8ssandra.io/stable"
-        traefik:
-          name: traefik
+        - name: traefik
           type: helm
           url: "https://helm.traefik.io/traefik"
-        elasticsearch:
-          name: elasticsearch
+        - name: elasticsearch
           type: helm
           url: "https://helm.elastic.co/"
-        metrics-server:
-          name: metrics-server
+        - name: metrics-server
           type: helm
           url: "https://kubernetes-sigs.github.io/metrics-server/"
-        fsm-akka:
-          name: fsm-akka
-          type: helm
-          url: "http://fsmakka.salgar.org/repository/fsm-akka-helm/"
-
-      credentialTemplates:
-        fsm-akka:
-          url: "http://fsmakka.salgar.org/repository/fsm-akka-helm/"
-          username: "fsm_helm_user"
-          password: "start#123"
+        

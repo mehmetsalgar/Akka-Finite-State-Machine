@@ -46,9 +46,9 @@ dependencies:
     repository: https://helm.nginx.com/stable
     tags:
       - infrastructure
-  - name: fsm-akka-4eyes-application
-    version: 1.1.4
-    condition: fsm-akka-4eyes-application.enabled
-    repository: http://fsmakka.salgar.org/repository/fsm-akka-helm/
-    tags:
-     - application
+#  - name: fsm-akka-4eyes-application
+#    version: 1.1.4
+#    condition: fsm-akka-4eyes-application.enabled
+#    repository: http://fsmakka.salgar.org/repository/fsm-akka-helm/
+#    tags:
+#     - application

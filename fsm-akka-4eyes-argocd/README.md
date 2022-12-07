@@ -1,1 +1,1 @@
-helm upgrade --install  fsm-akka-4eyes . -n fsm-akka
+helm upgrade --install  fsm-akka-4eyes . -n fsmakka
