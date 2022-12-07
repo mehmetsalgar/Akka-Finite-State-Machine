@@ -18,7 +18,7 @@ spec:
         - name: "fsm-akka-4eyes-application.enabled"
           value: "true"
       version: v3
-    targetRevision: argocd
+    targetRevision: argocd_noinfrastructure
   syncPolicy:
     automated:
       selfHeal: true
