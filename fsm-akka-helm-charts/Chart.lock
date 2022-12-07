@@ -20,8 +20,5 @@ dependencies:
 - name: nginx-ingress
   repository: https://helm.nginx.com/stable
   version: 0.15.2
-- name: fsm-akka-4eyes-application
-  repository: http://fsmakka.salgar.org/repository/fsm-akka-helm/
-  version: 1.1.4
-digest: sha256:5e5edc5c3c0183952e42f6870704eee16b6ddfa97465176a09987837e6f24f4a
-generated: "2022-12-07T14:20:44.690128+01:00"
+digest: sha256:ed185df41f688ea386bf6ce2ea6f40cb9caeb4e0f54f911fb969540aa41c7b4e
+generated: "2022-12-07T16:21:10.844601+01:00"

@@ -9,10 +9,6 @@ argo-cd:
     extraArgs:
       - --application-namespaces
       - "*"
-  repoServer:
-    containerPort: 8981
-    service:
-      port: 8981
   server:
     extraArgs:
       - --insecure
