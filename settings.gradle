@@ -1,6 +1,8 @@
 rootProject.name = 'fsm_akka'
+include 'address-check-application'
 include '4eyes-address-check-api'
 include '4eyes-address-check-impl'
+include '4eyes-address-check-application'
 include '4eyes-credit-score-api'
 include '4eyes-credit-score-impl'
 include '4eyes-fraud-prevention-api'

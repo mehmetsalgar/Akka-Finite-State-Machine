@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: foureyes
+  name: address-check
   namespace: fsmakka
   finalizers:
     - resources-finalizer.argocd.argoproj.io
@@ -12,7 +12,7 @@ spec:
   project: fsm-akka-4eyes-project
   source:
     repoURL: "https://github.com/mehmetsalgar/Akka-Finite-State-Machine.git"
-    path: "fsm-akka-4eyes-application/helm"
+    path: "address-check-application/helm"
     helm:
       version: v3
     targetRevision: argocd_noinfrastructure
