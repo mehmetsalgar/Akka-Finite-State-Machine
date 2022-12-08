@@ -80,3 +80,5 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+jdkOptions: "-XshowSettings:vm -XX:+AlwaysActAsServerClassMachine -XX:TieredStopAtLevel=1 -noverify"
