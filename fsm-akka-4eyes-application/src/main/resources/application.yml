@@ -29,11 +29,12 @@ org:
 management:
   endpoint:
     health:
-      enabled: true
-    livenessState:
-      enabled: true
-    readinessstate:
-      enabled: true
+      probes:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health,info
 
 server:
   port: 8787

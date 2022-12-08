@@ -6,7 +6,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 @SpringBootApplication
 public class AddressCheckApplication {
     public static void main(String[] args) {
-        new SpringApplicationBuilder()
+        new SpringApplicationBuilder(AddressCheckApplication.class)
                 .registerShutdownHook(true)
                 .run(args);
     }
