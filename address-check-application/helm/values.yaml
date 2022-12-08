@@ -6,7 +6,7 @@ replicaCount: 1
 
 image:
   repository: k3d-fsm-akka.registry:5555/fsmakka/address-check-application
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: "1.0-SNAPSHOT"
 
