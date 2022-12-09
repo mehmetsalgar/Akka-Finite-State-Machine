@@ -149,10 +149,13 @@ project(':address-check-application') {
     apply plugin: 'com.google.cloud.tools.jib'
     apply plugin: 'org.unbroken-dome.helm'
     apply plugin: 'org.unbroken-dome.helm-publish'
+    apply plugin: 'io.freefair.lombok'
 
     dependencies {
         implementation 'org.springframework.boot:spring-boot-starter'
-        implementation 'org.springframework.boot:spring-boot-starter-actuator:'
+        implementation 'org.springframework.boot:spring-boot-starter-web'
+        implementation 'org.springframework.boot:spring-boot-starter-actuator'
+        implementation 'org.projectlombok:lombok'
     }
 
     jib {
@@ -188,7 +191,7 @@ project(':address-check-application') {
             foureyes {
                 publish = true
                 chartName = 'address-check-application'
-                chartVersion = '1.0.1'
+                chartVersion = '1.0.2'
                 sourceDir = file('helm')
             }
         }
