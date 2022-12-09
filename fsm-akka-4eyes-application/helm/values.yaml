@@ -4,6 +4,8 @@
 
 replicaCount: 2
 
+strategy: Recreate
+
 image:
   repository: k3d-fsm-akka.registry:5555/fsmakka/fsm-akka-4eyes-application
   pullPolicy: Always

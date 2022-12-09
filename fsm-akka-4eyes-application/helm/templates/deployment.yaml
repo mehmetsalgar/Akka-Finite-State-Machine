@@ -9,6 +9,8 @@ spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
+  strategy:
+    type: {{ .Values.strategy }}
   selector:
     matchLabels:
       {{- include "fsm-akka-4eyes-application.selectorLabels" . | nindent 6 }}
