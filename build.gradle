@@ -188,7 +188,7 @@ project(':address-check-application') {
 
     helm {
         charts {
-            foureyes {
+            adress_check {
                 publish = true
                 chartName = 'address-check-application'
                 chartVersion = '1.0.2'
@@ -243,6 +243,84 @@ project(':4eyes-credit-score-impl') {
     }
     bootJar {
         enabled = false
+    }
+}
+
+project(':credit-score-application') {
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'java'
+    apply plugin: 'java-library'
+    apply plugin: 'com.google.cloud.tools.jib'
+    apply plugin: 'org.unbroken-dome.helm'
+    apply plugin: 'org.unbroken-dome.helm-publish'
+    apply plugin: 'io.freefair.lombok'
+
+    dependencies {
+        implementation 'org.springframework.boot:spring-boot-starter'
+        implementation 'org.springframework.boot:spring-boot-starter-web'
+        implementation 'org.springframework.boot:spring-boot-starter-actuator'
+        implementation 'org.projectlombok:lombok'
+    }
+
+    jib {
+        from {
+            image = 'azul/zulu-openjdk:17.0.2-17.32.13'
+            platforms {
+                platform {
+                    architecture = 'amd64'
+                    os = 'linux'
+                }
+                platform {
+                    architecture = 'arm64'
+                    os = 'linux'
+                }
+            }
+            auth {
+                username = "${props.DOCKER_HUB_USER}"
+                password = "${props.DOCKER_HUB_PASSWORD}"
+            }
+        }
+        to {
+            image = "fsm-akka.registry:5555/fsmakka/${project.name}:${project.version}"
+            auth {
+                username = "${props.DOCKER_UPLOAD_USER}"
+                password = "${props.DOCKER_UPLOAD_PASSWORD}"
+            }
+        }
+        allowInsecureRegistries = true
+    }
+
+    helm {
+        charts {
+            credit_score {
+                publish = true
+                chartName = 'credit-score-application'
+                chartVersion = '1.0.0'
+                sourceDir = file('helm')
+            }
+        }
+        repositories {
+            credit_score_rep {
+                url 'http://fsmakka.salgar.org/repository/fsm-akka-helm/'
+                credentials {
+                    username = "${props.HELM_USER}"
+                    password = "${props.HELM_PASSWORD}"
+                }
+            }
+        }
+        publishing {
+            repositories {
+                nexus {
+                    url = uri('http://fsmakka.salgar.org/')
+                    repository = 'fsm-akka-helm'
+                    apiVersion = 'v1'
+                    credentials {
+                        username = "${props.HELM_USER}"
+                        password = "${props.HELM_PASSWORD}"
+                    }
+                }
+            }
+        }
     }
 }
 
