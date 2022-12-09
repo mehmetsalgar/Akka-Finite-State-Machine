@@ -15,6 +15,7 @@ spec:
     - nexus
   sourceRepos:
     - "https://github.com/mehmetsalgar/Akka-Finite-State-Machine.git"
+    - "https://github.com/mehmetsalgar/customer-relationship-adapter.git"
     - "https://sonatype.github.io/helm3-charts/"
     - "http://fsmakka.salgar.org/repository/fsm-akka-helm/"
   clusterResourceWhitelist:

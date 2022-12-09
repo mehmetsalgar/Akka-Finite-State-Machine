@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: customer-relationship-adapter
+  namespace: fsmakka
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: fsmakka
+  project: fsm-akka-4eyes-project
+  source:
+    repoURL: "https://github.com/mehmetsalgar/customer-relationship-adapter.git"
+    path: "helm"
+    helm:
+      version: v3
+    targetRevision: master
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true
+    syncOptions:
+      - CreateNamespace=true
