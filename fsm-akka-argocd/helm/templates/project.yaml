@@ -1,3 +1,4 @@
+{{- if .Values.projects.enabled -}}
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
@@ -24,3 +25,4 @@ spec:
   namespaceResourceWhitelist:
     - group: "*"
       kind: "*"
+{{- end -}}

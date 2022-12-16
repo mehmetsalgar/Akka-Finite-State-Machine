@@ -1,5 +1,6 @@
 elasticsearch:
   enabled: true
   #For Apple M1 CPU
-  #imageTag: "7.16.3-arm64"
+  imageTag: "7.16.3-arm64"
   replicas: 1
+  clusterHealthCheckParams: "wait_for_status=yellow&timeout=1s"

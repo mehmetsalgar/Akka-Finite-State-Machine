@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: fraud-prevention-application
+
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health,info
