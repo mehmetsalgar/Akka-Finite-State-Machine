@@ -1,0 +1,73 @@
+ module org.salgar.fsm.pekko.foureyes.kafka
+
+ var javaPath = "src"
+
+ Workflow {
+    bean = org.salgar.pekko.fsm.xtend.uml.engine.UmlGeneratorStandaloneSetup : setupJavaKafka {
+         config = {
+             javaGenPath = "build/generated-sources/main/java"
+             rootClass = "org.salgar.pekko.fsm.xtend.uml.templates.kafka.JavaKafkaGenerator"
+         }
+         doInit = true
+     }
+
+     bean = org.salgar.pekko.fsm.xtend.uml.engine.UmlGeneratorStandaloneSetup : setupScalaKafka {
+          config = {
+              javaGenPath = "build/generated-sources/main/scala"
+              rootClass = "org.salgar.pekko.fsm.xtend.uml.templates.kafka.ScalaKafkaGenerator"
+          }
+          doInit = true
+      }
+
+     component =  org.salgar.pekko.fsm.xtext.reader.XTextReader : javaKafkaReader  {
+         useJavaClassPath = true
+         uriFilter = org.eclipse.xtext.mwe.NameBasedFilter {
+             regularExpression = '4eyes.*\\.uml'
+         }
+
+         register = setupJavaKafka
+         loadResource = {
+             slot = "modelSlot"
+         }
+     }
+
+      component =  org.salgar.pekko.fsm.xtext.reader.XTextReader : scalaKafkaReader  {
+          useJavaClassPath = true
+          uriFilter = org.eclipse.xtext.mwe.NameBasedFilter {
+              regularExpression = '4eyes.*\\.uml'
+          }
+
+          register = setupScalaKafka
+          loadResource = {
+              slot = "modelSlot"
+          }
+      }
+
+    component = org.eclipse.emf.mwe.utils.DirectoryCleaner : javaKafkaCleaner {
+        directory = "build/generated-sources/main/java"
+    }
+
+    component = org.eclipse.xtext.generator.GeneratorComponent : javaKafkaGenerator {
+        register = setupJavaKafka
+         slot = 'modelSlot'
+         outlet = {
+             path = "build/generated-sources/main/java"
+         }
+         outlet = {
+            outletName = "gen-once"
+            path = javaPath
+         }
+     }
+
+     component = org.eclipse.xtext.generator.GeneratorComponent : scalaKafkaGenerator {
+         register = setupScalaKafka
+          slot = 'modelSlot'
+          outlet = {
+              path = "build/generated-sources/main/scala"
+          }
+          outlet = {
+             outletName = "gen-once"
+             path = javaPath
+          }
+      }
+ }

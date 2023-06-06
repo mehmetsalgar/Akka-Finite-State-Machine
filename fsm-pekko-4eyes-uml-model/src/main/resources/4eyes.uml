@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<uml:Model xmi:version="20131001" xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML" xmi:id="_44-2QN_1Eeudm_vjRKDtiA" name="foureyes">
+  <packageImport xmi:type="uml:PackageImport" xmi:id="_48y_QN_1Eeudm_vjRKDtiA">
+    <importedPackage xmi:type="uml:Model" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#_0"/>
+  </packageImport>
+  <packagedElement xmi:type="uml:Package" xmi:id="_6hFygOPlEeup6LjjOh4MjQ" name="org">
+    <packagedElement xmi:type="uml:Package" xmi:id="_75yq0OPlEeup6LjjOh4MjQ" name="salgar">
+      <packagedElement xmi:type="uml:Package" xmi:id="__I318OPlEeup6LjjOh4MjQ" name="fsm">
+        <packagedElement xmi:type="uml:Package" xmi:id="_AzbTQOPmEeup6LjjOh4MjQ" name="pekko" URI="">
+          <packagedElement xmi:type="uml:Package" xmi:id="_C0wR0OPmEeup6LjjOh4MjQ" name="foureyes">
+            <packagedElement xmi:type="uml:Package" xmi:id="_yXfFgOSSEeup6LjjOh4MjQ" name="credit">
+              <packagedElement xmi:type="uml:StateMachine" xmi:id="_s1DswOLnEeuvzPeHGzGr1A" name="CreditSM" isActive="true">
+                <region xmi:type="uml:Region" xmi:id="_zmrKgOLnEeuvzPeHGzGr1A" name="CreditSMRegion">
+                  <transition xmi:type="uml:Transition" xmi:id="_SvwiYOLoEeuvzPeHGzGr1A" name="intial_onSubmit" source="_CAyqsOLoEeuvzPeHGzGr1A" target="_DxDHYOLoEeuvzPeHGzGr1A">
+                    <ownedComment xmi:type="uml:Comment" xmi:id="_5xFFAG4VEeyDm79Hj-X2dw">
+                      <body>This is the intial transition in the System that is reacting to onSubmit Event of the Credit Application.
+
+This will send to all interested parties an email (or other means of notification) that there is a new Credit Application requires their Approval.</body>
+                    </ownedComment>
+                    <trigger xmi:type="uml:Trigger" xmi:id="_QSot8D1kEey-7smbVHMbdw" name="onSubmit" event="_QD5HUD1kEey-7smbVHMbdw">
+                      <ownedComment xmi:type="uml:Comment" xmi:id="_g47DMG4WEeyDm79Hj-X2dw">
+                        <body>When our UI application or Automated Process Management decides, all requried pre-conditions are reached, it will send this event to our state machine.</body>
+                      </ownedComment>
+                    </trigger>
+                  </transition>
+                  <transition xmi:type="uml:Transition" xmi:id="_bQIoAOLoEeuvzPeHGzGr1A" name="managerRejected_onRejected" source="_DxDHYOLoEeuvzPeHGzGr1A" target="_0gnaYKVfEeyIw-xDSuxlAg">
+                    <trigger xmi:type="uml:Trigger" xmi:id="_C3VjQOMLEeuvzPeHGzGr1A" name="onRejected" event="_Cu28sOMLEeuvzPeHGzGr1A"/>
+                  </transition>
+                  <transition xmi:type="uml:Transition" xmi:id="_Yl_1oOLrEeuvzPeHGzGr1A" name="lowScore_onResultReceived" guard="_rQPuQOLrEeuvzPeHGzGr1A" source="_DxDHYOLoEeuvzPeHGzGr1A" target="_0gnaYKVfEeyIw-xDSuxlAg">
+                    <ownedRule xmi:type="uml:Constraint" xmi:id="_rQPuQOLrEeuvzPeHGzGr1A" name="isScoreTooLowGuard"/>
+                    <trigger xmi:type="uml:Trigger" xmi:id="_1AIi4OMKEeuvzPeHGzGr1A" name="onResultReceived" event="_0yQe8OMKEeuvzPeHGzGr1A"/>
+                  </transition>
+                  <transition xmi:type="uml:Transition" xmi:id="_mw9xUIp1EeyblZd49qNUpA" name="customer_updated" source="_DxDHYOLoEeuvzPeHGzGr1A" target="_DxDHYOLoEeuvzPeHGzGr1A">
+                    <ownedComment xmi:type="uml:Comment" xmi:id="_8Cp5IIssEeyblZd49qNUpA">
+                      <body>This Action will search the State Context for the updated Customer object and actualise it's information.</body>
+                    </ownedComment>
+                    <trigger xmi:type="uml:Trigger" xmi:id="_HL_5QIp2EeyblZd49qNUpA" name="onCustomerUpdated" event="_G_egMIp2EeyblZd49qNUpA"/>
+                  </transition>
+                  <subvertex xmi:type="uml:Pseudostate" xmi:id="_CAyqsOLoEeuvzPeHGzGr1A" name="Initial">
+                    <ownedComment xmi:type="uml:Comment" xmi:id="_PBvmQG4WEeyDm79Hj-X2dw">
+                      <body>Our state machine will initialize this pseudo state wait for necessary preconditions(collection of necessary documents and so) reached and a credit application can be made by credit Tenants under the super vision of the Relastionship Manager. </body>
+                    </ownedComment>
+                  </subvertex>
+                  <subvertex xmi:type="uml:State" xmi:id="_DxDHYOLoEeuvzPeHGzGr1A" name="CREDIT_APPLICATION_SUBMITTED" submachine="_-b4eIN_1Eeudm_vjRKDtiA">
+                    <ownedComment xmi:type="uml:Comment" xmi:id="_7BuYEG4WEeyDm79Hj-X2dw">
+                      <body>When are approval process starts, our State Machine until credit application accepted or rejected will be in this state. Complex workflows under it will be managed from underlying Nested Submachines. According Submachine theory, this State will delegate all the events that it can't deal to Sub State Machine</body>
+                    </ownedComment>
+                  </subvertex>
+                  <subvertex xmi:type="uml:FinalState" xmi:id="_0gnaYKVfEeyIw-xDSuxlAg" name="CREDIT_REJECTED"/>
+                </region>
+              </packagedElement>
+              <packagedElement xmi:type="uml:StateMachine" xmi:id="_-b4eIN_1Eeudm_vjRKDtiA" name="CreditApprovalSM" visibility="protected" submachineState="_DxDHYOLoEeuvzPeHGzGr1A">
+                <region xmi:type="uml:Region" xmi:id="_CbSS8N_2Eeudm_vjRKDtiA" name="CreditApprovalRegion">
+                  <transition xmi:type="uml:Transition" xmi:id="_kU__YN_2Eeudm_vjRKDtiA" name="inital" source="_J_JtAN_2Eeudm_vjRKDtiA" target="_OR7w0N_2Eeudm_vjRKDtiA">
+                    <ownedComment xmi:type="uml:Comment" xmi:id="_VZqVIG4XEeyDm79Hj-X2dw">
+                      <body>Anonymous transition realising automatic transition to WAITING_APPROVAL state.</body>
+                    </ownedComment>
+                  </transition>
+                  <transition xmi:type="uml:Transition" xmi:id="_lVnu4N_2Eeudm_vjRKDtiA" name="waitingApproval_onRelationshipManagerApproved" source="_OR7w0N_2Eeudm_vjRKDtiA" target="_WsNOcN_2Eeudm_vjRKDtiA">
+                    <ownedComment xmi:type="uml:Comment" xmi:id="_vnEdMG4XEeyDm79Hj-X2dw">
+                      <body>Relationship Manager revieved Credit Application documents and decided every precondition reached and give it approval to process forward in approval process.
+
+This action will notificaty, over the notification system, Sales Managers that a Credit Application waiting their approval.</body>
+                    </ownedComment>
+                    <trigger xmi:type="uml:Trigger" xmi:id="_vrZMcOMCEeuvzPeHGzGr1A" name="onRelationshipManagerApproved" event="_24G_4OMEEeuvzPeHGzGr1A"/>
+                  </transition>
+                  <transition xmi:type="uml:Transition" xmi:id="_3urJ0N_2Eeudm_vjRKDtiA" name="relationshipManagerApproved_onSalesManagerApproved" source="_WsNOcN_2Eeudm_vjRKDtiA" target="_rs72QN_2Eeudm_vjRKDtiA">
+                    <ownedComment xmi:type="uml:Comment" xmi:id="_hp1HQIjnEeygS4XeHwQCgQ">
+                      <body>Relationshpship Manager approved, now we can call the all Partner Systems, CreditScore Slave State Machine, Fraud Prevention Slave State Machine, Address Check Slave Machine.
+
+Slave State Machines will asyncrhnously reply to Master State Machine, in this case Credit State Machine.</body>
+                    </ownedComment>
+                    <trigger xmi:type="uml:Trigger" xmi:id="_SOCu4OMIEeuvzPeHGzGr1A" name="onSalesManagerApproved" event="_SBnccOMIEeuvzPeHGzGr1A"/>
+                  </transition>
+                  <transition xmi:type="uml:Transition" xmi:id="_JOBrcOCNEeuquPi25eySzA" name="salesManagerApproved_onResultReceived" guard="_13TMsOCfEeuquPi25eySzA" kind="local" source="_rs72QN_2Eeudm_vjRKDtiA" target="_X6VH0OCNEeuquPi25eySzA">
+                    <ownedRule xmi:type="uml:Constraint" xmi:id="_13TMsOCfEeuquPi25eySzA" name="isResultSufficientGuard"/>
+                    <trigger xmi:type="uml:Trigger" xmi:id="_AdIckOMJEeuvzPeHGzGr1A" name="onResultReceived" event="_AUznAOMJEeuvzPeHGzGr1A"/>
+                  </transition>
+                  <transition xmi:type="uml:Transition" xmi:id="_DRgvEOCgEeuquPi25eySzA" name="salesManagerApproved_onCreditScoreReceived" guard="_Tk3o0OCgEeuquPi25eySzA" kind="local" source="_rs72QN_2Eeudm_vjRKDtiA" target="_5PlXIOCfEeuquPi25eySzA">
+                    <ownedRule xmi:type="uml:Constraint" xmi:id="_Tk3o0OCgEeuquPi25eySzA" name="isCreditScoreNotSufficientGuard"/>
+                    <trigger xmi:type="uml:Trigger" xmi:id="_hozzwOMIEeuvzPeHGzGr1A" name="onResultReceived" event="_hIbDgOMIEeuvzPeHGzGr1A"/>
+                  </transition>
+                  <transition xmi:type="uml:Transition" xmi:id="_ZyB5MOChEeuFXrY5MUYDWw" name="waitingApprovalFromSeniorOfficier_onAcceptableScore" source="_5PlXIOCfEeuquPi25eySzA" target="_X6VH0OCNEeuquPi25eySzA">
+                    <trigger xmi:type="uml:Trigger" xmi:id="_hjKpUOMJEeuvzPeHGzGr1A" name="onAcceptableScore" event="_hYylUOMJEeuvzPeHGzGr1A"/>
+                  </transition>
+                  <transition xmi:type="uml:Transition" xmi:id="_KQqOYNtaEeyBoKz2hPLjXg" name="creditAnalyst_onAccepted" source="_X6VH0OCNEeuquPi25eySzA" target="_GStLENtaEeyBoKz2hPLjXg">
+                    <trigger xmi:type="uml:Trigger" xmi:id="_ggXKwNtaEeyBoKz2hPLjXg" name="onAccepted" event="_ejQQYN_lEeyBoKz2hPLjXg"/>
+                  </transition>
+                  <subvertex xmi:type="uml:Pseudostate" xmi:id="_J_JtAN_2Eeudm_vjRKDtiA" name="Initial_CA">
+                    <ownedComment xmi:type="uml:Comment" xmi:id="_J0NU8G4XEeyDm79Hj-X2dw">
+                      <body>This is the initial pseudo state for Creadit Approval process, while the following transition has no trigger on it, it will directly realise a transition to WAITING_APPROVAL state.</body>
+                    </ownedComment>
+                  </subvertex>
+                  <subvertex xmi:type="uml:State" xmi:id="_OR7w0N_2Eeudm_vjRKDtiA" name="WAITING_APPROVAL" submachine="_HGtxINdYEeyBoKz2hPLjXg"/>
+                  <subvertex xmi:type="uml:State" xmi:id="_WsNOcN_2Eeudm_vjRKDtiA" name="RELATIONSHIP_MANAGER_APPROVED" submachine="_gw6S0NqXEeyBoKz2hPLjXg">
+                    <ownedComment xmi:type="uml:Comment" xmi:id="_85160G4XEeyDm79Hj-X2dw">
+                      <body>This state indicates the Releation Ship Mavager approved the credit application and Sales Managers are notified for further approval of the Credit Application.</body>
+                    </ownedComment>
+                  </subvertex>
+                  <subvertex xmi:type="uml:State" xmi:id="_rs72QN_2Eeudm_vjRKDtiA" name="SALES_MANAGER_APPROVED" submachine="_-A334DivEeyPjN0PDF-AkA"/>
+                  <subvertex xmi:type="uml:State" xmi:id="_X6VH0OCNEeuquPi25eySzA" name="WAITING_CREDIT_ANALYST_APPROVAL" submachine="_RCicwNtYEeyBoKz2hPLjXg"/>
+                  <subvertex xmi:type="uml:State" xmi:id="_5PlXIOCfEeuquPi25eySzA" name="WAITING_APPROVAL_FROM_SENIOR_MANAGER"/>
+                  <subvertex xmi:type="uml:FinalState" xmi:id="_GStLENtaEeyBoKz2hPLjXg" name="CREDIT_ACCEPTED"/>
+                </region>
+              </packagedElement>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_24G_4OMEEeuvzPeHGzGr1A" name="RelationshipManagerApprovedPersistEvent" signal="_MZhDAEFkEey-7smbVHMbdw"/>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_SBnccOMIEeuvzPeHGzGr1A" name="SalesManagerApprovalPersistEvent"/>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_hIbDgOMIEeuvzPeHGzGr1A" name="CreditScoreNotEnoughPersisteEvent"/>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_qD8NAOMIEeuvzPeHGzGr1A" name="PositiveResultReceivedPersistEvent"/>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_AUznAOMJEeuvzPeHGzGr1A" name="PositiveResultPersistedEvent"/>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_hYylUOMJEeuvzPeHGzGr1A" name="AcceptableScorePersistedEvent"/>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_Vi3qwOMKEeuvzPeHGzGr1A" name="CreditAanlystApprovedPersistEvent"/>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_lco_0OMKEeuvzPeHGzGr1A" name="WaitingCreditAnalystApprovalCreditAcceptedPersistEvent"/>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_0yQe8OMKEeuvzPeHGzGr1A" name="CreditScoreToLowPersistEvent"/>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_Cu28sOMLEeuvzPeHGzGr1A" name="CreditRejectedPersistEvent"/>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_b-2aQOMLEeuvzPeHGzGr1A" name="FraudPreventionFraudPersistEvent"/>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_rmK9MOSnEeup6LjjOh4MjQ" name="CreditInitialPersistEvent"/>
+              <packagedElement xmi:type="uml:StateMachine" xmi:id="_-A334DivEeyPjN0PDF-AkA" name="CreditSlaveCoordinationSM" submachineState="_rs72QN_2Eeudm_vjRKDtiA">
+                <region xmi:type="uml:Region" xmi:id="_FDFWYDiwEeyPjN0PDF-AkA" name="creditSlaveRegion">
+                  <transition xmi:type="uml:Transition" xmi:id="_l8_WMDixEeyPjN0PDF-AkA" name="initial_creditScoreReceived" guard="_Cnco0Dx-EeyPjN0PDF-AkA" source="_Nnu4ADiwEeyPjN0PDF-AkA" target="_VncgkDiwEeyPjN0PDF-AkA">
+                    <ownedRule xmi:type="uml:Constraint" xmi:id="_Cnco0Dx-EeyPjN0PDF-AkA" name="isCreditScoreResultGuard"/>
+                    <trigger xmi:type="uml:Trigger" xmi:id="_uyDSYDixEeyPjN0PDF-AkA" name="onResultReceived" event="_3yClgDx9EeyPjN0PDF-AkA"/>
+                  </transition>
+                  <transition xmi:type="uml:Transition" xmi:id="_nRY9UDixEeyPjN0PDF-AkA" name="initial_FraudPreventionResultReceived" guard="_v8HqwDyAEeyPjN0PDF-AkA" source="_Nnu4ADiwEeyPjN0PDF-AkA" target="_lSxxADiwEeyPjN0PDF-AkA">
+                    <ownedRule xmi:type="uml:Constraint" xmi:id="_v8HqwDyAEeyPjN0PDF-AkA" name="isFraudPreventionResultGuard"/>
+                    <trigger xmi:type="uml:Trigger" xmi:id="_1khrwDixEeyPjN0PDF-AkA" name="onResultReceived" event="_irjzoDyAEeyPjN0PDF-AkA"/>
+                  </transition>
+                  <transition xmi:type="uml:Transition" xmi:id="_p8eqkDixEeyPjN0PDF-AkA" name="initial_AddressCheckResultReceived" guard="_agJG0Dx_EeyPjN0PDF-AkA" source="_Nnu4ADiwEeyPjN0PDF-AkA" target="_xy_wUDiwEeyPjN0PDF-AkA">
+                    <ownedRule xmi:type="uml:Constraint" xmi:id="_agJG0Dx_EeyPjN0PDF-AkA" name="isAdressCheckResultGuard"/>
+                    <trigger xmi:type="uml:Trigger" xmi:id="_5OKE4DixEeyPjN0PDF-AkA" name="onResultReceived" event="_MBDnEDx_EeyPjN0PDF-AkA"/>
+                  </transition>
+                  <transition xmi:type="uml:Transition" xmi:id="_--5UcDixEeyPjN0PDF-AkA" name="creditScoreReceived_creditScore_fraudPreventionResult" guard="_CtPyADyCEeyPjN0PDF-AkA" source="_VncgkDiwEeyPjN0PDF-AkA" target="_77nmIDiwEeyPjN0PDF-AkA">
+                    <ownedRule xmi:type="uml:Constraint" xmi:id="_CtPyADyCEeyPjN0PDF-AkA" name="isFraudPreventionResultGuard"/>
+                    <trigger xmi:type="uml:Trigger" xmi:id="_HSmQADiyEeyPjN0PDF-AkA" name="onResultReceived" event="_9P1uIDyBEeyPjN0PDF-AkA"/>
+                  </transition>
+                  <transition xmi:type="uml:Transition" xmi:id="_J4U8IDiyEeyPjN0PDF-AkA" name="fraudPreventionResultReceived_creditScoreFraudPreventionResultReceived" guard="_PEiCUDyDEeyPjN0PDF-AkA" source="_lSxxADiwEeyPjN0PDF-AkA" target="_77nmIDiwEeyPjN0PDF-AkA">
+                    <ownedRule xmi:type="uml:Constraint" xmi:id="_PEiCUDyDEeyPjN0PDF-AkA" name="isCreditScoreResultGuard"/>
+                    <trigger xmi:type="uml:Trigger" xmi:id="_Poye4DiyEeyPjN0PDF-AkA" name="onResultReceived" event="_EDf90DyDEeyPjN0PDF-AkA"/>
+                  </transition>
+                  <transition xmi:type="uml:Transition" xmi:id="_RS2M8DiyEeyPjN0PDF-AkA" name="fraudPReventionResultReceived_fraudPReventionResultReceived" guard="_8qU7YDyDEeyPjN0PDF-AkA" source="_lSxxADiwEeyPjN0PDF-AkA" target="_F-_IgDixEeyPjN0PDF-AkA">
+                    <ownedRule xmi:type="uml:Constraint" xmi:id="_8qU7YDyDEeyPjN0PDF-AkA" name="isAddressCheckResultGuard"/>
+                    <trigger xmi:type="uml:Trigger" xmi:id="_WK0ogDiyEeyPjN0PDF-AkA" name="onResultReceived" event="_3__TMDyDEeyPjN0PDF-AkA"/>
+                  </transition>
+                  <transition xmi:type="uml:Transition" xmi:id="_SVumQDiyEeyPjN0PDF-AkA" name="addressCheckResultReceived_fraudPreventionResultReceived" guard="_bnkFEDyDEeyPjN0PDF-AkA" source="_xy_wUDiwEeyPjN0PDF-AkA" target="_F-_IgDixEeyPjN0PDF-AkA">
+                    <ownedRule xmi:type="uml:Constraint" xmi:id="_bnkFEDyDEeyPjN0PDF-AkA" name="isFraudPreventionResultGaurd"/>
+                    <trigger xmi:type="uml:Trigger" xmi:id="_bcZP0DiyEeyPjN0PDF-AkA" name="onResultReceived" event="_eefrYDyCEeyPjN0PDF-AkA"/>
+                  </transition>
+                  <transition xmi:type="uml:Transition" xmi:id="_pr70MEFkEey-7smbVHMbdw" name="creditScore_addressCheck_onResultReceived" guard="_OZQQsEFlEey-7smbVHMbdw" source="_VncgkDiwEeyPjN0PDF-AkA" target="_pgDw0EFjEey-7smbVHMbdw">
+                    <ownedRule xmi:type="uml:Constraint" xmi:id="_OZQQsEFlEey-7smbVHMbdw" name="isAddressCheckResult">
+                      <ownedComment xmi:type="uml:Comment" xmi:id="_plufMImJEeygS4XeHwQCgQ" annotatedElement="_yXfFgOSSEeup6LjjOh4MjQ">
+                        <body>We have to check the Result is arriving from Address Check Slave State Machine.</body>
+                      </ownedComment>
+                    </ownedRule>
+                    <trigger xmi:type="uml:Trigger" xmi:id="_5KArwEFkEey-7smbVHMbdw" name="onResultReceived" event="_49mncEFkEey-7smbVHMbdw"/>
+                  </transition>
+                  <transition xmi:type="uml:Transition" xmi:id="_QnYVIEFlEey-7smbVHMbdw" name="addressCheck_CredfitScore_onResultReceived" guard="_sCPHwEFlEey-7smbVHMbdw" source="_xy_wUDiwEeyPjN0PDF-AkA" target="_pgDw0EFjEey-7smbVHMbdw">
+                    <ownedRule xmi:type="uml:Constraint" xmi:id="_sCPHwEFlEey-7smbVHMbdw" name="isCreditScoreResult">
+                      <ownedComment xmi:type="uml:Comment" xmi:id="_du2n4LZ4EeyecuRKYfK1Yg" annotatedElement="_yXfFgOSSEeup6LjjOh4MjQ">
+                        <body>We have to check the Result is arriving from Credit Score Slave State Machine.</body>
+                      </ownedComment>
+                    </ownedRule>
+                    <trigger xmi:type="uml:Trigger" xmi:id="_i65IwEFlEey-7smbVHMbdw" name="onResultReceived" event="_iwvHMEFlEey-7smbVHMbdw"/>
+                  </transition>
+                  <subvertex xmi:type="uml:Pseudostate" xmi:id="_Nnu4ADiwEeyPjN0PDF-AkA" name="Initial_CSC"/>
+                  <subvertex xmi:type="uml:State" xmi:id="_VncgkDiwEeyPjN0PDF-AkA" name="CREDITSCORE_RECEIVED"/>
+                  <subvertex xmi:type="uml:State" xmi:id="_lSxxADiwEeyPjN0PDF-AkA" name="FRAUDPREVENTION_RESULT_RECEIVED"/>
+                  <subvertex xmi:type="uml:State" xmi:id="_xy_wUDiwEeyPjN0PDF-AkA" name="ADRRESCHECK_RESULT_RECEIVED"/>
+                  <subvertex xmi:type="uml:State" xmi:id="_77nmIDiwEeyPjN0PDF-AkA" name="CREDITSCORE_FRAUDPREVENTION_RESULT_RECEIVED"/>
+                  <subvertex xmi:type="uml:State" xmi:id="_F-_IgDixEeyPjN0PDF-AkA" name="FRAUDPREVENTION_ADRESSCHECK_RESULT_RECEIVED"/>
+                  <subvertex xmi:type="uml:State" xmi:id="_pgDw0EFjEey-7smbVHMbdw" name="CREDITSCORE_ADDRESSCHECK_RESULT_RECEIVED"/>
+                </region>
+              </packagedElement>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_3yClgDx9EeyPjN0PDF-AkA" name="CreditScoreReceivedPersistEvent"/>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_MBDnEDx_EeyPjN0PDF-AkA" name="AdressCheckReceivedPersistEvent"/>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_irjzoDyAEeyPjN0PDF-AkA" name="FraudPreventionReceivedPersistEvent"/>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_9P1uIDyBEeyPjN0PDF-AkA" name="CreditScoreFraudPreventionReceivedPersistEvent"/>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_eefrYDyCEeyPjN0PDF-AkA" name="AdressCheckFraudPreventionReceviedPersistEvent"/>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_EDf90DyDEeyPjN0PDF-AkA" name="FraudPreventionCreditScoreReceivedPersistEvent"/>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_3__TMDyDEeyPjN0PDF-AkA" name="FraudPreventionAdressCheckReceivedPersistEvent"/>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_QD5HUD1kEey-7smbVHMbdw" name="CreditApplicationSubmittedPersistEvent"/>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_DaboIEFkEey-7smbVHMbdw" name="CreditScoreAddressCheckReceivedPersistEvent"/>
+              <packagedElement xmi:type="uml:Signal" xmi:id="_MZhDAEFkEey-7smbVHMbdw" name="RelationShipManagerApprovedSnapshotSignal"/>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_49mncEFkEey-7smbVHMbdw" name="CreditScoreAddressResultReceivedPersistEvent"/>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_iwvHMEFlEey-7smbVHMbdw" name="AddressCheckCreditScoreResultReceivedPersistEvent"/>
+              <packagedElement xmi:type="uml:Class" xmi:id="_Sger8FwYEeynMdx0NLQt4g" name="CreditUUID">
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_Wb2VUFwYEeynMdx0NLQt4g" name="creditUUID">
+                  <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_mYVAIFwYEeynMdx0NLQt4g" name="Customer">
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_pfe-UFwYEeynMdx0NLQt4g" name="firstName">
+                  <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_w_yuEFwYEeynMdx0NLQt4g" name="lastName">
+                  <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_1L47EFwYEeynMdx0NLQt4g" name="personalId">
+                  <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_OOk8cFwZEeynMdx0NLQt4g" name="adress" type="_5UqHQFwYEeynMdx0NLQt4g" association="_OOgrAFwZEeynMdx0NLQt4g"/>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_frFRkKVBEeyIw-xDSuxlAg" name="email">
+                  <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_5UqHQFwYEeynMdx0NLQt4g" name="Address">
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_9NtccFwYEeynMdx0NLQt4g" name="street">
+                  <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_B8eRoFwZEeynMdx0NLQt4g" name="houseNo">
+                  <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_FpnRwFwZEeynMdx0NLQt4g" name="city">
+                  <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_JWH_wFwZEeynMdx0NLQt4g" name="country">
+                  <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Association" xmi:id="_OOgrAFwZEeynMdx0NLQt4g" name="address" memberEnd="_OOk8cFwZEeynMdx0NLQt4g _OOljgVwZEeynMdx0NLQt4g">
+                <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_OOjHQFwZEeynMdx0NLQt4g" source="org.eclipse.papyrus">
+                  <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_OOjHQVwZEeynMdx0NLQt4g" key="nature" value="UML_Nature"/>
+                </eAnnotations>
+                <ownedEnd xmi:type="uml:Property" xmi:id="_OOljgVwZEeynMdx0NLQt4g" name="customer" type="_mYVAIFwYEeynMdx0NLQt4g" association="_OOgrAFwZEeynMdx0NLQt4g"/>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_ZXi08FwZEeynMdx0NLQt4g" name="CreditTenants">
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_lZuNYFwZEeynMdx0NLQt4g" name="customer" type="_mYVAIFwYEeynMdx0NLQt4g" association="_lZs_QFwZEeynMdx0NLQt4g">
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_nC6_0FwZEeynMdx0NLQt4g" value="*"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Association" xmi:id="_lZs_QFwZEeynMdx0NLQt4g" name="creditTenants" memberEnd="_lZuNYFwZEeynMdx0NLQt4g _lZuNY1wZEeynMdx0NLQt4g">
+                <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_lZtmUFwZEeynMdx0NLQt4g" source="org.eclipse.papyrus">
+                  <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_lZtmUVwZEeynMdx0NLQt4g" key="nature" value="UML_Nature"/>
+                </eAnnotations>
+                <ownedEnd xmi:type="uml:Property" xmi:id="_lZuNY1wZEeynMdx0NLQt4g" name="credittenants" type="_ZXi08FwZEeynMdx0NLQt4g" association="_lZs_QFwZEeynMdx0NLQt4g"/>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Class" xmi:id="_DBBkAFzLEeynMdx0NLQt4g" name="CreditTenantScoreResult">
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_JSbQoFzLEeynMdx0NLQt4g" name="personalId">
+                  <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_SeVmkFzLEeynMdx0NLQt4g" name="creditScore">
+                  <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Real"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_G_egMIp2EeyblZd49qNUpA" name="CustomerUpdatedEvent"/>
+              <packagedElement xmi:type="uml:Class" xmi:id="_xCvOoNXNEeyBoKz2hPLjXg" name="CreditApplication">
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_3TZ7cNXNEeyBoKz2hPLjXg" name="creditAmount">
+                  <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Real"/>
+                </ownedAttribute>
+                <ownedAttribute xmi:type="uml:Property" xmi:id="__KqyoNXNEeyBoKz2hPLjXg" name="credittenants" type="_ZXi08FwZEeynMdx0NLQt4g" association="__KnvUNXNEeyBoKz2hPLjXg">
+                  <lowerValue xmi:type="uml:LiteralInteger" xmi:id="__KqyodXNEeyBoKz2hPLjXg"/>
+                  <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="__KqyotXNEeyBoKz2hPLjXg" value="1"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:Association" xmi:id="__KnvUNXNEeyBoKz2hPLjXg" name="creditTenants" visibility="public" memberEnd="__KqyoNXNEeyBoKz2hPLjXg __Kqyo9XNEeyBoKz2hPLjXg">
+                <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="__KqLkNXNEeyBoKz2hPLjXg" source="org.eclipse.papyrus">
+                  <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="__KqLkdXNEeyBoKz2hPLjXg" key="nature" value="UML_Nature"/>
+                </eAnnotations>
+                <ownedEnd xmi:type="uml:Property" xmi:id="__Kqyo9XNEeyBoKz2hPLjXg" name="creditapplication" type="_xCvOoNXNEeyBoKz2hPLjXg" association="__KnvUNXNEeyBoKz2hPLjXg"/>
+              </packagedElement>
+              <packagedElement xmi:type="uml:StateMachine" xmi:id="_HGtxINdYEeyBoKz2hPLjXg" name="FourEyesRelationshipManagerSM" submachineState="_OR7w0N_2Eeudm_vjRKDtiA">
+                <region xmi:type="uml:Region" xmi:id="_RzutcNdYEeyBoKz2hPLjXg" name="FourEyesRegion">
+                  <transition xmi:type="uml:Transition" xmi:id="_c0J-4NdhEeyBoKz2hPLjXg" name="initial" source="_rBldANdYEeyBoKz2hPLjXg" target="_QgGzUNdhEeyBoKz2hPLjXg"/>
+                  <transition xmi:type="uml:Transition" xmi:id="_iKIvoNdiEeyBoKz2hPLjXg" name="waitingManagerApproval_onRelationshipManagerApproved" guard="_Gn00sNdjEeyBoKz2hPLjXg" source="_QgGzUNdhEeyBoKz2hPLjXg" target="_QgGzUNdhEeyBoKz2hPLjXg">
+                    <ownedRule xmi:type="uml:Constraint" xmi:id="_Gn00sNdjEeyBoKz2hPLjXg" name="relationshipManagerCreditAmountCriticalGuard"/>
+                    <trigger xmi:type="uml:Trigger" xmi:id="_zTVFMNdiEeyBoKz2hPLjXg" name="onRelationshipManagerApproved" event="_ymw6INdiEeyBoKz2hPLjXg"/>
+                  </transition>
+                  <subvertex xmi:type="uml:Pseudostate" xmi:id="_rBldANdYEeyBoKz2hPLjXg" name="Initial_FE"/>
+                  <subvertex xmi:type="uml:State" xmi:id="_QgGzUNdhEeyBoKz2hPLjXg" name="WAITING_MANAGER_APPROVAL"/>
+                </region>
+              </packagedElement>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_ymw6INdiEeyBoKz2hPLjXg" name="WaitingManagerApprovalRelationshipManagerPersistEvent"/>
+              <packagedElement xmi:type="uml:StateMachine" xmi:id="_gw6S0NqXEeyBoKz2hPLjXg" name="FourEyesSalesManagerSM" submachineState="_WsNOcN_2Eeudm_vjRKDtiA">
+                <region xmi:type="uml:Region" xmi:id="_n6YP4NqXEeyBoKz2hPLjXg" name="FourEyesSalesManagerRegion">
+                  <transition xmi:type="uml:Transition" xmi:id="_V-W5wNqYEeyBoKz2hPLjXg" name="intial" source="_DnyyINqYEeyBoKz2hPLjXg" target="_MhG8MNqYEeyBoKz2hPLjXg"/>
+                  <transition xmi:type="uml:Transition" xmi:id="_qcIlgNqYEeyBoKz2hPLjXg" name="waitingForApproval_onSalesManagerApproved" guard="_ejJv4NqZEeyBoKz2hPLjXg" source="_MhG8MNqYEeyBoKz2hPLjXg" target="_MhG8MNqYEeyBoKz2hPLjXg">
+                    <ownedRule xmi:type="uml:Constraint" xmi:id="_ejJv4NqZEeyBoKz2hPLjXg" name="salesManagerCreditAmountCriticalGuard"/>
+                    <trigger xmi:type="uml:Trigger" xmi:id="_x6AFQNqYEeyBoKz2hPLjXg" name="onSalesManagerApproved" event="_VnDXkNqZEeyBoKz2hPLjXg"/>
+                  </transition>
+                  <subvertex xmi:type="uml:Pseudostate" xmi:id="_DnyyINqYEeyBoKz2hPLjXg" name="initial_FE_SM"/>
+                  <subvertex xmi:type="uml:State" xmi:id="_MhG8MNqYEeyBoKz2hPLjXg" name="WAITING_MANAGER_APPROVAL"/>
+                </region>
+              </packagedElement>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_VnDXkNqZEeyBoKz2hPLjXg" name="WaitingManagerApprovalSalesManagerApprovedPersistEvent"/>
+              <packagedElement xmi:type="uml:StateMachine" xmi:id="_RCicwNtYEeyBoKz2hPLjXg" name="FourEyesCreditAnalystSM" submachineState="_X6VH0OCNEeuquPi25eySzA">
+                <region xmi:type="uml:Region" xmi:id="_V9f64NtYEeyBoKz2hPLjXg" name="FourEyesCreditAnalystRegion">
+                  <transition xmi:type="uml:Transition" xmi:id="_5PdMoNtYEeyBoKz2hPLjXg" name="initial" source="_i_6oUNtYEeyBoKz2hPLjXg" target="_wg9LcNtYEeyBoKz2hPLjXg"/>
+                  <transition xmi:type="uml:Transition" xmi:id="_B_NLANtZEeyBoKz2hPLjXg" name="waitingAnalystApproval_onCreditAccepted" guard="_ucPFMNtZEeyBoKz2hPLjXg" source="_wg9LcNtYEeyBoKz2hPLjXg" target="_wg9LcNtYEeyBoKz2hPLjXg">
+                    <ownedRule xmi:type="uml:Constraint" xmi:id="_ucPFMNtZEeyBoKz2hPLjXg" name="creditAnalystCreditAmountCritical"/>
+                    <trigger xmi:type="uml:Trigger" xmi:id="_INAxENtZEeyBoKz2hPLjXg" name="onAccepted" event="_lco_0OMKEeuvzPeHGzGr1A"/>
+                  </transition>
+                  <subvertex xmi:type="uml:Pseudostate" xmi:id="_i_6oUNtYEeyBoKz2hPLjXg" name="Initial_CA_SM"/>
+                  <subvertex xmi:type="uml:State" xmi:id="_wg9LcNtYEeyBoKz2hPLjXg" name="WAITING_ANAYLIST_APPROVAL"/>
+                </region>
+              </packagedElement>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_ejQQYN_lEeyBoKz2hPLjXg" name="CreditAcceptedPersistEvent"/>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Package" xmi:id="_7WfA0OSSEeup6LjjOh4MjQ" name="creditscore">
+              <packagedElement xmi:type="uml:StateMachine" xmi:id="_MYTEgOCMEeuquPi25eySzA" name="CreditScoreSM" isAbstract="true" isActive="true">
+                <region xmi:type="uml:Region" xmi:id="_QrJZwOCMEeuquPi25eySzA" name="CreditScoreRegion">
+                  <transition xmi:type="uml:Transition" xmi:id="_1juisOMLEeuvzPeHGzGr1A" name="initial" source="_oBRDQOMLEeuvzPeHGzGr1A" target="_reJZ0OMLEeuvzPeHGzGr1A">
+                    <trigger xmi:type="uml:Trigger" xmi:id="_odlgQDcoEeyPjN0PDF-AkA" name="onStartCreditScoreResearch" event="_oPdksDcoEeyPjN0PDF-AkA"/>
+                  </transition>
+                  <transition xmi:type="uml:Transition" xmi:id="_2fnjMOMLEeuvzPeHGzGr1A" name="waitingResult_onResultReceived" source="_reJZ0OMLEeuvzPeHGzGr1A" target="_xrE2IOMLEeuvzPeHGzGr1A">
+                    <trigger xmi:type="uml:Trigger" xmi:id="_mqa6MOMNEeuvzPeHGzGr1A" name="onResultReceived" event="_mc3mYOMNEeuvzPeHGzGr1A"/>
+                  </transition>
+                  <transition xmi:type="uml:Transition" xmi:id="_7vQQ0OMLEeuvzPeHGzGr1A" name="waitingResult_onError" source="_reJZ0OMLEeuvzPeHGzGr1A" target="_4yCRwOMLEeuvzPeHGzGr1A">
+                    <trigger xmi:type="uml:Trigger" xmi:id="_wkmrYOMNEeuvzPeHGzGr1A" name="onError" event="_wXMhgOMNEeuvzPeHGzGr1A"/>
+                  </transition>
+                  <transition xmi:type="uml:Transition" xmi:id="_EnHpYOMMEeuvzPeHGzGr1A" name="error_onRetry" source="_4yCRwOMLEeuvzPeHGzGr1A" target="_reJZ0OMLEeuvzPeHGzGr1A">
+                    <trigger xmi:type="uml:Trigger" xmi:id="_5BJZ4OMNEeuvzPeHGzGr1A" name="onRetry" event="_408J4OMNEeuvzPeHGzGr1A"/>
+                  </transition>
+                  <subvertex xmi:type="uml:Pseudostate" xmi:id="_oBRDQOMLEeuvzPeHGzGr1A" name="Initial"/>
+                  <subvertex xmi:type="uml:State" xmi:id="_reJZ0OMLEeuvzPeHGzGr1A" name="WAiTING_RESULT"/>
+                  <subvertex xmi:type="uml:FinalState" xmi:id="_xrE2IOMLEeuvzPeHGzGr1A" name="ResultReceived"/>
+                  <subvertex xmi:type="uml:State" xmi:id="_4yCRwOMLEeuvzPeHGzGr1A" name="ERROR"/>
+                </region>
+              </packagedElement>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_oPdksDcoEeyPjN0PDF-AkA" name="StartCreditScoreResearchPersistEvent"/>
+              <packagedElement xmi:type="uml:StateMachine" xmi:id="_MqaWoEOREeyWHY1USPjr0w" name="MultiTenantCreditScoreSM" isAbstract="true" isActive="true">
+                <region xmi:type="uml:Region" xmi:id="_VW6MsEOREeyWHY1USPjr0w" name="MultiTenantCreditScoreRegion">
+                  <transition xmi:type="uml:Transition" xmi:id="_DdELYEOTEeyWHY1USPjr0w" name="initial_WaitingMultiTenantResult" source="_BB3JsEOSEeyWHY1USPjr0w" target="_eWJjIEOSEeyWHY1USPjr0w">
+                    <trigger xmi:type="uml:Trigger" xmi:id="_6BncQEOgEeyWHY1USPjr0w" name="onStartMultiTenantCreditScoreResearch" event="_5cFtUEOgEeyWHY1USPjr0w"/>
+                  </transition>
+                  <transition xmi:type="uml:Transition" xmi:id="_T7NY0EOTEeyWHY1USPjr0w" name="waitingMultiTenantResult_finalState" guard="_6YKm8EOTEeyWHY1USPjr0w" source="_eWJjIEOSEeyWHY1USPjr0w" target="_SOZRsEOTEeyWHY1USPjr0w">
+                    <ownedRule xmi:type="uml:Constraint" xmi:id="_6YKm8EOTEeyWHY1USPjr0w" name="isAllCreditScoreMultitenantResponded"/>
+                    <trigger xmi:type="uml:Trigger" xmi:id="_f0qTEEOTEeyWHY1USPjr0w" name="onCreditScoreReceived" event="_rKe70EOTEeyWHY1USPjr0w"/>
+                  </transition>
+                  <transition xmi:type="uml:Transition" xmi:id="_vsegUEOTEeyWHY1USPjr0w" name="waitingMultiTenantResults_waitingMultiTenantResults" guard="_hlNOMEOUEeyWHY1USPjr0w" source="_eWJjIEOSEeyWHY1USPjr0w" target="_eWJjIEOSEeyWHY1USPjr0w">
+                    <ownedRule xmi:type="uml:Constraint" xmi:id="_hlNOMEOUEeyWHY1USPjr0w" name="isNotAllTenantsResponded"/>
+                    <trigger xmi:type="uml:Trigger" xmi:id="_c18pwEOUEeyWHY1USPjr0w" name="onCreditScoreReceived" event="_chLToEOUEeyWHY1USPjr0w"/>
+                  </transition>
+                  <subvertex xmi:type="uml:Pseudostate" xmi:id="_BB3JsEOSEeyWHY1USPjr0w" name="Initial_MTCS"/>
+                  <subvertex xmi:type="uml:State" xmi:id="_eWJjIEOSEeyWHY1USPjr0w" name="WAITING_MULTI_TENANT_RESULTS"/>
+                  <subvertex xmi:type="uml:FinalState" xmi:id="_SOZRsEOTEeyWHY1USPjr0w" name="FinalState"/>
+                </region>
+              </packagedElement>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_rKe70EOTEeyWHY1USPjr0w" name="MultiTenantResultsReceivedPersistentEvent"/>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_chLToEOUEeyWHY1USPjr0w" name="OneTenantCreditScoreResultReceived"/>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_5cFtUEOgEeyWHY1USPjr0w" name="StartMultiTenantResearchPersistEvent"/>
+              <packagedElement xmi:type="uml:Class" xmi:id="_pZkbsGI7EeyDm79Hj-X2dw" name="CreditScoreResult">
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_uSbBAGI7EeyDm79Hj-X2dw" name="creditScore">
+                  <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Real"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_408J4OMNEeuvzPeHGzGr1A" name="CreditScoreRetryPersistEvent"/>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_mc3mYOMNEeuvzPeHGzGr1A" name="CreditScorePersistEvent"/>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_wXMhgOMNEeuvzPeHGzGr1A" name="CreditScoreErrorPersistEvent"/>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Package" xmi:id="_-nYJ0OSSEeup6LjjOh4MjQ" name="fraudprevention">
+              <packagedElement xmi:type="uml:StateMachine" xmi:id="_avArYOCMEeuquPi25eySzA" name="FraudPreventionSM" isAbstract="true" isActive="true">
+                <region xmi:type="uml:Region" xmi:id="_dcJnEOCMEeuquPi25eySzA" name="FraudPreventionRegion">
+                  <transition xmi:type="uml:Transition" xmi:id="_Z8RpEOMMEeuvzPeHGzGr1A" name="initial" source="_Hd1-4OMMEeuvzPeHGzGr1A" target="_L2YscOMMEeuvzPeHGzGr1A">
+                    <trigger xmi:type="uml:Trigger" xmi:id="_BH3hQDfwEeyPjN0PDF-AkA" name="onStartFraudPreventionEvaluation" event="_A70pUDfwEeyPjN0PDF-AkA"/>
+                  </transition>
+                  <transition xmi:type="uml:Transition" xmi:id="_fpJFQOMMEeuvzPeHGzGr1A" name="waitingResult_onResult" source="_L2YscOMMEeuvzPeHGzGr1A" target="_UjeYYOMMEeuvzPeHGzGr1A">
+                    <trigger xmi:type="uml:Trigger" xmi:id="_GRP-AOMOEeuvzPeHGzGr1A" name="onResult" event="_GIJsYOMOEeuvzPeHGzGr1A"/>
+                  </transition>
+                  <transition xmi:type="uml:Transition" xmi:id="_g0CyIOMMEeuvzPeHGzGr1A" name="waitingResult_onError" source="_L2YscOMMEeuvzPeHGzGr1A" target="_RJIYcOMMEeuvzPeHGzGr1A">
+                    <trigger xmi:type="uml:Trigger" xmi:id="_RMSIMOMOEeuvzPeHGzGr1A" name="onError" event="_QvhTsOMOEeuvzPeHGzGr1A"/>
+                  </transition>
+                  <transition xmi:type="uml:Transition" xmi:id="_jfjWIOMMEeuvzPeHGzGr1A" name="error_onRetry" source="_RJIYcOMMEeuvzPeHGzGr1A" target="_L2YscOMMEeuvzPeHGzGr1A">
+                    <trigger xmi:type="uml:Trigger" xmi:id="_bsNqwOMOEeuvzPeHGzGr1A" name="onRetry" event="_bjt2EOMOEeuvzPeHGzGr1A"/>
+                  </transition>
+                  <subvertex xmi:type="uml:Pseudostate" xmi:id="_Hd1-4OMMEeuvzPeHGzGr1A" name="Initial"/>
+                  <subvertex xmi:type="uml:State" xmi:id="_L2YscOMMEeuvzPeHGzGr1A" name="WAITING_RESULT"/>
+                  <subvertex xmi:type="uml:State" xmi:id="_RJIYcOMMEeuvzPeHGzGr1A" name="ERROR"/>
+                  <subvertex xmi:type="uml:FinalState" xmi:id="_UjeYYOMMEeuvzPeHGzGr1A" name="ResultReceived"/>
+                </region>
+              </packagedElement>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_A70pUDfwEeyPjN0PDF-AkA" name="FraudPreventionPersistEvemt"/>
+              <packagedElement xmi:type="uml:Class" xmi:id="_fAXSkGJDEeyDm79Hj-X2dw" name="FraudPreventionResult">
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_i5W9YGJDEeyDm79Hj-X2dw" name="fraudPreventionResult">
+                  <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_bjt2EOMOEeuvzPeHGzGr1A" name="FraudPreventionRetryPersistEvent"/>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_QvhTsOMOEeuvzPeHGzGr1A" name="FraudPreventionErrorPersistEvent"/>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_GIJsYOMOEeuvzPeHGzGr1A" name="FraudPreventionReceivedPersistEvent"/>
+            </packagedElement>
+            <packagedElement xmi:type="uml:Package" xmi:id="_CT5e4OSTEeup6LjjOh4MjQ" name="addresscheck">
+              <packagedElement xmi:type="uml:StateMachine" xmi:id="_v7Ap4OCeEeuquPi25eySzA" name="AdressCheckSM" isAbstract="true" isActive="true">
+                <region xmi:type="uml:Region" xmi:id="_zAudoOCeEeuquPi25eySzA" name="AdressCheckRegion">
+                  <transition xmi:type="uml:Transition" xmi:id="_ErTwYOMNEeuvzPeHGzGr1A" name="initial" source="_8qulIOMMEeuvzPeHGzGr1A" target="_-WLaUOMMEeuvzPeHGzGr1A">
+                    <trigger xmi:type="uml:Trigger" xmi:id="_b1LKwDiHEeyPjN0PDF-AkA" name="onStartAdressCheckResearch" event="_bl28YDiHEeyPjN0PDF-AkA"/>
+                  </transition>
+                  <transition xmi:type="uml:Transition" xmi:id="_LNLh8OMNEeuvzPeHGzGr1A" name="waiting_onResult" source="_-WLaUOMMEeuvzPeHGzGr1A" target="_HAhUQOMNEeuvzPeHGzGr1A">
+                    <trigger xmi:type="uml:Trigger" xmi:id="_oTIH8OMOEeuvzPeHGzGr1A" name="onResult" event="_uIZSMOMOEeuvzPeHGzGr1A"/>
+                  </transition>
+                  <transition xmi:type="uml:Transition" xmi:id="_MMyk0OMNEeuvzPeHGzGr1A" name="waiting_onError" source="_-WLaUOMMEeuvzPeHGzGr1A" target="_CIyJQOMNEeuvzPeHGzGr1A">
+                    <trigger xmi:type="uml:Trigger" xmi:id="_4pkx8OMOEeuvzPeHGzGr1A" name="onError" event="_4MkF0OMOEeuvzPeHGzGr1A"/>
+                  </transition>
+                  <transition xmi:type="uml:Transition" xmi:id="_OBxJcOMNEeuvzPeHGzGr1A" name="error_onRetry" source="_CIyJQOMNEeuvzPeHGzGr1A" target="_-WLaUOMMEeuvzPeHGzGr1A">
+                    <trigger xmi:type="uml:Trigger" xmi:id="_F6eAQOMPEeuvzPeHGzGr1A" name="onRetry" event="_Fh4hIOMPEeuvzPeHGzGr1A"/>
+                  </transition>
+                  <subvertex xmi:type="uml:Pseudostate" xmi:id="_8qulIOMMEeuvzPeHGzGr1A" name="Initial"/>
+                  <subvertex xmi:type="uml:State" xmi:id="_-WLaUOMMEeuvzPeHGzGr1A" name="WAITING_RESULT"/>
+                  <subvertex xmi:type="uml:State" xmi:id="_CIyJQOMNEeuvzPeHGzGr1A" name="ERROR"/>
+                  <subvertex xmi:type="uml:FinalState" xmi:id="_HAhUQOMNEeuvzPeHGzGr1A" name="ResultReceived"/>
+                </region>
+              </packagedElement>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_bl28YDiHEeyPjN0PDF-AkA" name="StartAdressCheckPersistEvent"/>
+              <packagedElement xmi:type="uml:Class" xmi:id="__HXDMGJOEeyDm79Hj-X2dw" name="AddressCheckResult">
+                <ownedAttribute xmi:type="uml:Property" xmi:id="_ClIxoGJPEeyDm79Hj-X2dw" name="addressCheckResult">
+                  <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
+                </ownedAttribute>
+              </packagedElement>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_Fh4hIOMPEeuvzPeHGzGr1A" name="AddressCheckRetryPersistEvent"/>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_4MkF0OMOEeuvzPeHGzGr1A" name="AddressCheckErrorPersistEvent"/>
+              <packagedElement xmi:type="uml:SignalEvent" xmi:id="_uIZSMOMOEeuvzPeHGzGr1A" name="AddressCheckPersistEvent"/>
+            </packagedElement>
+          </packagedElement>
+        </packagedElement>
+      </packagedElement>
+    </packagedElement>
+  </packagedElement>
+  <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_t6awUOCMEeuquPi25eySzA">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_t6b-cOCMEeuquPi25eySzA" source="http://www.eclipse.org/uml2/2.0.0/UML">
+      <references xmi:type="ecore:EPackage" href="pathmap://PAPYRUS_ACTIONLANGUAGE_PROFILE/ActionLanguage-Profile.profile.uml#_Kv8EIKFXEeS_KNX0nfvIVQ"/>
+    </eAnnotations>
+    <appliedProfile xmi:type="uml:Profile" href="pathmap://PAPYRUS_ACTIONLANGUAGE_PROFILE/ActionLanguage-Profile.profile.uml#ActionLanguage"/>
+  </profileApplication>
+</uml:Model>

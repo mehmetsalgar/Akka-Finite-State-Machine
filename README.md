@@ -1,8 +1,8 @@
-# Model Driven CQRS Proof of Concept Application with Akka Finite State Machine, Kafka, Cassandra, Elasticsearch
+# Model Driven CQRS Proof of Concept Application with Pekko Finite State Machine, Kafka, Cassandra, Elasticsearch
 ## Features
 - Event Sourcing / Command Query Responsibility Segregation Pattern Implementation
-- Command part with Apache Kafka, Akka Finite State Machine, Apache Cassandra
-- Query part with Akka Projection, Elasticsearch
+- Command part with Apache Kafka, Pekko Finite State Machine, Apache Cassandra
+- Query part with Pekko Projection, Elasticsearch
 - Code Generation with Eclipse XText, Xtend from Eclipse Papyrus UML Diagrams
 - Spring Boot Application
 - Docker / Helm packaging for deployment to Kubernetes

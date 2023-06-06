@@ -1,0 +1,41 @@
+module org.salgar.fsm.pekko.foureyes.projection.adapter
+
+var javaPath = "src"
+
+Workflow {
+    bean = org.salgar.pekko.fsm.xtend.uml.engine.UmlGeneratorStandaloneSetup : scalaSetup {
+        config = {
+            javaGenPath = "build/generated-sources/main/scala"
+            rootClass = "org.salgar.pekko.fsm.xtend.uml.templates.elk.ScalaProjectionElkGenerator"
+        }
+        doInit = true
+    }
+
+    component =  org.salgar.pekko.fsm.xtext.reader.XTextReader : scalaTransformerReader  {
+        useJavaClassPath = true
+        uriFilter = org.eclipse.xtext.mwe.NameBasedFilter {
+            regularExpression = '4eyes.*\\.uml'
+        }
+
+        register = scalaSetup
+        loadResource = {
+            slot = "modelSlot"
+        }
+    }
+
+    component = org.eclipse.emf.mwe.utils.DirectoryCleaner : scalaCleaner {
+        directory = "build/generated-sources/main/scala"
+    }
+
+    component = org.eclipse.xtext.generator.GeneratorComponent : scalaGenerator {
+        register = scalaSetup
+        slot = 'modelSlot'
+        outlet = {
+            path = "build/generated-sources/main/scala"
+        }
+        outlet = {
+            outletName = "gen-once"
+            path = javaPath
+        }
+    }
+}

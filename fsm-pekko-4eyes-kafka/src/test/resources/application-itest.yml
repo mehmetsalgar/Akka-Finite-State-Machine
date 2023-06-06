@@ -1,0 +1,77 @@
+org:
+  salgar:
+    fsm:
+      pekko:
+        pekko-system:
+          application-name: "FourEyes"
+        foureyes:
+          credit:
+            kafka:
+              topics:
+                creditSM: 'creditSM'
+                creditScoreSM: 'creditScoreSM'
+                adressCheckSM: 'addressCheckSM'
+                fraudPreventionSM: 'fraudPreventionSM'
+                multiTenantCreditScoreSM: 'multiTenantScreditScoreSM'
+          elasticsearch:
+            url: 'localhost:56677'
+            batchSize: 1
+            bulkSize: 512
+            lingerMs: 10
+            maxInFlightRequests: 2
+            maxRetries_: 3
+            retryBackoffMs: 5000
+            behaviorOnMalformedDoc: 'WARN'
+            flushTimeoutMs: 5000
+        projections:
+          offsetStore: elasticsearch
+
+spring:
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      autoOffsetReset: earliest
+      group-id: "pekko-fsm-foureyes"
+      properties:
+        "schema.registry.url": "cp-schema-registry:8081"
+        "derive.type": "true"
+        "specific.protobuf.value.type" : "org.salgar.fsm.pekko.foureyes.credit.protobuf.CreditSMCommand"
+      credit-sm:
+        autoOffsetReset: earliest
+        group-id: "pekko-fsm-foureyes"
+        properties:
+          "schema.registry.url": "cp-schema-registry:8081"
+          "derive.type": "true"
+          "specific.protobuf.value.type": "org.salgar.fsm.pekko.foureyes.credit.protobuf.CreditSMCommand"
+      credit-score-sm:
+        autoOffsetReset: earliest
+        group-id: "pekko-fsm-foureyes"
+        properties:
+          "schema.registry.url": "cp-schema-registry:8081"
+          "derive.type": "true"
+          "specific.protobuf.value.type": "org.salgar.fsm.pekko.foureyes.creditscore.protobuf.CreditScoreSMCommand"
+      multi-tenant-credit-score-sm:
+        autoOffsetReset: earliest
+        group-id: "pekko-fsm-foureyes"
+        properties:
+          "schema.registry.url": "cp-schema-registry:8081"
+          "derive.type": "true"
+          "specific.protobuf.value.type": "org.salgar.fsm.pekko.foureyes.creditscore.protobuf.CreditScoreSMCommand"
+      adress-check-sm:
+        autoOffsetReset: earliest
+        group-id: "pekko-fsm-foureyes"
+        properties:
+          "schema.registry.url": "cp-schema-registry:8081"
+          "derive.type": "true"
+          "specific.protobuf.value.type": "org.salgar.fsm.pekko.foureyes.addresscheck.protobuf.AdressCheckSMCommand"
+      fraud-prevention-sm:
+        autoOffsetReset: earliest
+        group-id: "pekko-fsm-foureyes"
+        properties:
+          "schema.registry.url": "cp-schema-registry:8081"
+          "derive.type": "true"
+          "specific.protobuf.value.type": "org.salgar.fsm.pekko.foureyes.fraudprevention.protobuf.FraudPreventionSMCommand"
+    producer:
+      batch-size: 1
+      properties:
+        "linger.ms" : "1"

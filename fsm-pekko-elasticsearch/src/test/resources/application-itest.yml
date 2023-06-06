@@ -1,0 +1,17 @@
+org:
+  salgar:
+    fsm:
+      pekko:
+        foureyes:
+          elasticsearch:
+            url: 'localhost:56677'
+            batchSize: 1
+            bulkSize: 512
+            lingerMs: 10
+            maxInFlightRequests: 2
+            maxRetries_: 3
+            retryBackoffMs: 5000
+            behaviorOnMalformedDoc: 'WARN'
+            flushTimeoutMs: 5000
+        projections:
+          offsetStore: elasticsearch

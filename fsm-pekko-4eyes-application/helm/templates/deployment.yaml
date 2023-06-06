@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "fsm-pekko-4eyes-application.fullname" . }}
+  labels:
+    {{- include "fsm-pekko-4eyes-application.labels" . | nindent 4 }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "fsm-pekko-4eyes-application.selectorLabels" . | nindent 6 }}
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "fsm-pekko-4eyes-application.selectorLabels" . | nindent 8 }}
+        app: {{ .Release.Name }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "fsm-pekko-4eyes-application.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: management
+              containerPort: 8558
+              protocol: TCP
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /alive
+              port: management
+            initialDelaySeconds: 120
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: management
+            initialDelaySeconds: 120
+            periodSeconds: 30
+          env:
+            - name: KUBERNETES_NAMESPACE
+              value: {{ .Release.Namespace }}
+            - name: REQUIRED_CONTACT_POINT_NR
+              value: "{{ .Values.replicaCount }}"
+            - name: CASSANDRA_CONTACT_POINT
+              value: "{{ .Values.cassandraContactPoint.cassandraReleaseName }}-dc1-all-pods-service.{{ .Values.cassandraContactPoint.cassandraNamespace }}.svc.cluster.local"
+            - name: NUMBER_OF_SHARDS
+              value: "{{ .Values.pekko.fsm.numberOfShards }}"
+            - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+              value: "{{ .Values.spring.kafka.bootstrapServers }}"
+            - name: K8SSANDRA_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: fsm-cassandra-superuser
+                  key: password
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

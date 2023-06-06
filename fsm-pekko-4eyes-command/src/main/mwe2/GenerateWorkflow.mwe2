@@ -1,0 +1,41 @@
+ module org.salgar.fsm.pekko.foureyes.command
+
+ var javaPath = "src"
+
+ Workflow {
+    bean = org.salgar.pekko.fsm.xtend.uml.engine.UmlGeneratorStandaloneSetup : setupCommand {
+         config = {
+             javaGenPath = "build/generated-sources/main/java"
+             rootClass = "org.salgar.pekko.fsm.xtend.uml.templates.command.CommandGenerator"
+         }
+         doInit = true
+     }
+
+     component =  org.salgar.pekko.fsm.xtext.reader.XTextReader : commandReader  {
+         useJavaClassPath = true
+         uriFilter = org.eclipse.xtext.mwe.NameBasedFilter {
+             regularExpression = '4eyes.*\\.uml'
+         }
+
+         register = setupCommand
+         loadResource = {
+             slot = "modelSlot"
+         }
+     }
+
+    component = org.eclipse.emf.mwe.utils.DirectoryCleaner : commandCleaner {
+        directory = "build/generated-sources/main/java"
+    }
+
+    component = org.eclipse.xtext.generator.GeneratorComponent : commandGenerator {
+        register = setupCommand
+         slot = 'modelSlot'
+         outlet = {
+             path = "build/generated-sources/main/java"
+         }
+         outlet = {
+            outletName = "gen-once"
+             path = javaPath
+         }
+     }
+ }

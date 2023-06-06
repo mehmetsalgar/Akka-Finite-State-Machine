@@ -1,0 +1,77 @@
+module org.salgar.pekko.fsm.xtend
+
+var javaPath = "src"
+
+Workflow {
+    bean = org.salgar.pekko.fsm.xtend.uml.engine.UmlGeneratorStandaloneSetup : setupPlanuml {
+        config = {
+            javaGenPath = "target/generated-sources/docs/asciidoc"
+            rootClass = "org.salgar.pekko.fsm.xtend.uml.templates.PlanumlRoot"
+        }
+        doInit = true
+    }
+
+	bean = org.salgar.pekko.fsm.xtend.uml.engine.UmlGeneratorStandaloneSetup : setupAsciidoc {
+        config = {
+            javaGenPath = "target/generated-sources/docs/asciidoc"
+            rootClass = "org.salgar.pekko.fsm.xtend.uml.templates.AsciidocRoot"
+        }
+        doInit = true
+    }
+
+    component =  org.salgar.pekko.fsm.xtext.reader.XTextReader : planumlReader  {
+            useJavaClassPath = true
+            uriFilter = org.eclipse.xtext.mwe.NameBasedFilter {
+                regularExpression = 'fsm-pekko-4eyes-uml.*\\.uml'
+            }
+
+            register = setupPlanuml
+            loadResource = {
+                slot = "modelSlot"
+            }
+        }
+
+    component =  org.salgar.pekko.fsm.xtext.reader.XTextReader : asciidocReader  {
+        useJavaClassPath = true
+        uriFilter = org.eclipse.xtext.mwe.NameBasedFilter {
+            regularExpression = 'fsm-pekko-4eyes-uml.*\\.uml'
+        }
+
+        register = setupAsciidoc
+        loadResource = {
+            slot = "modelSlot"
+        }
+    }
+
+    component = org.eclipse.emf.mwe.utils.DirectoryCleaner : planumlCleaner {
+    		directory = "target/generated-sources/docs/puml"
+    	}
+
+	component = org.eclipse.emf.mwe.utils.DirectoryCleaner : asciidocCleaner {
+		directory = "target/generated-sources/docs/asciidoc"
+	}
+
+    component = org.eclipse.xtext.generator.GeneratorComponent : planumlGenerator {
+        register = setupPlanuml
+        slot = 'modelSlot'
+        outlet = {
+            path = "target/generated-sources/docs/puml"
+        }
+        outlet = {
+            outletName = "gen-once"
+            path = javaPath
+        }
+    }
+
+	component = org.eclipse.xtext.generator.GeneratorComponent : asciidocGenerator {
+		register = setupAsciidoc
+        slot = 'modelSlot'
+        outlet = {
+            path = "target/generated-sources/docs/asciidoc"
+        }
+        outlet = {
+        	outletName = "gen-once"
+            path = javaPath
+        }
+    }
+}

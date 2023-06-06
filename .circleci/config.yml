@@ -21,15 +21,15 @@ jobs:
 
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "fsm-akka-eclipse-dependencies/pom.xml" }}
+            - v1-dependencies-{{ checksum "fsm-pekko-eclipse-dependencies/pom.xml" }}
             - v1-dependencies
 
-      - run: mvn clean install --file="fsm-akka-eclipse-dependencies/pom.xml"
+      - run: mvn clean install --file="fsm-pekko-eclipse-dependencies/pom.xml"
 
       - save_cache:
           paths:
             - "~/.m2"
-          key: v1-dependencies-{{ checksum "fsm-akka-eclipse-dependencies/pom.xml" }}
+          key: v1-dependencies-{{ checksum "fsm-pekko-eclipse-dependencies/pom.xml" }}
 
   build2:
     # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
@@ -57,7 +57,7 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "fsm-akka-eclipse-dependencies/pom.xml" }}
+            - v1-dependencies-{{ checksum "fsm-pekko-eclipse-dependencies/pom.xml" }}
             - v1-dependencies-{{ checksum "build.gradle" }}
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-

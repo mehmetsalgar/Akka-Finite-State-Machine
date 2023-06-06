@@ -1,0 +1,131 @@
+module org.salgar.fsm.pekko.foureyes.statemachine
+
+var javaPath = "src"
+
+Workflow {
+	bean = org.salgar.pekko.fsm.xtend.uml.engine.UmlGeneratorStandaloneSetup : setupScala {
+        config = {
+            javaGenPath = "build/generated-sources/main/scala"
+            rootClass = "org.salgar.pekko.fsm.xtend.uml.templates.ScalaRoot"
+        }
+        doInit = true
+    }
+
+    bean = org.salgar.pekko.fsm.xtend.uml.engine.UmlGeneratorStandaloneSetup : setupJava {
+        config = {
+            javaGenPath = "build/generated-sources/main/java"
+            rootClass = "org.salgar.pekko.fsm.xtend.uml.templates.JavaRoot"
+        }
+        doInit = true
+    }
+
+    bean = org.salgar.pekko.fsm.xtend.uml.engine.UmlGeneratorStandaloneSetup : setupTestJava {
+        config = {
+            javaGenPath = "build/generated-sources/test/java"
+            rootClass = "org.salgar.pekko.fsm.xtend.uml.templates.JavaTestRoot"
+        }
+        doInit = true
+    }
+
+    component =  org.salgar.pekko.fsm.xtext.reader.XTextReader : scalaReader  {
+        useJavaClassPath = true
+        uriFilter = org.eclipse.xtext.mwe.NameBasedFilter {
+            regularExpression = '4eyes.*\\.uml'
+        }
+
+        register = setupScala
+        loadResource = {
+            slot = "modelSlot"
+        }
+    }
+
+    component =  org.salgar.pekko.fsm.xtext.reader.XTextReader : javaReader  {
+        useJavaClassPath = true
+        uriFilter = org.eclipse.xtext.mwe.NameBasedFilter {
+            regularExpression = '4eyes.*\\.uml'
+        }
+
+        register = setupJava
+        loadResource = {
+            slot = "modelSlot"
+        }
+    }
+
+    component =  org.salgar.pekko.fsm.xtext.reader.XTextReader : javaTestReader  {
+        useJavaClassPath = true
+        uriFilter = org.eclipse.xtext.mwe.NameBasedFilter {
+            regularExpression = '4eyes.*\\.uml'
+        }
+
+        register = setupTestJava
+        loadResource = {
+            slot = "modelSlot"
+        }
+    }
+
+	component = org.eclipse.emf.mwe.utils.DirectoryCleaner : scalaCleaner {
+		directory = "build/generated-sources/main/scala"
+	}
+
+	component = org.eclipse.emf.mwe.utils.DirectoryCleaner : javaCleaner {
+        directory = "build/generated-sources/main/java"
+    }
+
+	component = org.eclipse.emf.mwe.utils.DirectoryCleaner : javaTestCleaner {
+        directory = "build/generated-test-sources/test/java"
+    }
+
+	component = org.salgar.pekko.fsm.xtend.uml.generator.FsmPekkoGeneratorComponent : scalaGenerator {
+		register = setupScala
+        slot = 'modelSlot'
+        globalVar = {
+            name = "targetSourceStateSeperator" value = "_$$_"
+        }
+        globalVar = {
+                name = "submachineSeperator" value = "_$_"
+        }
+        outlet = {
+            path = "build/generated-sources/main/scala"
+        }
+        outlet = {
+        	outletName = "gen-once"
+            path = javaPath
+        }
+    }
+
+    component = org.salgar.pekko.fsm.xtend.uml.generator.FsmPekkoGeneratorComponent : javaGenerator {
+        register = setupJava
+        slot = 'modelSlot'
+        globalVar = {
+            name = "targetSourceStateSeperator" value = "_$$_"
+        }
+        globalVar = {
+                name = "submachineSeperator" value = "_$_"
+        }
+        outlet = {
+            path = "build/generated-sources/main/java"
+        }
+        outlet = {
+            outletName = "gen-once"
+            path = javaPath
+        }
+    }
+
+    component = org.salgar.pekko.fsm.xtend.uml.generator.FsmPekkoGeneratorComponent : javaTestGenerator {
+        register = setupTestJava
+        slot = 'modelSlot'
+        globalVar = {
+            name = "targetSourceStateSeperator" value = "_$$_"
+        }
+        globalVar = {
+                name = "submachineSeperator" value = "_$_"
+        }
+        outlet = {
+            path = "build/generated-test-sources/test/java"
+        }
+        outlet = {
+            outletName = "gen-once"
+            path = javaPath
+        }
+    }
+}

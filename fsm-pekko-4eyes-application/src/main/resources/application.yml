@@ -1,0 +1,121 @@
+org:
+  salgar:
+    fsm:
+      pekko:
+        pekko-system:
+          application-name: "FourEyes"
+        foureyes:
+          credit:
+            kafka:
+              topics:
+                creditSM: 'creditSM'
+                creditScoreSM: 'creditScoreSM'
+                adressCheckSM: 'addressCheckSM'
+                fraudPreventionSM: 'fraudPreventionSM'
+                multiTenantCreditScoreSM: 'multiTenantScreditScoreSM'
+          elasticsearch:
+            url: 'localhost:51914'
+            batchSize: 1
+            bulkSize: 512
+            lingerMs: 10
+            maxInFlightRequests: 2
+            maxRetries_: 3
+            retryBackoffMs: 5000
+            behaviorOnMalformedDoc: 'WARN'
+            flushTimeoutMs: 5000
+        projections:
+          offsetStore: elasticsearch
+
+management:
+  endpoint:
+    health:
+      enabled: true
+    livenessState:
+      enabled: true
+    readinessstate:
+      enabled: true
+
+server:
+  port: 8787
+
+spring:
+  cloud.kubernetes:
+    config:
+      enabled: false
+    secrets:
+      enabled: false
+  kafka:
+    bootstrap-servers: "localhost:9092"
+    consumer:
+      autoOffsetReset: earliest
+      group-id: "pekko-fsm-foureyes"
+      properties:
+        "schema.registry.url": "fsm-pekko-schema-registry-headless:8081"
+        "derive.type": "true"
+        "specific.protobuf.value.type" : "org.salgar.fsm.pekko.foureyes.credit.protobuf.CreditSMCommand"
+      credit-sm:
+        autoOffsetReset: earliest
+        group-id: "pekko-fsm-foureyes"
+        properties:
+          "schema.registry.url": "fsm-pekko-schema-registry-headless:8081"
+          "derive.type": "true"
+          "specific.protobuf.value.type": "org.salgar.fsm.pekko.foureyes.credit.protobuf.CreditSMCommand"
+      credit-score-sm:
+        autoOffsetReset: earliest
+        group-id: "pekko-fsm-foureyes"
+        properties:
+          "schema.registry.url": "fsm-pekko-schema-registry-headless:8081"
+          "derive.type": "true"
+          "specific.protobuf.value.type": "org.salgar.fsm.pekko.foureyes.creditscore.protobuf.CreditScoreSMCommand"
+      multi-tenant-credit-score-sm:
+        autoOffsetReset: earliest
+        group-id: "pekko-fsm-foureyes"
+        properties:
+          "schema.registry.url": "fsm-pekko-schema-registry-headless:8081"
+          "derive.type": "true"
+          "specific.protobuf.value.type": "org.salgar.fsm.pekko.foureyes.creditscore.protobuf.CreditScoreSMCommand"
+      adress-check-sm:
+        autoOffsetReset: earliest
+        group-id: "pekko-fsm-foureyes"
+        properties:
+          "schema.registry.url": "fsm-pekko-schema-registry-headless:8081"
+          "derive.type": "true"
+          "specific.protobuf.value.type": "org.salgar.fsm.pekko.foureyes.addresscheck.protobuf.AdressCheckSMCommand"
+      fraud-prevention-sm:
+        autoOffsetReset: earliest
+        group-id: "pekko-fsm-foureyes"
+        properties:
+          "schema.registry.url": "fsm-pekko-schema-registry-headless:8081"
+          "derive.type": "true"
+          "specific.protobuf.value.type": "org.salgar.fsm.pekko.foureyes.fraudprevention.protobuf.FraudPreventionSMCommand"
+    producer:
+      batch-size: 1
+      properties:
+        "linger.ms" : "1"
+---
+spring.config.activate.on-cloud-platform: kubernetes
+org:
+  salgar:
+    fsm:
+      pekko:
+        foureyes:
+          elasticsearch:
+            url: 'elasticsearch-master-headless:9200'
+spring:
+  cloud:
+    kubernetes:
+      config:
+        enabled: true
+      secrets:
+        enabled: true
+  data:
+    cassandra:
+      contact-points:
+        - "k8ssandra-dc1-all-pods-service.k8ssandra.svc.cluster.local:9042"
+  kafka:
+    consumer:
+      autoOffsetReset: earliest
+      group-id: "pekko-fsm-foureyes"
+      properties:
+        "schema.registry.url": "cp-schema-registry:8081"
+        "specific.avro.reader": "true"

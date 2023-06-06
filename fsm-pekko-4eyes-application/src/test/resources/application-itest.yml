@@ -1,0 +1,7 @@
+org:
+  salgar:
+    fsm:
+      pekko:
+        foureyes:
+          elasticsearch:
+            batchSize: 1

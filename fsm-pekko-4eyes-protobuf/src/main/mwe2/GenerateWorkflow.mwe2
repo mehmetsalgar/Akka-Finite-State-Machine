@@ -1,0 +1,41 @@
+module org.salgar.pekko.foureyes.protobuf
+
+var javaPath = "src"
+
+Workflow {
+	bean = org.salgar.pekko.fsm.xtend.uml.engine.UmlGeneratorStandaloneSetup : setupProtobuf {
+        config = {
+            javaGenPath = "build/generated-sources/main/proto"
+            rootClass = "org.salgar.pekko.fsm.xtend.uml.templates.model.protobuf.ProtobufGenerator"
+        }
+        doInit = true
+    }
+
+    component =  org.salgar.pekko.fsm.xtext.reader.XTextReader : protobufReader  {
+        useJavaClassPath = true
+        uriFilter = org.eclipse.xtext.mwe.NameBasedFilter {
+            regularExpression = '4eyes.*\\.uml'
+        }
+
+        register = setupProtobuf
+        loadResource = {
+            slot = "modelSlot"
+        }
+    }
+
+	component = org.eclipse.emf.mwe.utils.DirectoryCleaner : protobufCleaner {
+		directory = "build/generated-sources/main/proto"
+	}
+
+	component = org.eclipse.xtext.generator.GeneratorComponent : protobufGenerator {
+		register = setupProtobuf
+        slot = 'modelSlot'
+        outlet = {
+            path = "build/generated-sources/main/proto"
+        }
+        outlet = {
+        	outletName = "gen-once"
+            path = javaPath
+        }
+    }
+}

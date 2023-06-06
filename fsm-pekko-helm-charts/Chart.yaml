@@ -1,0 +1,48 @@
+apiVersion: v2
+name: fsm-pekko-helm-charts
+description: A Helm chart for Kubernetes
+type: application
+version: 0.1.0
+appVersion: "1.0.0-SNAPSHOT"
+dependencies:
+  - name: k8ssandra
+    version: 1.5.0-20220218064357-f72a8cb2
+    condition: k8ssandra.enabled
+    repository: https://helm.k8ssandra.io/stable
+    tags:
+      - infrastructure
+  - name: traefik
+    version: 10.14.2
+    condition: traefik.enabled
+    repository: https://helm.traefik.io/traefik
+    tags:
+      - infrastructure
+  - name: fsmpekkokafka
+    version: 1.0.0
+    condition: fsmpekkokafka.enabled
+    tags:
+      - infrastructure
+  - name: elasticsearch
+    version: 7.16.3
+    condition: elasticsearch.enabled
+    repository: https://helm.elastic.co/
+    tags:
+      - infrastructure
+  - name: nexus-repository-manager
+    version: 38.0.0
+    condition: nexus.enabled
+    repository: https://sonatype.github.io/helm3-charts/
+    tags:
+      - infrastructure
+  - name: metrics-server
+    version: 3.8.2
+    condition: metrics-server.enabled
+    repository: https://kubernetes-sigs.github.io/metrics-server/
+    tags:
+      - infrastructure
+  - name: fsm-pekko-4eyes-application
+    version: 1.1.2
+    condition: fsm-pekko-4eyes-application.enabled
+    repository: http://localhost:57198/repository/fsm-akka-helm/
+    tags:
+      - application

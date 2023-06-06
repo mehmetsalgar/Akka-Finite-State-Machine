@@ -45,7 +45,7 @@ allprojects {
         }
     }
 
-    group 'org.salgar.akka.fsm'
+    group 'org.salgar.pekko.fsm'
     version '1.0-SNAPSHOT'
 
     repositories {
@@ -61,19 +61,25 @@ allprojects {
 
     def scalaVersion = System.getProperty('scala.version', '2.13.8')
     def scalaMajorVersion = toMajorVersion(scalaVersion)
+    def scala3Version = System.getProperty('scala.version', '3.3.0')
+    def scala3MajorVersion = '3'
 
     ext.versions = [
-            scala               : [major: scalaMajorVersion, current: scalaVersion],
-            akka                : System.getProperty('akka.version', '2.6.19'),
-            akkaManagement      : System.getProperty('akkaManagement.version', '1.1.3'),
-            akkaProjections     : System.getProperty('akkaProjections.version', '1.2.3'),
-            akkaKafkaStream     : '3.0.0',
-            aspectjVersion      : "1.9.9.1",
-            cassandraPlugin     : "1.0.5",
-            confluent           : "6.1.0",
-            lombok              : "1.18.24",
-            xtext               : "2.25.0",
-            scalikeJdbcVersion  : "3.5.0"
+            aspectjVersion          : "1.9.9.1",
+            cassandraPlugin         : "1.0.5",
+            confluent               : "6.1.0",
+            lombok                  : "1.18.24",
+            pekko                   : System.getProperty('pekko.version', '0.0.0+26685-5abffda7-SNAPSHOT'),
+            pekkoCassandraPlugin    : System.getProperty('pekkoCassandraPlugin.version', '0.0.0-1088-aa545416-SNAPSHOT'),
+            pekkoConnectors         : System.getProperty('pekkoConnectors.version', '0.0.0+2779-5b038c8d-SNAPSHOT'),
+            pekkomanagement         : System.getProperty('pekkomanagement.version', '0.0.0+740-92e35ae0-SNAPSHOT'),
+            pekkohttp               : System.getProperty('pekkoHttp.version', '0.0.0+4418-546e7912+20230531-0937-SNAPSHOT'),
+            pekkoProjections        : System.getProperty('pekkoProjections.version', '0.0.0+611-0e855a60-SNAPSHOT'),
+            pekkoKafkaStream        : System.getProperty('pekkoProjections.version', '0.0.0+1738-07a19b8e-SNAPSHOT'),
+            scala                   : [major: scalaMajorVersion, current: scalaVersion],
+            scala3                  : [major: scala3MajorVersion, current: scala3Version],
+            scalikeJdbcVersion      : "3.5.0",
+            xtext                   : "2.25.0"
     ]
 
             idea {
@@ -245,18 +251,18 @@ project(':customer-relationship-adapter-impl') {
     }
 }
 
-project(':fsm-akka-api') {
+project(':fsm-pekko-api') {
     apply plugin: 'java'
     apply plugin: 'java-library'
 
     dependencies {
-        implementation "com.typesafe.akka:akka-actor-typed_${versions.scala.major}:${versions.akka}"
-        implementation "com.typesafe.akka:akka-persistence-typed_${versions.scala.major}:${versions.akka}"
+        implementation "org.apache.pekko:pekko-actor-typed_${versions.scala.major}:${versions.pekko}"
+        implementation "org.apache.pekko:pekko-persistence-typed_${versions.scala.major}:${versions.pekko}"
         implementation 'org.projectlombok:lombok'
     }
 }
 
-project(':fsm-akka-4eyes-advice') {
+project(':fsm-pekko-4eyes-advice') {
     apply plugin: 'java'
 
     configurations {
@@ -308,30 +314,29 @@ project(':fsm-akka-4eyes-advice') {
         ajc "org.aspectj:aspectjtools:${versions.aspectjVersion}"
         implementation "org.aspectj:aspectjrt:${versions.aspectjVersion}"
 
-        implementation "com.typesafe.akka:akka-actor-typed_${versions.scala.major}:${versions.akka}"
-        implementation "com.typesafe.akka:akka-persistence-typed_${versions.scala.major}:${versions.akka}"
+        implementation "org.apache.pekko:pekko-actor-typed_${versions.scala.major}:${versions.pekko}"
+        implementation "org.apache.pekko:pekko-persistence-typed_${versions.scala.major}:${versions.pekko}"
 
         implementation "ch.qos.logback:logback-classic"
     }
 }
 
-project(':fsm-akka-base') {
+project(':fsm-pekko-base') {
     apply plugin: 'scala'
     apply plugin: 'java-library'
 
     dependencies {
         implementation "org.scala-lang:scala-library:${versions.scala.current}"
-        api project(':fsm-akka-api')
-        api "com.typesafe.akka:akka-actor-typed_${versions.scala.major}:${versions.akka}"
-        api "com.typesafe.akka:akka-persistence-typed_${versions.scala.major}:${versions.akka}"
-        api "com.typesafe.akka:akka-slf4j_${versions.scala.major}:${versions.akka}"
+        api project(':fsm-pekko-api')
+        api "org.apache.pekko:pekko-actor-typed_${versions.scala.major}:${versions.pekko}"
+        api "org.apache.pekko:pekko-persistence-typed_${versions.scala.major}:${versions.pekko}"
         api "com.chuusai:shapeless_${versions.scala.major}:2.3.3"
         api "org.springframework:spring-context"
         api "javax.annotation:javax.annotation-api:1.3.2"
     }
 }
 
-project(':fsm-akka-xtext-reader') {
+project(':fsm-pekko-xtext-reader') {
     apply plugin: 'java'
 
     dependencies {
@@ -341,20 +346,20 @@ project(':fsm-akka-xtext-reader') {
     }
 }
 
-project(':fsm-akka-xtend') {
+project(':fsm-pekko-xtend') {
     apply plugin: 'java'
     apply plugin: 'org.xtext.xtend'
 
     sourceSets.main.java.srcDirs = ['src/main/java']
 
     dependencies {
-        implementation 'org.salgar.akka.fsm:fsm-akka-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
+        implementation 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
         implementation "org.eclipse.xtend:org.eclipse.xtend.lib:${versions.xtext}"
         implementation "org.eclipse.xtext:org.eclipse.xtext:${versions.xtext}"
     }
 }
 
-project(':fsm-akka-4eyes-uml-model') {
+project(':fsm-pekko-4eyes-uml-model') {
     apply plugin: 'java'
 
     dependencies {
@@ -362,7 +367,7 @@ project(':fsm-akka-4eyes-uml-model') {
     }
 }
 
-project(':fsm-akka-4eyes-model') {
+project(':fsm-pekko-4eyes-model') {
     apply plugin: 'java'
     apply plugin: 'org.xtext.xtend'
     apply plugin: 'io.freefair.lombok'
@@ -402,10 +407,10 @@ project(':fsm-akka-4eyes-model') {
     }
 
     dependencies {
-        mwe2 project(':fsm-akka-xtext-reader')
-        mwe2 project(':fsm-akka-xtend')
-        mwe2 project(':fsm-akka-4eyes-uml-model')
-        mwe2 'org.salgar.akka.fsm:fsm-akka-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
+        mwe2 project(':fsm-pekko-xtext-reader')
+        mwe2 project(':fsm-pekko-xtend')
+        mwe2 project(':fsm-pekko-4eyes-uml-model')
+        mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
     }
 
     task generateXtextLanguage(type: JavaExec) {
@@ -426,28 +431,29 @@ project(':fsm-akka-4eyes-model') {
     compileJava.dependsOn(spotlessApply)
 }
 
-project(':fsm-akka-akkasystem') {
+project(':fsm-pekko-pekkosystem') {
     apply plugin: 'java-library'
     apply plugin: 'scala'
 
     dependencies {
-        api project(':fsm-akka-base')
-        api "com.typesafe.akka:akka-actor-typed_${versions.scala.major}:${versions.akka}"
-        api "com.typesafe.akka:akka-persistence-typed_${versions.scala.major}:${versions.akka}"
-        api "com.typesafe.akka:akka-slf4j_${versions.scala.major}:${versions.akka}"
-        api "com.typesafe.akka:akka-cluster-sharding-typed_${versions.scala.major}:${versions.akka}"
-        implementation "com.typesafe.akka:akka-serialization-jackson_${versions.scala.major}:${versions.akka}"
-        api "com.lightbend.akka.management:akka-management-cluster-http_${versions.scala.major}:${versions.akkaManagement}"
-        api "com.lightbend.akka.management:akka-management-cluster-bootstrap_${versions.scala.major}:${versions.akkaManagement}"
-        api "com.lightbend.akka.discovery:akka-discovery-kubernetes-api_${versions.scala.major}:${versions.akkaManagement}"
-        api "com.typesafe.akka:akka-discovery_${versions.scala.major}:${versions.akka}"
+        api project(':fsm-pekko-base')
+        api "org.apache.pekko:pekko-actor-typed_${versions.scala.major}:${versions.pekko}"
+        api "org.apache.pekko:pekko-persistence-typed_${versions.scala.major}:${versions.pekko}"
+        api "org.apache.pekko:pekko-cluster-sharding-typed_${versions.scala.major}:${versions.pekko}"
+        implementation "org.apache.pekko:pekko-serialization-jackson_${versions.scala.major}:${versions.pekko}"
+        api "org.apache.pekko:pekko-management-cluster-http_${versions.scala.major}:${versions.pekkomanagement}"
+        api "org.apache.pekko:pekko-management-cluster-bootstrap_${versions.scala.major}:${versions.pekkomanagement}"
+        api "org.apache.pekko:pekko-discovery-kubernetes-api_${versions.scala.major}:${versions.pekkomanagement}"
+        api "org.apache.pekko:pekko-discovery_${versions.scala.major}:${versions.pekko}"
+        api "org.apache.pekko:pekko-http-core_${versions.scala.major}:${versions.pekkohttp}"
+        api "org.apache.pekko:pekko-http_${versions.scala.major}:${versions.pekkohttp}"
         api 'org.springframework.cloud:spring-cloud-starter-kubernetes-fabric8-config'
         api 'org.lmdbjava:lmdbjava:0.8.2'
         api 'com.github.jnr:jnr-ffi:2.2.11'
     }
 }
 
-project(':fsm-akka-4eyes-statemachine') {
+project(':fsm-pekko-4eyes-statemachine') {
     apply plugin: 'java-library'
     apply plugin: 'scala'
     apply plugin: 'org.xtext.xtend'
@@ -520,10 +526,10 @@ project(':fsm-akka-4eyes-statemachine') {
     dependencies {
         ajc "org.aspectj:aspectjtools:${versions.aspectjVersion}"
         implementation "org.aspectj:aspectjrt:${versions.aspectjVersion}"
-        api project(':fsm-akka-base'),
-                project(':fsm-akka-akkasystem')
-        aspects project(':fsm-akka-4eyes-advice')
-        api "com.typesafe.akka:akka-cluster-sharding-typed_${versions.scala.major}:${versions.akka}"
+        api project(':fsm-pekko-base'),
+                project(':fsm-pekko-pekkosystem')
+        aspects project(':fsm-pekko-4eyes-advice')
+        api "org.apache.pekko:pekko-cluster-sharding-typed_${versions.scala.major}:${versions.pekko}"
         api 'com.fasterxml.jackson.core:jackson-databind'
     }
 
@@ -559,10 +565,10 @@ project(':fsm-akka-4eyes-statemachine') {
     }
 
     dependencies {
-        mwe2 project(':fsm-akka-xtext-reader')
-        mwe2 project(':fsm-akka-xtend')
-        mwe2 project(':fsm-akka-4eyes-uml-model')
-        mwe2 'org.salgar.akka.fsm:fsm-akka-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
+        mwe2 project(':fsm-pekko-xtext-reader')
+        mwe2 project(':fsm-pekko-xtend')
+        mwe2 project(':fsm-pekko-4eyes-uml-model')
+        mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
     }
 
     task generateXtextLanguage(type: JavaExec) {
@@ -583,42 +589,42 @@ project(':fsm-akka-4eyes-statemachine') {
     compileScala.dependsOn(spotlessApply)
 }
 
-project(':fsm-akka-statemachine-facade') {
+project(':fsm-pekko-statemachine-facade') {
     apply plugin: 'java-library'
     apply plugin: 'scala'
 
     dependencies {
-        api project(':fsm-akka-akkasystem')
+        api project(':fsm-pekko-pekkosystem')
     }
 }
 
-project(':fsm-akka-4eyes-event-adapter') {
+project(':fsm-pekko-4eyes-event-adapter') {
     apply plugin: 'java-library'
     apply plugin: 'scala'
 
     dependencies {
-        api project(':fsm-akka-4eyes-statemachine'),
-                project(':fsm-akka-4eyes-model')
+        api project(':fsm-pekko-4eyes-statemachine'),
+                project(':fsm-pekko-4eyes-model')
     }
 }
 
-project(':fsm-akka-4eyes-actionguard-impl') {
+project(':fsm-pekko-4eyes-actionguard-impl') {
     apply plugin: 'java'
     apply plugin: 'java-library'
     apply plugin: 'io.freefair.lombok'
 
     dependencies {
-        api project(':fsm-akka-api'),
-                project(':fsm-akka-4eyes-model'),
-                project(':fsm-akka-base'),
-                project(':fsm-akka-4eyes-statemachine-facade'),
+        api project(':fsm-pekko-api'),
+                project(':fsm-pekko-4eyes-model'),
+                project(':fsm-pekko-base'),
+                project(':fsm-pekko-4eyes-statemachine-facade'),
                 project(':4eyes-address-check-api'),
                 project(':4eyes-credit-score-api'),
                 project(':4eyes-fraud-prevention-api'),
                 project(':4eyes-notifier-api'),
                 project(':customer-relationship-adapter')
 
-        implementation project(':fsm-akka-4eyes-statemachine')
+        implementation project(':fsm-pekko-4eyes-statemachine')
         implementation 'org.springframework:spring-context'
         implementation "org.projectlombok:lombok:${versions.lombok}"
 
@@ -632,7 +638,7 @@ project(':fsm-akka-4eyes-actionguard-impl') {
     }
 }
 
-project(':fsm-akka-4eyes-protobuf') {
+project(':fsm-pekko-4eyes-protobuf') {
     apply plugin: 'java-library'
     apply plugin: 'java'
     apply plugin: 'org.xtext.xtend'
@@ -678,10 +684,10 @@ project(':fsm-akka-4eyes-protobuf') {
     }
 
     dependencies {
-        mwe2 project(':fsm-akka-xtext-reader')
-        mwe2 project(':fsm-akka-xtend')
-        mwe2 project(':fsm-akka-4eyes-uml-model')
-        mwe2 'org.salgar.akka.fsm:fsm-akka-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
+        mwe2 project(':fsm-pekko-xtext-reader')
+        mwe2 project(':fsm-pekko-xtend')
+        mwe2 project(':fsm-pekko-4eyes-uml-model')
+        mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
     }
 
     task generateXtextLanguage(type: JavaExec) {
@@ -700,7 +706,7 @@ project(':fsm-akka-4eyes-protobuf') {
     clean.dependsOn(cleanGenerateXtextLanguage)
 }
 
-project(':fsm-akka-converter') {
+project(':fsm-pekko-converter') {
     apply plugin: 'java-library'
     apply plugin: 'java'
     apply plugin: 'io.freefair.lombok'
@@ -712,7 +718,7 @@ project(':fsm-akka-converter') {
     }
 }
 
-project(':fsm-akka-4eyes-converter') {
+project(':fsm-pekko-4eyes-converter') {
     apply plugin: 'java-library'
     apply plugin: 'java'
     apply plugin: 'org.xtext.xtend'
@@ -728,9 +734,9 @@ project(':fsm-akka-4eyes-converter') {
     }
 
     dependencies {
-        api project(':fsm-akka-converter')
-        implementation project(':fsm-akka-4eyes-protobuf'),
-                project(':fsm-akka-4eyes-model')
+        api project(':fsm-pekko-converter')
+        implementation project(':fsm-pekko-4eyes-protobuf'),
+                project(':fsm-pekko-4eyes-model')
         api "io.confluent:kafka-protobuf-serializer:${versions.confluent}"
         api "org.projectlombok:lombok:${versions.lombok}"
         implementation 'org.springframework.boot:spring-boot-autoconfigure'
@@ -759,10 +765,10 @@ project(':fsm-akka-4eyes-converter') {
     }
 
     dependencies {
-        mwe2 project(':fsm-akka-xtext-reader')
-        mwe2 project(':fsm-akka-xtend')
-        mwe2 project(':fsm-akka-4eyes-uml-model')
-        mwe2 'org.salgar.akka.fsm:fsm-akka-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
+        mwe2 project(':fsm-pekko-xtext-reader')
+        mwe2 project(':fsm-pekko-xtend')
+        mwe2 project(':fsm-pekko-4eyes-uml-model')
+        mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
     }
 
     task generateXtextLanguage(type: JavaExec) {
@@ -783,7 +789,7 @@ project(':fsm-akka-4eyes-converter') {
     compileJava.dependsOn(spotlessApply)
 }
 
-project(':fsm-akka-command') {
+project(':fsm-pekko-command') {
     apply plugin: 'java-library'
     apply plugin: 'java'
 
@@ -793,7 +799,7 @@ project(':fsm-akka-command') {
     }
 }
 
-project(':fsm-akka-4eyes-command') {
+project(':fsm-pekko-4eyes-command') {
     apply plugin: 'java-library'
     apply plugin: 'java'
     apply plugin: 'org.xtext.xtend'
@@ -809,10 +815,10 @@ project(':fsm-akka-4eyes-command') {
     }
 
     dependencies {
-        api project(':fsm-akka-command')
-        implementation project(':fsm-akka-4eyes-statemachine'),
-                project(':fsm-akka-4eyes-protobuf'),
-                project(':fsm-akka-4eyes-converter')
+        api project(':fsm-pekko-command')
+        implementation project(':fsm-pekko-4eyes-statemachine'),
+                project(':fsm-pekko-4eyes-protobuf'),
+                project(':fsm-pekko-4eyes-converter')
         implementation "org.scala-lang:scala-library:${versions.scala.current}"
         implementation 'org.springframework.boot:spring-boot-autoconfigure'
         api "org.projectlombok:lombok:${versions.lombok}"
@@ -840,10 +846,10 @@ project(':fsm-akka-4eyes-command') {
     }
 
     dependencies {
-        mwe2 project(':fsm-akka-xtext-reader')
-        mwe2 project(':fsm-akka-xtend')
-        mwe2 project(':fsm-akka-4eyes-uml-model')
-        mwe2 'org.salgar.akka.fsm:fsm-akka-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
+        mwe2 project(':fsm-pekko-xtext-reader')
+        mwe2 project(':fsm-pekko-xtend')
+        mwe2 project(':fsm-pekko-4eyes-uml-model')
+        mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
     }
 
     task generateXtextLanguage(type: JavaExec) {
@@ -864,7 +870,7 @@ project(':fsm-akka-4eyes-command') {
     compileJava.dependsOn(spotlessApply)
 }
 
-project(':fsm-akka-kafka') {
+project(':fsm-pekko-kafka') {
     apply plugin: 'java-library'
     apply plugin: 'scala'
     apply plugin: 'io.freefair.lombok'
@@ -873,11 +879,12 @@ project(':fsm-akka-kafka') {
         implementation 'org.springframework.boot:spring-boot-autoconfigure'
         api "io.confluent:kafka-protobuf-serializer:${versions.confluent}"
         api "io.confluent:kafka-streams-protobuf-serde:${versions.confluent}"
-        implementation "com.typesafe.akka:akka-stream-kafka-cluster-sharding_${versions.scala.major}:${versions.akkaKafkaStream}"
+        implementation "org.apache.pekko:pekko-connectors-kafka-cluster-sharding_${versions.scala.major}:${versions.pekkoKafkaStream}"
+        implementation "org.apache.pekko:pekko-cluster-sharding-typed_${versions.scala.major}:${versions.pekko}"
     }
 }
 
-project(':fsm-akka-4eyes-kafka') {
+project(':fsm-pekko-4eyes-kafka') {
     apply plugin: 'java-library'
     apply plugin: 'scala'
     apply plugin: 'org.xtext.xtend'
@@ -922,33 +929,34 @@ project(':fsm-akka-4eyes-kafka') {
     }
 
     dependencies {
-        api project(':fsm-akka-kafka'),
-                project(':fsm-akka-4eyes-command'),
-                project(':fsm-akka-4eyes-converter'),
-                project(':fsm-akka-4eyes-protobuf')
-        implementation project(':fsm-akka-4eyes-statemachine'),
-                project(':fsm-akka-akkasystem'),
-                project(':fsm-akka-api')
+        api project(':fsm-pekko-kafka'),
+                project(':fsm-pekko-4eyes-command'),
+                project(':fsm-pekko-4eyes-converter'),
+                project(':fsm-pekko-4eyes-protobuf')
+        implementation project(':fsm-pekko-4eyes-statemachine'),
+                project(':fsm-pekko-pekkosystem'),
+                project(':fsm-pekko-api')
         implementation "org.scala-lang:scala-library:${versions.scala.current}"
         implementation 'org.springframework.boot:spring-boot-autoconfigure'
         implementation 'org.springframework.kafka:spring-kafka'
-        implementation "com.typesafe.akka:akka-persistence-cassandra_${versions.scala.major}:${versions.cassandraPlugin}"
-        implementation "com.typesafe.akka:akka-persistence-query_${versions.scala.major}:${versions.akka}"
-        implementation "com.typesafe.akka:akka-persistence-typed_${versions.scala.major}:${versions.akka}"
-        implementation "com.typesafe.akka:akka-cluster-sharding-typed_${versions.scala.major}:${versions.akka}"
-        implementation "com.typesafe.akka:akka-stream-kafka_${versions.scala.major}:${versions.akkaKafkaStream}"
+        implementation "org.apache.pekko:pekko-cluster-sharding-typed_${versions.scala.major}:${versions.pekko}"
+        implementation "org.apache.pekko:pekko-connectors-kafka_${versions.scala.major}:${versions.pekkoKafkaStream}"
         api "io.confluent:kafka-protobuf-serializer:${versions.confluent}"
         api "io.confluent:kafka-streams-protobuf-serde:${versions.confluent}"
         implementation "org.projectlombok:lombok:${versions.lombok}"
         annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
-        testImplementation project(':fsm-akka-4eyes-statemachine-facade'),
-                project(':fsm-akka-4eyes-actionguard-impl'),
+        testImplementation project(':fsm-pekko-4eyes-statemachine-facade'),
+                project(':fsm-pekko-4eyes-actionguard-impl'),
                 project(':4eyes-address-check-impl'),
                 project(':4eyes-credit-score-impl'),
                 project(':4eyes-fraud-prevention-impl'),
                 project(':customer-relationship-adapter'),
                 project(':customer-relationship-adapter-impl'),
-                project(':fsm-akka-4eyes-advice')
+                project(':fsm-pekko-4eyes-advice')
+        testImplementation "org.apache.pekko:pekko-persistence-cassandra_${versions.scala.major}:${versions.pekkoCassandraPlugin}"
+        testImplementation "org.apache.pekko:pekko-connectors-cassandra_${versions.scala.major}:${versions.pekkoConnectors}"
+        testImplementation "org.apache.pekko:pekko-persistence-query_${versions.scala.major}:${versions.pekko}"
+        testImplementation "org.apache.pekko:pekko-persistence-typed_${versions.scala.major}:${versions.pekko}"
         testImplementation 'org.springframework.boot:spring-boot-starter'
         testImplementation('org.springframework.boot:spring-boot-starter-test') {
             exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
@@ -963,10 +971,10 @@ project(':fsm-akka-4eyes-kafka') {
     }
 
     dependencies {
-        mwe2 project(':fsm-akka-xtext-reader')
-        mwe2 project(':fsm-akka-xtend')
-        mwe2 project(':fsm-akka-4eyes-uml-model')
-        mwe2 'org.salgar.akka.fsm:fsm-akka-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
+        mwe2 project(':fsm-pekko-xtext-reader')
+        mwe2 project(':fsm-pekko-xtend')
+        mwe2 project(':fsm-pekko-4eyes-uml-model')
+        mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
     }
 
     task generateXtextLanguage(type: JavaExec) {
@@ -993,7 +1001,7 @@ project(':fsm-akka-4eyes-kafka') {
     compileScala.dependsOn(compileJava)
 }
 
-project(':fsm-akka-elasticsearch') {
+project(':fsm-pekko-elasticsearch') {
     apply plugin: 'java-library'
     apply plugin: 'java'
     apply plugin: 'io.freefair.lombok'
@@ -1002,7 +1010,6 @@ project(':fsm-akka-elasticsearch') {
         api 'org.springframework.boot:spring-boot-starter'
         api 'org.springframework.data:spring-data-elasticsearch'
         annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
-
         testImplementation 'org.springframework:spring-web'
         testImplementation 'org.springframework.boot:spring-boot-starter'
         testImplementation "org.junit.platform:junit-platform-runner:1.8.2"
@@ -1016,7 +1023,7 @@ project(':fsm-akka-elasticsearch') {
     }
 }
 
-project(':fsm-akka-4eyes-elasticsearch-statemachine-adapter') {
+project(':fsm-pekko-4eyes-elasticsearch-statemachine-adapter') {
     apply plugin: 'java'
     apply plugin: 'scala'
     apply plugin: 'io.freefair.lombok'
@@ -1036,8 +1043,8 @@ project(':fsm-akka-4eyes-elasticsearch-statemachine-adapter') {
     }
 
     dependencies {
-        implementation project(':fsm-akka-4eyes-model'),
-                project(':fsm-akka-4eyes-statemachine')
+        implementation project(':fsm-pekko-4eyes-model'),
+                project(':fsm-pekko-4eyes-statemachine')
         implementation 'org.springframework.data:spring-data-elasticsearch'
     }
 
@@ -1069,10 +1076,10 @@ project(':fsm-akka-4eyes-elasticsearch-statemachine-adapter') {
     }
 
     dependencies {
-        mwe2 project(':fsm-akka-xtext-reader')
-        mwe2 project(':fsm-akka-xtend')
-        mwe2 project(':fsm-akka-4eyes-uml-model')
-        mwe2 'org.salgar.akka.fsm:fsm-akka-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
+        mwe2 project(':fsm-pekko-xtext-reader')
+        mwe2 project(':fsm-pekko-xtend')
+        mwe2 project(':fsm-pekko-4eyes-uml-model')
+        mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
     }
 
     task generateXtextLanguage(type: JavaExec) {
@@ -1094,7 +1101,7 @@ project(':fsm-akka-4eyes-elasticsearch-statemachine-adapter') {
     compileJava.dependsOn(spotlessApply)
 }
 
-project(':fsm-akka-4eyes-projections-statemachine-adapter') {
+project(':fsm-pekko-4eyes-projections-statemachine-adapter') {
     apply plugin: 'java-library'
     apply plugin: 'scala'
     apply plugin: 'io.freefair.lombok'
@@ -1111,12 +1118,12 @@ project(':fsm-akka-4eyes-projections-statemachine-adapter') {
     }
 
     dependencies {
-        api project(':fsm-akka-elasticsearch'),
-                project(':fsm-akka-4eyes-statemachine'),
-                project(':fsm-akka-4eyes-elasticsearch-statemachine-adapter'),
-                project(':fsm-akka-projections')
+        api project(':fsm-pekko-elasticsearch'),
+                project(':fsm-pekko-4eyes-statemachine'),
+                project(':fsm-pekko-4eyes-elasticsearch-statemachine-adapter'),
+                project(':fsm-pekko-projections')
         implementation 'org.springframework.data:spring-data-elasticsearch'
-        implementation "com.lightbend.akka:akka-projection-eventsourced_${versions.scala.major}:${versions.akkaProjections}"
+        implementation "org.apache.pekko:pekko-projection-eventsourced_${versions.scala.major}:${versions.pekkoProjections}"
     }
 
     spotless {
@@ -1141,10 +1148,10 @@ project(':fsm-akka-4eyes-projections-statemachine-adapter') {
     }
 
     dependencies {
-        mwe2 project(':fsm-akka-xtext-reader')
-        mwe2 project(':fsm-akka-xtend')
-        mwe2 project(':fsm-akka-4eyes-uml-model')
-        mwe2 'org.salgar.akka.fsm:fsm-akka-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
+        mwe2 project(':fsm-pekko-xtext-reader')
+        mwe2 project(':fsm-pekko-xtend')
+        mwe2 project(':fsm-pekko-4eyes-uml-model')
+        mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
     }
 
     task generateXtextLanguage(type: JavaExec) {
@@ -1165,58 +1172,50 @@ project(':fsm-akka-4eyes-projections-statemachine-adapter') {
     compileJava.dependsOn(spotlessApply)
 }
 
-project(':fsm-akka-projections') {
+project(':fsm-pekko-projections') {
     apply plugin: 'java-library'
     apply plugin: 'scala'
 
     dependencies {
-        api project(':fsm-akka-elasticsearch'),
-                project(':fsm-akka-akkasystem')
-        api "com.lightbend.akka:akka-projection-eventsourced_${versions.scala.major}:${versions.akkaProjections}"
-        api "com.lightbend.akka:akka-projection-cassandra_${versions.scala.major}:${versions.akkaProjections}"
-        api "com.typesafe.akka:akka-persistence-cassandra_${versions.scala.major}:${versions.cassandraPlugin}"
-        //implementation "com.lightbend.akka:akka-projection-jdbc_${versions.scala.major}:${versions.akkaProjections}"
-        //implementation "org.scalikejdbc:scalikejdbc_${versions.scala.major}:${versions.scalikeJdbcVersion}"
-        //implementation "org.scalikejdbc:scalikejdbc-config_${versions.scala.major}:${versions.scalikeJdbcVersion}"
+        api project(':fsm-pekko-elasticsearch'),
+                project(':fsm-pekko-pekkosystem')
+        api "org.apache.pekko:pekko-projection-eventsourced_${versions.scala.major}:${versions.pekkoProjections}"
+        api "org.apache.pekko:pekko-projection-cassandra_${versions.scala.major}:${versions.pekkoProjections}"
+        api "org.apache.pekko:pekko-persistence-cassandra_${versions.scala.major}:${versions.pekkoCassandraPlugin}"
+        api "org.apache.pekko:pekko-connectors-cassandra_${versions.scala.major}:${versions.pekkoConnectors}"
         annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
     }
 }
 
-project(':fsm-akka-4eyes-projections') {
+project(':fsm-pekko-4eyes-projections') {
     apply plugin: 'java-library'
     apply plugin: 'scala'
 
     dependencies {
-        api project(':fsm-akka-projections'),
-                project(':fsm-akka-elasticsearch'),
-                project(':fsm-akka-4eyes-projections-statemachine-adapter')
-        implementation project(':fsm-akka-4eyes-statemachine')
-        //implementation "com.lightbend.akka:akka-projection-eventsourced_${versions.scala.major}:${versions.akkaProjections}"
-        //implementation "com.lightbend.akka:akka-projection-cassandra_${versions.scala.major}:${versions.akkaProjections}"
-        //implementation "com.typesafe.akka:akka-persistence-cassandra_${versions.scala.major}:${versions.cassandraPlugin}"
-        //implementation "com.lightbend.akka:akka-projection-jdbc_${versions.scala.major}:${versions.akkaProjections}"
-        //implementation "org.scalikejdbc:scalikejdbc_${versions.scala.major}:${versions.scalikeJdbcVersion}"
-        //implementation "org.scalikejdbc:scalikejdbc-config_${versions.scala.major}:${versions.scalikeJdbcVersion}"
+        api project(':fsm-pekko-projections'),
+                project(':fsm-pekko-elasticsearch'),
+                project(':fsm-pekko-4eyes-projections-statemachine-adapter')
+        implementation project(':fsm-pekko-4eyes-statemachine')
         annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
     }
 }
 
-project(':fsm-akka-4eyes-statemachine-facade') {
+project(':fsm-pekko-4eyes-statemachine-facade') {
     apply plugin: 'java-library'
     apply plugin: 'scala'
 
     dependencies {
-        api project(':fsm-akka-4eyes-event-adapter'),
-                project(':fsm-akka-statemachine-facade'),
-                project(':fsm-akka-akkasystem')
-        implementation project(':fsm-akka-kafka'),
-                project(':fsm-akka-4eyes-kafka'),
-                project(':fsm-akka-4eyes-protobuf')
-        implementation "com.typesafe.akka:akka-stream-kafka-cluster-sharding_${versions.scala.major}:${versions.akkaKafkaStream}"
+        api project(':fsm-pekko-4eyes-event-adapter'),
+                project(':fsm-pekko-statemachine-facade'),
+                project(':fsm-pekko-pekkosystem')
+        implementation project(':fsm-pekko-kafka'),
+                project(':fsm-pekko-4eyes-kafka'),
+                project(':fsm-pekko-4eyes-protobuf')
+        implementation "org.apache.pekko:pekko-connectors-kafka-cluster-sharding_${versions.scala.major}:${versions.pekkoKafkaStream}"
     }
 }
 
-project(':fsm-akka-4eyes-application') {
+project(':fsm-pekko-4eyes-application') {
     apply plugin: 'org.springframework.boot'
     apply plugin: 'java'
     apply plugin: 'io.freefair.lombok'
@@ -1229,11 +1228,11 @@ project(':fsm-akka-4eyes-application') {
         implementation 'org.springframework.boot:spring-boot-starter'
 //        implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
-        implementation project(':fsm-akka-4eyes-statemachine-facade'),
-                project(':fsm-akka-4eyes-statemachine'),
-                project(':fsm-akka-4eyes-actionguard-impl'),
-                project(':fsm-akka-4eyes-advice'),
-                project(':fsm-akka-api'),
+        implementation project(':fsm-pekko-4eyes-statemachine-facade'),
+                project(':fsm-pekko-4eyes-statemachine'),
+                project(':fsm-pekko-4eyes-actionguard-impl'),
+                project(':fsm-pekko-4eyes-advice'),
+                project(':fsm-pekko-api'),
                 project(':4eyes-address-check-impl'),
                 project(':4eyes-credit-score-impl'),
                 project(':4eyes-fraud-prevention-impl'),
@@ -1241,16 +1240,16 @@ project(':fsm-akka-4eyes-application') {
                 project(':4eyes-notifier-impl'),
                 project(':customer-relationship-adapter'),
                 project(':customer-relationship-adapter-impl'),
-                project(':fsm-akka-4eyes-kafka'),
-                project(':fsm-akka-4eyes-projections'),
-                project(':fsm-akka-elasticsearch'),
-                project(':fsm-akka-4eyes-elasticsearch-statemachine-adapter')
+                project(':fsm-pekko-4eyes-kafka'),
+                project(':fsm-pekko-4eyes-projections'),
+                project(':fsm-pekko-elasticsearch'),
+                project(':fsm-pekko-4eyes-elasticsearch-statemachine-adapter')
 
-        implementation "com.typesafe.akka:akka-persistence-cassandra_${versions.scala.major}:${versions.cassandraPlugin}"
-        implementation "com.typesafe.akka:akka-persistence-query_${versions.scala.major}:${versions.akka}"
-        implementation "com.typesafe.akka:akka-persistence-typed_${versions.scala.major}:${versions.akka}"
-        implementation "com.typesafe.akka:akka-cluster-sharding-typed_${versions.scala.major}:${versions.akka}"
-        testImplementation "com.typesafe.akka:akka-serialization-jackson_${versions.scala.major}:${versions.akka}"
+        implementation "org.apache.pekko:pekko-persistence-cassandra_${versions.scala.major}:${versions.pekkoCassandraPlugin}"
+        implementation "org.apache.pekko:pekko-persistence-query_${versions.scala.major}:${versions.pekko}"
+        implementation "org.apache.pekko:pekko-persistence-typed_${versions.scala.major}:${versions.pekko}"
+        implementation "org.apache.pekko:pekko-cluster-sharding-typed_${versions.scala.major}:${versions.pekko}"
+        testImplementation "org.apache.pekko:pekko-serialization-jackson_${versions.scala.major}:${versions.pekko}"
         testImplementation "org.codehaus.groovy:groovy-all:3.0.9"
         testImplementation platform("org.spockframework:spock-bom:2.0-groovy-3.0")
         testImplementation "org.spockframework:spock-core"
@@ -1291,7 +1290,7 @@ project(':fsm-akka-4eyes-application') {
             }
         }
         to {
-            image = "fsm-akka.registry:5555/fsmakka/${project.name}:${project.version}"
+            image = "fsm-pekko.registry:5555/fsmpekko/${project.name}:${project.version}"
             auth {
                 username = "${props.DOCKER_UPLOAD_USER}"
                 password = "${props.DOCKER_UPLOAD_PASSWORD}"
@@ -1299,7 +1298,7 @@ project(':fsm-akka-4eyes-application') {
         }
         extraDirectories {
             permissions = [
-                    'var/lib/fsm_akka_4eyes_application': '644'
+                    'var/lib/fsm_pekko_4eyes_application': '644'
             ]
         }
         allowInsecureRegistries = true
@@ -1310,14 +1309,14 @@ project(':fsm-akka-4eyes-application') {
         charts {
             foureyes {
                 publish = true
-                chartName = 'fsm-akka-4eyes-application'
+                chartName = 'fsm-pekko-4eyes-application'
                 chartVersion = '1.1.4'
                 sourceDir = file('helm')
             }
         }
         repositories {
-            fsmakka {
-                url 'http://localhost:57198//repository/fsm-akka-helm/'
+            fsmpekko {
+                url 'http://localhost:57198//repository/fsm-pekko-helm/'
                 credentials {
                     username = "${props.HELM_USER}"
                     password = "${props.HELM_PASSWORD}"
@@ -1328,7 +1327,7 @@ project(':fsm-akka-4eyes-application') {
             repositories {
                 nexus {
                     url = uri('http://localhost:57198/')
-                    repository = 'fsm-akka-helm'
+                    repository = 'fsm-pekko-helm'
                     apiVersion = 'v1'
                     credentials {
                         username = "${props.HELM_USER}"
@@ -1340,7 +1339,7 @@ project(':fsm-akka-4eyes-application') {
     }
 }
 
-project(':fsm-akka-asciidoc') {
+project(':fsm-pekko-asciidoc') {
     apply plugin: 'org.xtext.xtend'
     apply plugin: 'org.asciidoctor.jvm.convert'
     apply plugin: 'org.asciidoctor.jvm.gems'
@@ -1365,10 +1364,10 @@ project(':fsm-akka-asciidoc') {
     }
 
     dependencies {
-        mwe2 project(':fsm-akka-xtext-reader')
-        mwe2 project(':fsm-akka-xtend')
-        mwe2 project(':fsm-akka-4eyes-uml-model')
-        mwe2 'org.salgar.akka.fsm:fsm-akka-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
+        mwe2 project(':fsm-pekko-xtext-reader')
+        mwe2 project(':fsm-pekko-xtend')
+        mwe2 project(':fsm-pekko-4eyes-uml-model')
+        mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
         asciidoctorGems 'rubygems:rouge:3.15.0'
     }
 
@@ -1411,10 +1410,6 @@ project(':fsm-akka-asciidoc') {
     plantUml {
         render input: 'target/generated-sources/docs/puml/activity/**/*.puml', output: "${project.buildDir.absolutePath}/puml/activity", format: 'png', withMetadata: false
     }
-}
-
-project(':fsm-akka-docker-kubernetes') {
-
 }
 
 def static toMajorVersion(String scalaVersion) {
