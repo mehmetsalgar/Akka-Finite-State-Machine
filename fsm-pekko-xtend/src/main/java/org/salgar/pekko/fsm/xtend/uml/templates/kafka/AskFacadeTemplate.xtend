@@ -23,7 +23,7 @@ class AskFacadeTemplate {
     def generate(org.eclipse.uml2.uml.StateMachine masterSm, Resource input)'''
         package «packageName(masterSm)».kafka.facade
 
-        import org.salgar.fsm.akka.command.CommandHandler
+        import org.salgar.fsm.pekko.command.CommandHandler
         «FOR org.eclipse.uml2.uml.StateMachine sm : input.allContents.toIterable.filter(org.eclipse.uml2.uml.StateMachine).filter[i|i.active]»
             import «packageName(sm)».«sm.name»
         «ENDFOR»

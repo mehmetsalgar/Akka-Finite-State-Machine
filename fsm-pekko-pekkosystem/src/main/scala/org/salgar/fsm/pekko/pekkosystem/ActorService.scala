@@ -12,7 +12,7 @@ import org.apache.pekko.cluster.sharding.typed.scaladsl.ClusterSharding
 import org.apache.pekko.serialization.jackson.{JacksonObjectMapperFactory, JacksonObjectMapperProviderSetup}
 import org.apache.pekko.util.Timeout
 import org.salgar.fsm.pekko.pekkosystem.ActorService.{customJacksonObjectMapperFactory, log, mainBehavior}
-import org.salgar.fsm.pekko.pekkosystem.config.AkkaApplicationProperty
+import org.salgar.fsm.pekko.pekkosystem.config.PekkoApplicationProperty
 import org.slf4j.{Logger, LoggerFactory}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -51,8 +51,8 @@ object ActorService {
 
 @Component
 class ActorService (
-                      @Autowired akkaApplicationProperty: AkkaApplicationProperty,
-                      @Autowired additionalService: AdditionalService){
+                     @Autowired pekkoApplicationProperty: PekkoApplicationProperty,
+                     @Autowired additionalService: AdditionalService){
   private var _sharding: ClusterSharding = null
   private var _ec: ExecutionContext = null
   private var _scheduler : Scheduler = null
@@ -73,7 +73,7 @@ class ActorService (
     val actorSystemSetup = ActorSystemSetup()
       .withSetup(JacksonObjectMapperProviderSetup(customJacksonObjectMapperFactory))
       .withSetup(BootstrapSetup(additionalService.configureFromFiles()))
-    _actorSystem = ActorSystem(mainBehavior, akkaApplicationProperty.getApplicationName(), actorSystemSetup)
+    _actorSystem = ActorSystem(mainBehavior, pekkoApplicationProperty.getApplicationName(), actorSystemSetup)
 
     additionalService.config(actorSystem)
 

@@ -37,33 +37,10 @@ plugins {
 allprojects {
     apply plugin: 'io.spring.dependency-management'
 
-    dependencyManagement {
-        imports {
-            mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
-            mavenBom 'org.springframework.cloud:spring-cloud-dependencies:2021.0.1'
-            mavenBom 'org.springframework.data:spring-data-bom:2021.1.2'
-        }
-    }
-
-    group 'org.salgar.pekko.fsm'
-    version '1.0-SNAPSHOT'
-
-    repositories {
-        maven { url "https://repo.spring.io/snapshot" }
-        maven { url "https://repo.spring.io/milestone" }
-        maven { url "https://packages.confluent.io/maven/"}
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots"}
-        mavenLocal()
-        mavenCentral()
-    }
-
-    sourceCompatibility = '1.8'
-
     def scalaVersion = System.getProperty('scala.version', '2.13.8')
     def scalaMajorVersion = toMajorVersion(scalaVersion)
     def scala3Version = System.getProperty('scala.version', '3.3.0')
     def scala3MajorVersion = '3'
-
     ext.versions = [
             aspectjVersion          : "1.9.9.1",
             cassandraPlugin         : "1.0.5",
@@ -82,7 +59,30 @@ allprojects {
             xtext                   : "2.25.0"
     ]
 
-            idea {
+    dependencyManagement {
+        imports {
+            mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
+            mavenBom 'org.springframework.cloud:spring-cloud-dependencies:2021.0.1'
+            mavenBom 'org.springframework.data:spring-data-bom:2021.1.2'
+            mavenBom "org.eclipse.xtext:xtext-dev-bom:${versions.xtext}"
+        }
+    }
+
+    group 'org.salgar.pekko.fsm'
+    version '1.0-SNAPSHOT'
+
+    repositories {
+        maven { url "https://repo.spring.io/snapshot" }
+        maven { url "https://repo.spring.io/milestone" }
+        maven { url "https://packages.confluent.io/maven/"}
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots"}
+        mavenLocal()
+        mavenCentral()
+    }
+
+    sourceCompatibility = '1.8'
+
+    idea {
         module {
             downloadJavadoc = true
             downloadSources = true
@@ -413,13 +413,13 @@ project(':fsm-pekko-4eyes-model') {
         mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
     }
 
-    task generateXtextLanguage(type: JavaExec) {
+    tasks.register('generateXtextLanguage', JavaExec) {
         def generatedFileDir = file("target/generated-sources")
         outputs.dir generatedFileDir
-        main = 'org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher'
+        mainClass = 'org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher'
         classpath = configurations.mwe2
-        inputs.file "src/main/mwe2/GenerateWorkflow.mwe2"
-        outputs.dir "build/generated-sources"
+        inputs.file('src/main/mwe2/GenerateWorkflow.mwe2').withPathSensitivity(PathSensitivity.RELATIVE)
+        outputs.dir('build/generated-sources')
         args += "src/main/mwe2/GenerateWorkflow.mwe2"
         args += "-p"
         args += "rootPath=/${projectDir}/.."
@@ -571,12 +571,12 @@ project(':fsm-pekko-4eyes-statemachine') {
         mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
     }
 
-    task generateXtextLanguage(type: JavaExec) {
-        def generatedFileDir = file("build/generated-sources")
+    tasks.register('generateXtextLanguage', JavaExec) {
+        def generatedFileDir = file('build/generated-sources')
         outputs.dir generatedFileDir
         mainClass = 'org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher'
         classpath = configurations.mwe2
-        inputs.file "src/main/mwe2/GenerateWorkflow.mwe2"
+        inputs.file('src/main/mwe2/GenerateWorkflow.mwe2').withPathSensitivity(PathSensitivity.RELATIVE)
         args += "src/main/mwe2/GenerateWorkflow.mwe2"
         args += "-p"
         args += "rootPath=/${projectDir}/.."
@@ -690,13 +690,13 @@ project(':fsm-pekko-4eyes-protobuf') {
         mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
     }
 
-    task generateXtextLanguage(type: JavaExec) {
+    tasks.register('generateXtextLanguage', JavaExec) {
         def generatedFileDir = file("build/generated-sources")
         outputs.dir generatedFileDir
-        main = 'org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher'
+        mainClass = 'org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher'
         classpath = configurations.mwe2
-        inputs.file "src/main/mwe2/GenerateWorkflow.mwe2"
-        outputs.dir "build/generated-sources"
+        inputs.file('src/main/mwe2/GenerateWorkflow.mwe2').withPathSensitivity(PathSensitivity.RELATIVE)
+        outputs.dir('build/generated-sources')
         args += "src/main/mwe2/GenerateWorkflow.mwe2"
         args += "-p"
         args += "rootPath=/${projectDir}/.."
@@ -771,13 +771,13 @@ project(':fsm-pekko-4eyes-converter') {
         mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
     }
 
-    task generateXtextLanguage(type: JavaExec) {
+    tasks.register('generateXtextLanguage', JavaExec) {
         def generatedFileDir = file("build/generated-sources")
         outputs.dir generatedFileDir
-        main = 'org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher'
+        mainClass = 'org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher'
         classpath = configurations.mwe2
-        inputs.file "src/main/mwe2/GenerateWorkflow.mwe2"
-        outputs.dir "build/generated-sources"
+        inputs.file('src/main/mwe2/GenerateWorkflow.mwe2').withPathSensitivity(PathSensitivity.RELATIVE)
+        outputs.dir('build/generated-sources')
         args += "src/main/mwe2/GenerateWorkflow.mwe2"
         args += "-p"
         args += "rootPath=/${projectDir}/.."
@@ -852,13 +852,13 @@ project(':fsm-pekko-4eyes-command') {
         mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
     }
 
-    task generateXtextLanguage(type: JavaExec) {
+    tasks.register('generateXtextLanguage', JavaExec) {
         def generatedFileDir = file("build/generated-sources")
         outputs.dir generatedFileDir
-        main = 'org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher'
+        mainClass = 'org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher'
         classpath = configurations.mwe2
-        inputs.file "src/main/mwe2/GenerateWorkflow.mwe2"
-        outputs.dir "build/generated-sources"
+        inputs.file('src/main/mwe2/GenerateWorkflow.mwe2').withPathSensitivity(PathSensitivity.RELATIVE)
+        outputs.dir('build/generated-sources')
         args += "src/main/mwe2/GenerateWorkflow.mwe2"
         args += "-p"
         args += "rootPath=/${projectDir}/.."
@@ -977,13 +977,13 @@ project(':fsm-pekko-4eyes-kafka') {
         mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
     }
 
-    task generateXtextLanguage(type: JavaExec) {
+    tasks.register('generateXtextLanguage', JavaExec) {
         def generatedFileDir = file("build/generated-sources")
         outputs.dir generatedFileDir
-        main = 'org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher'
+        mainClass = 'org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher'
         classpath = configurations.mwe2
-        inputs.file "src/main/mwe2/GenerateWorkflow.mwe2"
-        outputs.dir "build/generated-sources"
+        inputs.file('src/main/mwe2/GenerateWorkflow.mwe2').withPathSensitivity(PathSensitivity.RELATIVE)
+        outputs.dir('build/generated-sources')
         args += "src/main/mwe2/GenerateWorkflow.mwe2"
         args += "-p"
         args += "rootPath=/${projectDir}/.."
@@ -1082,13 +1082,13 @@ project(':fsm-pekko-4eyes-elasticsearch-statemachine-adapter') {
         mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
     }
 
-    task generateXtextLanguage(type: JavaExec) {
+    tasks.register('generateXtextLanguage', JavaExec) {
         def generatedFileDir = file("build/generated-sources")
         outputs.dir generatedFileDir
-        main = 'org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher'
+        mainClass = 'org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher'
         classpath = configurations.mwe2
-        inputs.file "src/main/mwe2/GenerateWorkflow.mwe2"
-        outputs.dir "build/generated-sources"
+        inputs.file('src/main/mwe2/GenerateWorkflow.mwe2').withPathSensitivity(PathSensitivity.RELATIVE)
+        outputs.dir('build/generated-sources')
         args += "src/main/mwe2/GenerateWorkflow.mwe2"
         args += "-p"
         args += "rootPath=/${projectDir}/.."
@@ -1154,13 +1154,13 @@ project(':fsm-pekko-4eyes-projections-statemachine-adapter') {
         mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
     }
 
-    task generateXtextLanguage(type: JavaExec) {
+    tasks.register('generateXtextLanguage', JavaExec) {
         def generatedFileDir = file("build/generated-sources")
         outputs.dir generatedFileDir
-        main = 'org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher'
+        mainClass = 'org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher'
         classpath = configurations.mwe2
-        inputs.file "src/main/mwe2/GenerateWorkflow.mwe2"
-        outputs.dir "build/generated-sources"
+        inputs.file('src/main/mwe2/GenerateWorkflow.mwe2').withPathSensitivity(PathSensitivity.RELATIVE)
+        outputs.dir('build/generated-sources')
         args += "src/main/mwe2/GenerateWorkflow.mwe2"
         args += "-p"
         args += "rootPath=/${projectDir}/.."
@@ -1371,11 +1371,11 @@ project(':fsm-pekko-asciidoc') {
         asciidoctorGems 'rubygems:rouge:3.15.0'
     }
 
-    task generateXtextLanguage(type: JavaExec) {
-        main = 'org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher'
+    tasks.register('generateXtextLanguage', JavaExec) {
+        mainClass = 'org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher'
         classpath = configurations.mwe2
-        inputs.file "src/main/mwe2/GenerateWorkflow.mwe2"
-        outputs.dir "target/generated-sources"
+        inputs.file('src/main/mwe2/GenerateWorkflow.mwe2').withPathSensitivity(PathSensitivity.RELATIVE)
+        outputs.dir('build/generated-sources')
         args += "src/main/mwe2/GenerateWorkflow.mwe2"
         args += "-p"
         args += "rootPath=/${projectDir}/.."

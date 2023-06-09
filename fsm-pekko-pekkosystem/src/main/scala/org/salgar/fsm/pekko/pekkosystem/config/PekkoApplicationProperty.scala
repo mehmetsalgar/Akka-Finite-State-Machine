@@ -1,6 +1,6 @@
 package org.salgar.fsm.pekko.pekkosystem.config
 
-class AkkaApplicationProperty {
+class PekkoApplicationProperty {
   private var _applicationName: String = null
 
   def setApplicationName(applicationName: String) = {

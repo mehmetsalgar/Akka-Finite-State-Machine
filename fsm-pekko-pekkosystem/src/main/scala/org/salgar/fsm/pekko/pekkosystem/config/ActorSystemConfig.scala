@@ -19,8 +19,8 @@ class ActorSystemConfig {
   }
 
   @Bean
-  @ConfigurationProperties("org.salgar.fsm.akka.akka-system")
-  def akkaApplicationProperty() : AkkaApplicationProperty = {
-    new AkkaApplicationProperty()
+  @ConfigurationProperties("org.salgar.fsm.pekko.pekko-system")
+  def akkaApplicationProperty() : PekkoApplicationProperty = {
+    new PekkoApplicationProperty()
   }
 }
