@@ -1,4 +1,5 @@
 # Model Driven CQRS Proof of Concept Application with Pekko Finite State Machine, Kafka, Cassandra, Elasticsearch
+[![LICENSE]](https://github.com/mehmetsalgar/Akka-Finite-State-Machine/edit/master/LICENSE)
 ## Features
 - Event Sourcing / Command Query Responsibility Segregation Pattern Implementation
 - Command part with Apache Kafka, Pekko Finite State Machine, Apache Cassandra
