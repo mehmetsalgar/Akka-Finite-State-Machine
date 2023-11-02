@@ -8,7 +8,7 @@ artifactory:
   enabled: false
 k8ssandra:
   enabled: false
-fsmakkakafka:
+fsmpekkokafka:
   enabled: false
 elasticsearch:
   enabled: false

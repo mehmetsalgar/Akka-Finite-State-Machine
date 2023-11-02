@@ -39,8 +39,8 @@ public class Starter {
     private final ConsumerConfig<String, FraudPreventionSMCommand> fraudPreventionSMConsumerConfig;
 
     @EventListener(ApplicationReadyEvent.class)
-    public void initialized(ApplicationReadyEvent applicationReadyEvent) {
-        log.info("FSM Pekko 4eyes Initialized!");
+    public void initialised(ApplicationReadyEvent applicationReadyEvent) {
+        log.info("FSM Pekko 4eyes Initialised!");
 
         CreditSMStreamConfig.apply(
                 creditSMConsumerConfig,

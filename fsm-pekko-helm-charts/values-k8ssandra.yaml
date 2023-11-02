@@ -25,8 +25,11 @@ k8ssandra:
       enabled: true
   kube-prometheus-stack:
     grafana:
+      enabled: false
       adminUser: admin
       adminPassword: admin123
+    prometheus:
+      enabled: false
   medusa:
     enabled: false
   reaper:

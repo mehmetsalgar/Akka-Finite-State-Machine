@@ -40,9 +40,9 @@ dependencies:
     repository: https://kubernetes-sigs.github.io/metrics-server/
     tags:
       - infrastructure
-  - name: fsm-pekko-4eyes-application
-    version: 1.1.2
-    condition: fsm-pekko-4eyes-application.enabled
-    repository: http://localhost:57198/repository/fsm-akka-helm/
-    tags:
-      - application
+  #- name: fsm-pekko-4eyes-application
+  #  version: 1.1.2
+  #  condition: fsm-pekko-4eyes-application.enabled
+  #  repository: http://localhost:57198/repository/fsm-akka-helm/
+  #  tags:
+  #    - application

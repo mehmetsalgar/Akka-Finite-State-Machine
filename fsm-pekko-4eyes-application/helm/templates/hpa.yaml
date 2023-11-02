@@ -1,5 +1,5 @@
 {{- if .Values.autoscaling.enabled }}
-apiVersion: autoscaling/v2beta1
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ include "fsm-pekko-4eyes-application.fullname" . }}
@@ -25,4 +25,15 @@ spec:
         name: memory
         targetAverageUtilization: {{ .Values.autoscaling.targetMemoryUtilizationPercentage }}
     {{- end }}
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: {{ .Values.autoscaling.scaleDown.stabilizationWindowSeconds }}
+      policies:
+        {{- toYaml .Values.autoscaling.scaleDown.policies | nindent 8 }}
+      selectPolicy: {{ .Values.autoscaling.scaleDown.selectPolicy }}
+    scaleUp:
+      stabilizationWindowSeconds: {{ .Values.autoscaling.scaleUp.stabilizationWindowSeconds }}
+      policies:
+        {{- toYaml .Values.autoscaling.scaleUp.policies | nindent 8 }}
+      selectPolicy: {{ .Values.autoscaling.scaleUp.selectPolicy }}
 {{- end }}

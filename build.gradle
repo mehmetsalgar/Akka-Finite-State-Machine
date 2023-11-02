@@ -8,7 +8,6 @@ buildscript {
         maven { url "https://repo.spring.io/milestone" }
         maven { url "https://plugins.gradle.org/m2/"}
         maven { url "https://oss.sonatype.org/content/repositories/snapshots"}
-        maven { url "https://plugins.gradle.org/m2/" }
     }
 
     dependencies {
@@ -46,13 +45,21 @@ allprojects {
             cassandraPlugin         : "1.0.5",
             confluent               : "6.1.0",
             lombok                  : "1.18.24",
-            pekko                   : System.getProperty('pekko.version', '0.0.0+26685-5abffda7-SNAPSHOT'),
-            pekkoCassandraPlugin    : System.getProperty('pekkoCassandraPlugin.version', '0.0.0-1088-aa545416-SNAPSHOT'),
-            pekkoConnectors         : System.getProperty('pekkoConnectors.version', '0.0.0+2779-5b038c8d-SNAPSHOT'),
-            pekkomanagement         : System.getProperty('pekkomanagement.version', '0.0.0+740-92e35ae0-SNAPSHOT'),
-            pekkohttp               : System.getProperty('pekkoHttp.version', '0.0.0+4418-546e7912+20230531-0937-SNAPSHOT'),
-            pekkoProjections        : System.getProperty('pekkoProjections.version', '0.0.0+611-0e855a60-SNAPSHOT'),
-            pekkoKafkaStream        : System.getProperty('pekkoProjections.version', '0.0.0+1738-07a19b8e-SNAPSHOT'),
+            pekko                   : System.getProperty('pekko.version', '1.0.1'),
+            //pekkoCassandraPlugin    : System.getProperty('pekkoCassandraPlugin.version', '0.0.0-1088-aa545416-SNAPSHOT'),
+            pekkoCassandraPlugin    : System.getProperty('pekkoCassandraPlugin.version', '1.0.0'),
+            //pekkoConnectorsAll      : System.getProperty('pekkoConnectorsAll.version', '0.0.0+2779-5b038c8d-SNAPSHOT'),
+            pekkoConnectorsAll      : System.getProperty('pekkoConnectorsAll.version', '1.0.0'),
+            //pekkoConnectors         : System.getProperty('pekkoConnectors.version', '1.0.0-RC1'),
+            pekkoConnectors         : System.getProperty('pekkoConnectors.version', '1.0.0'),
+            //pekkomanagement         : System.getProperty('pekkomanagement.version', '0.0.0+740-92e35ae0-SNAPSHOT'),
+            pekkomanagement         : System.getProperty('pekkomanagement.version', '1.0.0'),
+            //pekkohttp               : System.getProperty('pekkoHttp.version', '0.0.0+4418-546e7912+20230531-0937-SNAPSHOT'),
+            pekkohttp               : System.getProperty('pekkoHttp.version', '1.0.0'),
+            //pekkoProjections        : System.getProperty('pekkoProjections.version', '0.0.0+611-0e855a60-SNAPSHOT'),
+            pekkoProjections        : System.getProperty('pekkoProjections.version', '1.0.0'),
+            //pekkoKafkaStream        : System.getProperty('pekkoProjections.version', '0.0.0+1738-07a19b8e-SNAPSHOT'),
+            pekkoKafkaStream        : System.getProperty('pekkoProjections.version', '1.0.0'),
             scala                   : [major: scalaMajorVersion, current: scalaVersion],
             scala3                  : [major: scala3MajorVersion, current: scala3Version],
             scalikeJdbcVersion      : "3.5.0",
@@ -76,6 +83,7 @@ allprojects {
         maven { url "https://repo.spring.io/milestone" }
         maven { url "https://packages.confluent.io/maven/"}
         maven { url "https://oss.sonatype.org/content/repositories/snapshots"}
+        maven { url "https://repository.apache.org/content/groups/staging/" }
         mavenLocal()
         mavenCentral()
     }
@@ -954,7 +962,7 @@ project(':fsm-pekko-4eyes-kafka') {
                 project(':customer-relationship-adapter-impl'),
                 project(':fsm-pekko-4eyes-advice')
         testImplementation "org.apache.pekko:pekko-persistence-cassandra_${versions.scala.major}:${versions.pekkoCassandraPlugin}"
-        testImplementation "org.apache.pekko:pekko-connectors-cassandra_${versions.scala.major}:${versions.pekkoConnectors}"
+        testImplementation "org.apache.pekko:pekko-connectors-cassandra_${versions.scala.major}:${versions.pekkoConnectorsAll}"
         testImplementation "org.apache.pekko:pekko-persistence-query_${versions.scala.major}:${versions.pekko}"
         testImplementation "org.apache.pekko:pekko-persistence-typed_${versions.scala.major}:${versions.pekko}"
         testImplementation 'org.springframework.boot:spring-boot-starter'
@@ -1182,7 +1190,7 @@ project(':fsm-pekko-projections') {
         api "org.apache.pekko:pekko-projection-eventsourced_${versions.scala.major}:${versions.pekkoProjections}"
         api "org.apache.pekko:pekko-projection-cassandra_${versions.scala.major}:${versions.pekkoProjections}"
         api "org.apache.pekko:pekko-persistence-cassandra_${versions.scala.major}:${versions.pekkoCassandraPlugin}"
-        api "org.apache.pekko:pekko-connectors-cassandra_${versions.scala.major}:${versions.pekkoConnectors}"
+        api "org.apache.pekko:pekko-connectors-cassandra_${versions.scala.major}:${versions.pekkoConnectorsAll}"
         annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
     }
 }
@@ -1291,6 +1299,7 @@ project(':fsm-pekko-4eyes-application') {
         }
         to {
             image = "fsm-pekko.registry:5555/fsmpekko/${project.name}:${project.version}"
+            tags = ["${project.version}"]
             auth {
                 username = "${props.DOCKER_UPLOAD_USER}"
                 password = "${props.DOCKER_UPLOAD_PASSWORD}"
@@ -1310,13 +1319,18 @@ project(':fsm-pekko-4eyes-application') {
             foureyes {
                 publish = true
                 chartName = 'fsm-pekko-4eyes-application'
-                chartVersion = '1.1.4'
+                chartVersion = "${project.version}"
                 sourceDir = file('helm')
+                filtering {
+                    values.put 'imageRepository', jib.to.image
+                    values.put 'imageTag', jib.to.tags.first()
+                    values.put 'appVersion', jib.to.tags.first()
+                }
             }
         }
         repositories {
             fsmpekko {
-                url 'http://localhost:57198//repository/fsm-pekko-helm/'
+                url 'http://localhost:57941/repository/fsm-pekko-helm/'
                 credentials {
                     username = "${props.HELM_USER}"
                     password = "${props.HELM_PASSWORD}"
@@ -1326,7 +1340,7 @@ project(':fsm-pekko-4eyes-application') {
         publishing {
             repositories {
                 nexus {
-                    url = uri('http://localhost:57198/')
+                    url = uri('http://localhost:57941/')
                     repository = 'fsm-pekko-helm'
                     apiVersion = 'v1'
                     credentials {

@@ -1,4 +1,4 @@
-fsmakkakafka:
+fsmpekkokafka:
   enabled: true
   zookeeper:
     #image: k3d-fsm-akka.registry:5555/nxt/confluentinc/cp-zookeeper
@@ -33,10 +33,10 @@ fsmakkakafka:
       disksPerBroker: 1
     resources:
       limits:
-        cpu: 0.5
+        cpu: 1
         memory: 3G
       requests:
-        cpu: 0.5
+        cpu: 1
         memory: 3G
     replicationFactor: 1
     inSyncReplica: 1
@@ -47,7 +47,7 @@ fsmakkakafka:
     heapOptions: -Xms512M -Xmx512M
     resources:
       limits:
-        cpu: 100m
+        cpu: 500m
         memory: 1G
       requests:
         cpu: 100m
@@ -57,7 +57,7 @@ fsmakkakafka:
     heapOptions: -Xmx512M -Xmx512M
     resources:
       limits:
-        cpu: 100m
+        cpu: 500m
         memory: 1G
       requests:
         cpu: 100m

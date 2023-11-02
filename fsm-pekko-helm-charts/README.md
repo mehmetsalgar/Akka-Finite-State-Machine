@@ -78,7 +78,7 @@ https://github.com/jfrog/charts/issues/63
 kubectl -n artifactory delete pvc artifactory-volume-artifactory-artifactory-0
 
 # Add local Helm Repository to Helm
-helm repo add fsmAkka http://kubernetes.docker.internal:28015//artifactory/fsm_akka_helm --username fsm_akka_management --password fsm_akka_rest
+helm repo add fsmAkka http://kubernetes.docker.internal:28015/artifactory/fsm_akka_helm --username fsm_akka_management --password fsm_akka_rest
 
 # Kafka
 helm install fsm-akka . -n fsmakka --create-namespace -f values-kafka-k3d.yaml

@@ -1,7 +1,7 @@
 apiVersion: v2
 appVersion: "1.0"
 description: A Helm chart for FSM Akka Kafka
-name: fsmakkakafka
+name: fsmpekkokafka
 version: 1.0.0
 dependencies:
   - name: kafka
