@@ -1,0 +1,20 @@
+syntax = "proto3";
+option java_multiple_files = true;
+
+package org.salgar.fsm.pekko.foureyes.creditscore.protobuf;
+
+import "google/protobuf/any.proto";
+
+message CreditScoreSMCommand {
+    string useCaseKey = 1 ;
+    string command = 2;
+    map<string, google.protobuf.Any> payload = 3;
+}
+message MultiTenantCreditScoreSMCommand {
+    string useCaseKey = 1 ;
+    string command = 2;
+    map<string, google.protobuf.Any> payload = 3;
+}
+message CreditScoreResult {
+    double creditScore = 1;
+}

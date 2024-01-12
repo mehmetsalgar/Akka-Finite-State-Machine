@@ -1,0 +1,39 @@
+syntax = "proto3";
+option java_multiple_files = true;
+
+package org.salgar.fsm.pekko.foureyes.credit.protobuf;
+
+import "google/protobuf/any.proto";
+
+message CreditSMCommand {
+    string useCaseKey = 1 ;
+    string command = 2;
+    map<string, google.protobuf.Any> payload = 3;
+}
+message CreditUUID {
+    string creditUUID = 1;
+}
+message Customer {
+    string firstName = 1;
+    string lastName = 2;
+    string personalId = 3;
+    org.salgar.fsm.pekko.foureyes.credit.protobuf.Address address = 4;
+    string email = 5;
+}
+message Address {
+    string street = 1;
+    string houseNo = 2;
+    string city = 3;
+    string country = 4;
+}
+message CreditTenants {
+    repeated org.salgar.fsm.pekko.foureyes.credit.protobuf.Customer creditTenants = 1;
+}
+message CreditTenantScoreResult {
+    string personalId = 1;
+    double creditScore = 2;
+}
+message CreditApplication {
+    double creditAmount = 1;
+    org.salgar.fsm.pekko.foureyes.credit.protobuf.CreditTenants creditTenants = 2;
+}
