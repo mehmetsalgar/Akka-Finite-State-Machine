@@ -15,12 +15,12 @@ buildscript {
         classpath "io.freefair.gradle:lombok-plugin:6.4.3"
         classpath "org.xtext:xtext-gradle-plugin:2.0.9-alpha.3"
         classpath "com.diffplug.spotless:spotless-plugin-gradle:5.14.0"
-        classpath 'org.asciidoctor:asciidoctor-gradle-jvm:3.2.0'
-        classpath 'org.asciidoctor:asciidoctor-gradle-jvm-gems:3.2.0'
+        classpath 'org.asciidoctor:asciidoctor-gradle-jvm:4.0.3'
+        classpath 'org.asciidoctor:asciidoctor-gradle-jvm-gems:4.0.3'
         classpath "com.cosminpolifronie.gradle:gradle-plantuml-plugin:1.6.0"
         classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.18'
-        classpath "org.unbroken-dome.gradle-plugins.helm:helm-plugin:1.7.0"
-        classpath "org.unbroken-dome.gradle-plugins.helm:helm-publish-plugin:1.7.0"
+        classpath "com.citi.helm:com.citi.helm.gradle.plugin:2.2.0"
+        classpath "com.citi.helm-publish:com.citi.helm-publish.gradle.plugin:2.2.0"
     }
 }
 
@@ -1229,8 +1229,8 @@ project(':fsm-pekko-4eyes-application') {
     apply plugin: 'io.freefair.lombok'
     apply plugin: 'groovy'
     apply plugin: 'com.google.cloud.tools.jib'
-    apply plugin: 'org.unbroken-dome.helm'
-    apply plugin: 'org.unbroken-dome.helm-publish'
+    apply plugin: 'com.citi.helm'
+    apply plugin: 'com.citi.helm-publish'
 
     dependencies {
         implementation 'org.springframework.boot:spring-boot-starter'
@@ -1382,7 +1382,7 @@ project(':fsm-pekko-asciidoc') {
         mwe2 project(':fsm-pekko-xtend')
         mwe2 project(':fsm-pekko-4eyes-uml-model')
         mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
-        asciidoctorGems 'rubygems:rouge:3.15.0'
+        asciidoctorGems 'rubygems:rouge:4.5.1'
     }
 
     tasks.register('generateXtextLanguage', JavaExec) {
