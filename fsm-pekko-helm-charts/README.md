@@ -31,7 +31,7 @@ k3d cluster create poc-akka \
 # k3d -v5.x.x Cluster
 k3d cluster create poc-akka \
 --registry-use k3d-fsm-akka.registry:5555 \
---k3s-arg "--no-deploy=traefik@server:0" \
+--k3s-arg "--disable=traefik@server:0" \
 --port "80:32080@loadbalancer" \
 --port "443:32443@loadbalancer" \
 --port "9000:32090@loadbalancer" \
@@ -40,8 +40,8 @@ k3d cluster create poc-akka \
 --port "8880:30080@loadbalancer" \
 --port "8881:30082@loadbalancer" \
 --port "9200:32193@loadbalancer" \
---image rancher/k3s:v1.29.0-k3s1-arm64
---servers-memory 16Gi
+--image rancher/k3s:v1.29.0-k3s1-arm64 \
+--servers-memory 16G
 
 # Traefik
 helm repo add traefik https://helm.traefik.io/traefik
