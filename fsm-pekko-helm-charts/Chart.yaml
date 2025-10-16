@@ -17,9 +17,10 @@ dependencies:
     repository: https://helm.traefik.io/traefik
     tags:
       - infrastructure
-  - name: fsmpekkokafka
-    version: 1.0.0
-    condition: fsmpekkokafka.enabled
+  - name: strimzi-kafka-operator
+    version: 0.43.0
+    repository: https://strimzi.io/charts
+    condition: strimzi.enabled
     tags:
       - infrastructure
   - name: elasticsearch

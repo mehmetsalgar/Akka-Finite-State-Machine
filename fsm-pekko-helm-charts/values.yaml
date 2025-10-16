@@ -8,6 +8,10 @@ artifactory:
   enabled: false
 k8ssandra:
   enabled: false
+strimzi:
+  enabled: false
+kafka:
+  enabled: false
 fsmpekkokafka:
   enabled: false
 elasticsearch:

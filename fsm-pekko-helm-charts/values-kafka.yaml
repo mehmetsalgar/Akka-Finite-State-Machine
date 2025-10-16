@@ -1,0 +1,34 @@
+kafka:
+  enabled: true
+  clusterName: fsm-pekko-cluster
+  replicas: 1
+  version: 3.8.0
+  resources:
+    request:
+      memory: 2Gi
+      cpu: 1
+    limit:
+      memory: 4Gi
+      cpu: 2
+  jvmOptions:
+    xms: 2G
+    xmx: 4G
+  topics:
+    replicationFactor: 1
+    partitions: 1
+    retention:
+      ms: 7200000
+    segment:
+      bytes: 1073741824
+zookeeper:
+  replicas: 1
+  resources:
+    requests:
+      memory: 256Mi
+      cpu: 500m
+    limits:
+      memory: 512Mi
+      cpu: 1
+  jvmOptions:
+    xms: 512m
+    xmx: 512m

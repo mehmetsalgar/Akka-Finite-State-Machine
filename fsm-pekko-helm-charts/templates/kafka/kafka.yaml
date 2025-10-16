@@ -1,0 +1,118 @@
+{{- if .Values.kafka.enabled -}}
+apiVersion: kafka.strimzi.io/v1beta2
+kind: Kafka
+metadata:
+  name: {{ .Values.kafka.clusterName }}
+spec:
+  kafka:
+    replicas: {{ .Values.kafka.replicas }}
+    version: {{ .Values.kafka.version }}
+    logging:
+      type: inline
+      loggers:
+        kafka.root.logger.level: "INFO"
+    resources:
+      requests:
+        memory: {{ .Values.kafka.resources.request.memory }}
+        cpu: {{ .Values.kafka.resources.request.cpu }}
+      limits:
+        memory: {{ .Values.kafka.resources.limit.memory }}
+        cpu: {{ .Values.kafka.resources.limit.cpu }}
+    readinessProbe:
+      initialDelaySeconds: 150
+      timeoutSeconds: 10
+    livenessProbe:
+      initialDelaySeconds: 150
+      timeoutSeconds: 10
+    jvmOptions:
+      -Xms: {{ .Values.kafka.jvmOptions.xms }}
+      -Xmx: {{ .Values.kafka.jvmOptions.xmx }}
+    #image: quay.io/strimzi/kafka:32.0-kafka-3.2.1-arm64
+    listeners:
+      - name: plain
+        port: 9092
+        type: internal
+        tls: false
+        configuration:
+          useServiceDnsDomain: true
+    config:
+      auto.create.topics.enable: "false"
+      offsets.topic.replication.factor: 1
+      transaction.state.log.replication.factor: 1
+      transaction.state.log.min.isr: 1
+      default.replication.factor: 1
+      kafkastore.topic.replication.factor: 1
+      min.insync.replicas: 1
+      inter.broker.protocol.version: "3.8"
+      ssl.cipher.suites: "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384"
+      ssl.enabled.protocols: "TLSv1.2"
+      ssl.protocol: "TLSv1.2"
+    storage:
+      type: jbod
+      volumes:
+        - type: persistent-claim
+          id: 0
+          size: 10Gi
+  #    metricsConfig:
+  #      type: jmxPrometheusExporter
+  #      valueFrom:
+  #        configMapKeyRef:
+  #          name: my-config-map
+  #          key: my-key
+  zookeeper:
+    replicas: {{ .Values.zookeeper.replicas }}
+    logging:
+      type: inline
+      loggers:
+        zookeeper.root.logger: "INFO"
+    resources:
+      requests:
+        memory: {{ .Values.zookeeper.resources.requests.memory }}
+        cpu: {{ .Values.zookeeper.resources.requests.cpu }}
+      limits:
+        memory: {{ .Values.zookeeper.resources.limits.memory }}
+        cpu: {{ .Values.zookeeper.resources.limits.cpu }}
+    jvmOptions:
+      -Xms: {{ .Values.zookeeper.jvmOptions.xms }}
+      -Xmx: {{ .Values.zookeeper.jvmOptions.xmx }}
+    storage:
+      type: persistent-claim
+      size: 10Gi
+  entityOperator:
+    #   tlsSidecar:
+    #     resources:
+    #       requests:
+    #         cpu: 200m
+    #         memory: 64Mi
+    #       limits:
+    #          cpu: 500m
+    #          memory: 128Mi
+    topicOperator: {}
+    #      watchedNamespace: {{ .Release.Namespace }}
+    #      reconciliationIntervalSeconds: 60
+    #      logging:
+    #        type: inline
+    #        loggers:
+    #          rootLogger.level: "INFO"
+    #      resources:
+    #        requests:
+    #          memory: 512MiR
+    #          cpu: "0.5"
+    #        limits:
+    #          memory: 512Mi
+    #          cpu: "1"
+    userOperator: {}
+#      watchedNamespace: {{ .Release.Namespace }}
+#      reconciliationIntervalSeconds: 60
+#      logging:
+#        type: inline
+#        loggers:
+#          rootLogger.level: INFO
+#      resources:
+#        requests:
+#          memory: 256Mi
+#          cpu: "0.5"
+#        limits:
+#          memory: 512Mi
+#          cpu: "1"
+{{- end -}}

@@ -66,20 +66,6 @@ kubectl -n artifactory delete pvc artifactory-volume-artifactory-artifactory-0
 # Add local Helm Repository to Helm
 helm repo add fsmAkka http://kubernetes.docker.internal:28015/artifactory/fsm_akka_helm --username fsm_akka_management --password fsm_akka_rest
 
-# Kafka
-helm install fsm-akka . -n fsmakka --create-namespace -f values-kafka-k3d.yaml
-kafka-topics --zookeeper fsm-akka-zookeeper-headless:2181 --create --topic creditSM --partitions 1 --replication-factor 1
-kafka-topics --zookeeper fsm-akka-zookeeper-headless:2181 --create --topic multiTenantScreditScoreSM --partitions 1 --replication-factor 1
-kafka-topics --zookeeper fsm-akka-zookeeper-headless:2181 --create --topic creditScoreSM --partitions 1 --replication-factor 1
-kafka-topics --zookeeper fsm-akka-zookeeper-headless:2181 --create --topic addressCheckSM --partitions 1 --replication-factor 1
-kafka-topics --zookeeper fsm-akka-zookeeper-headless:2181 --create --topic fraudPreventionSM --partitions 1 --replication-factor 1
-
-kafka-topics --zookeeper localhost:2181 --create --topic creditSM --partitions 1 --replication-factor 1
-kafka-topics --zookeeper localhost:2181 --create --topic multiTenantScreditScoreSM --partitions 1 --replication-factor 1
-kafka-topics --zookeeper localhost:2181 --create --topic creditScoreSM --partitions 1 --replication-factor 1
-kafka-topics --zookeeper localhost:2181 --create --topic addressCheckSM --partitions 1 --replication-factor 1
-kafka-topics --zookeeper localhost:2181 --create --topic fraudPreventionSM --partitions 1 --replication-factor 1
-
 # JiB
 gradle :fsm-akka-4eyes-application:jib
 
@@ -87,37 +73,10 @@ gradle :fsm-akka-4eyes-application:jib
 https://medium.com/rahasak/replace-docker-desktop-with-minikube-and-hyperkit-on-macos-783ce4fb39e3
 minikube start --memory 32768 --cpus 6 --driver=docker
 
-# ARM64 Kafka Images
-https://nxt.engineering/blog/kafka-docker-image/
+#Strimzi Operator
+helm install fsmpekko-strimzi . --namespace strimzi-operator --create-namespace --set watchAnyNamespace=true -f values-strimzi.yaml
 
-socat -d -d TCP-LISTEN:2375,reuseaddr,fork UNIX-CONNECT:/run/user/1000/podman/podman.sock &
-
-jenv exec mvn clean package -DskipTests -Pdocker -Ddocker.registry=fsm-akka.registry:5555/nxt/
-jenv exec mvn clean package -DskipTests -Pdocker -DCONFLUENT_PACKAGES_REPO='https://packages.confluent.io/rpm/6.2' -DCONFLUENT_VERSION=6.2.2 -Ddocker.registry=nxt/
-jenv exec mvn clean package -DskipTests -Pdocker -DCONFLUENT_PACKAGES_REPO='https://packages.confluent.io/rpm/6.2' -DCONFLUENT_VERSION=6.2.2 -Ddocker.registry=nxt/
-
-docker tag nxt/confluentinc/cp-schema-registry:6.2.2-ubi8 fsm-akka.registry:5555/nxt/confluentinc/cp-schema-registry:6.2.2-ubi8
-docker tag nxt/confluentinc/cp-server-connect:6.2.2-ubi8 fsm-akka.registry:5555/nxt/confluentinc/cp-server-connect:6.2.2-ubi8
-docker tag nxt/confluentinc/cp-server-connect-base:6.2.2-ubi8 fsm-akka.registry:5555/nxt/confluentinc/cp-server-connect-base:6.2.2-ubi8
-docker tag nxt/confluentinc/cp-kafka-connect:6.2.2-ubi8 fsm-akka.registry:5555/nxt/confluentinc/cp-kafka-connect:6.2.2-ubi8
-docker tag nxt/confluentinc/cp-kafka-connect-base:6.2.2-ubi8 fsm-akka.registry:5555/nxt/confluentinc/cp-kafka-connect-base:6.2.2-ubi8
-docker tag nxt/confluentinc/cp-enterprise-kafka:6.2.2-ubi8 fsm-akka.registry:5555/nxt/confluentinc/cp-enterprise-kafka:6.2.2-ubi8
-docker tag nxt/confluentinc/cp-kafka:6.2.2-ubi8 fsm-akka.registry:5555/nxt/confluentinc/cp-kafka:6.2.2-ubi8
-docker tag nxt/confluentinc/cp-server:6.2.2-ubi8 fsm-akka.registry:5555/nxt/confluentinc/cp-server:6.2.2-ubi8
-docker tag nxt/confluentinc/cp-zookeeper:6.2.2-ubi8 fsm-akka.registry:5555/nxt/confluentinc/cp-zookeeper:6.2.2-ubi8
-docker tag nxt/confluentinc/cp-base-new:6.2.2-ubi8 fsm-akka.registry:5555/nxt/confluentinc/cp-base-new:6.2.2-ubi8
-
-docker push fsm-akka.registry:5555/nxt/confluentinc/cp-schema-registry:6.2.2-ubi8
-docker push fsm-akka.registry:5555/nxt/confluentinc/cp-server-connect:6.2.2-ubi8
-docker push fsm-akka.registry:5555/nxt/confluentinc/cp-server-connect-base:6.2.2-ubi8
-docker push fsm-akka.registry:5555/nxt/confluentinc/cp-kafka-connect:6.2.2-ubi8
-docker push fsm-akka.registry:5555/nxt/confluentinc/cp-kafka-connect-base:6.2.2-ubi8
-docker push fsm-akka.registry:5555/nxt/confluentinc/cp-enterprise-kafka:6.2.2-ubi8
-docker push fsm-akka.registry:5555/nxt/confluentinc/cp-kafka:6.2.2-ubi8
-docker push fsm-akka.registry:5555/nxt/confluentinc/cp-server:6.2.2-ubi8
-docker push fsm-akka.registry:5555/nxt/confluentinc/cp-zookeeper:6.2.2-ubi8
-docker push fsm-akka.registry:5555/nxt/confluentinc/cp-base-new:6.2.2-ubi8
-
+helm install fsm-pekko-kafka . -n fsmpekkokafka --create-namespace -f values-kafka.yaml
 
 # ARM64 ElasticSearch
 helm repo add elasticsearch https://helm.elastic.co/

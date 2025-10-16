@@ -1,5 +1,0 @@
-apiVersion: v2
-appVersion: "1.0"
-description: A Helm chart for Kafka Connect on Kubernetes
-name: kafka-connect
-version: 1.0.0

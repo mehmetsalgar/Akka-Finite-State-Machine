@@ -1,0 +1,15 @@
+{{- if .Values.kafka.enabled -}}
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  name: multi-tenants-credit-score-sm
+  labels:
+    strimzi.io/cluster: {{ .Values.kafka.clusterName }}
+spec:
+  topicName: multiTenantScreditScoreSM
+  partitions: {{ .Values.kafka.topics.partitions }}
+  replicas: {{ .Values.kafka.topics.replicationFactor }}
+  config:
+    retention.ms: {{ .Values.kafka.topics.retention.ms }}
+    segment.bytes: {{ .Values.kafka.topics.segment.bytes }}
+{{- end -}}
