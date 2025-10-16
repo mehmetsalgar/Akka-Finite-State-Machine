@@ -30,7 +30,7 @@ dependencies:
     tags:
       - infrastructure
   - name: nexus-repository-manager
-    version: 38.0.0
+    version:   64.2.0
     condition: nexus.enabled
     repository: https://sonatype.github.io/helm3-charts/
     tags:

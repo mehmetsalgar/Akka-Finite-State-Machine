@@ -1330,7 +1330,7 @@ project(':fsm-pekko-4eyes-application') {
         }
         repositories {
             fsmpekko {
-                url 'http://localhost:57941/repository/fsm-pekko-helm/'
+                url 'http://localhost:57157/repository/fsm-pekko-helm/'
                 credentials {
                     username = "${props.HELM_USER}"
                     password = "${props.HELM_PASSWORD}"
@@ -1340,7 +1340,7 @@ project(':fsm-pekko-4eyes-application') {
         publishing {
             repositories {
                 nexus {
-                    url = uri('http://localhost:57941/')
+                    url = uri('http://localhost:57157/')
                     repository = 'fsm-pekko-helm'
                     apiVersion = 'v1'
                     credentials {
