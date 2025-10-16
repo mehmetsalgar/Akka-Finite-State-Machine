@@ -10,27 +10,12 @@ https://docs.k8ssandra.io/tasks/connect/ingress/k3d-deployment/
 
 #k3d registry
 https://k3d.io/v5.1.0/usage/registries/
-k3d registry create fsm-akka.registry --port 5555
-vim /etc/hosts -> for fsm-akka.registry
-
-# k3d v4.x.x Cluster
-k3d cluster create poc-akka \
---registry-use k3d-fsm-akka.registry:5555 \
---k3s-server-arg "--no-deploy" \
---k3s-server-arg "traefik" \
---port "80:32080@loadbalancer" \
---port "443:32443@loadbalancer" \
---port "9000:32090@loadbalancer" \
---port "9042:32091@loadbalancer" \
---port "9142:32092@loadbalancer" \
---port "8880:30080@loadbalancer" \
---port "8881:30081@loadbalancer" \
---port "8881:30082@loadbalancer" \
---port "9200:32193@loadbalancer"
+k3d registry create fsm-pekko.registry --port 5555
+vim /etc/hosts -> for fsm-pekko.registry
 
 # k3d -v5.x.x Cluster
-k3d cluster create poc-akka \
---registry-use k3d-fsm-akka.registry:5555 \
+k3d cluster create poc-pekko \
+--registry-use k3d-fsm-pekko.registry:5555 \
 --k3s-arg "--disable=traefik@server:0" \
 --port "80:32080@loadbalancer" \
 --port "443:32443@loadbalancer" \
@@ -40,7 +25,7 @@ k3d cluster create poc-akka \
 --port "8880:30080@loadbalancer" \
 --port "8881:30082@loadbalancer" \
 --port "9200:32193@loadbalancer" \
---image rancher/k3s:v1.29.0-k3s1-arm64 \
+--image rancher/k3s:v1.24.13-rc1-k3s1-arm64 \
 --servers-memory 16G
 
 # Traefik
