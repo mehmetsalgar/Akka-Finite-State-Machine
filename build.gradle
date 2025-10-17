@@ -359,7 +359,7 @@ project(':fsm-pekko-xtend') {
     apply plugin: 'org.xtext.xtend'
     apply plugin: 'org.xtext.builder'
 
-    sourceSets.main.java.srcDirs = ['src/main/java', 'build/xtend/main/org']
+    sourceSets.main.java.srcDirs = ['src/main/java', 'build/xtend/main']
 
     dependencies {
         implementation 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
@@ -379,6 +379,7 @@ project(':fsm-pekko-4eyes-uml-model') {
 project(':fsm-pekko-4eyes-model') {
     apply plugin: 'java'
     apply plugin: 'org.xtext.xtend'
+    apply plugin: 'org.xtext.builder'
     apply plugin: 'io.freefair.lombok'
     apply plugin: 'com.diffplug.spotless'
 
@@ -466,6 +467,7 @@ project(':fsm-pekko-4eyes-statemachine') {
     apply plugin: 'java-library'
     apply plugin: 'scala'
     apply plugin: 'org.xtext.xtend'
+    apply plugin: 'org.xtext.builder'
     apply plugin: 'com.diffplug.spotless'
 
     sourceSets {
@@ -651,6 +653,7 @@ project(':fsm-pekko-4eyes-protobuf') {
     apply plugin: 'java-library'
     apply plugin: 'java'
     apply plugin: 'org.xtext.xtend'
+    apply plugin: 'org.xtext.builder'
     apply plugin: 'com.google.protobuf'
 
     sourceSets {
@@ -731,6 +734,7 @@ project(':fsm-pekko-4eyes-converter') {
     apply plugin: 'java-library'
     apply plugin: 'java'
     apply plugin: 'org.xtext.xtend'
+    apply plugin: 'org.xtext.builder'
     apply plugin: 'io.freefair.lombok'
     apply plugin: 'com.diffplug.spotless'
 
@@ -812,6 +816,7 @@ project(':fsm-pekko-4eyes-command') {
     apply plugin: 'java-library'
     apply plugin: 'java'
     apply plugin: 'org.xtext.xtend'
+    apply plugin: 'org.xtext.builder'
     apply plugin: 'io.freefair.lombok'
     apply plugin: 'com.diffplug.spotless'
 
@@ -897,6 +902,7 @@ project(':fsm-pekko-4eyes-kafka') {
     apply plugin: 'java-library'
     apply plugin: 'scala'
     apply plugin: 'org.xtext.xtend'
+    apply plugin: 'org.xtext.builder'
     apply plugin: 'io.freefair.lombok'
     apply plugin: 'com.diffplug.spotless'
 
@@ -1037,6 +1043,7 @@ project(':fsm-pekko-4eyes-elasticsearch-statemachine-adapter') {
     apply plugin: 'scala'
     apply plugin: 'io.freefair.lombok'
     apply plugin: 'org.xtext.xtend'
+    apply plugin: 'org.xtext.builder'
     apply plugin: 'io.freefair.lombok'
     apply plugin: 'com.diffplug.spotless'
 
@@ -1115,6 +1122,7 @@ project(':fsm-pekko-4eyes-projections-statemachine-adapter') {
     apply plugin: 'scala'
     apply plugin: 'io.freefair.lombok'
     apply plugin: 'org.xtext.xtend'
+    apply plugin: 'org.xtext.builder'
     apply plugin: 'io.freefair.lombok'
     apply plugin: 'com.diffplug.spotless'
 
@@ -1356,6 +1364,7 @@ project(':fsm-pekko-4eyes-application') {
 
 project(':fsm-pekko-asciidoc') {
     apply plugin: 'org.xtext.xtend'
+    apply plugin: 'org.xtext.builder'
     apply plugin: 'org.asciidoctor.jvm.convert'
     apply plugin: 'org.asciidoctor.jvm.gems'
     apply plugin: "com.cosminpolifronie.gradle.plantuml"
