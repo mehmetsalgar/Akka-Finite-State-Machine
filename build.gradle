@@ -63,7 +63,7 @@ allprojects {
             scala                   : [major: scalaMajorVersion, current: scalaVersion],
             scala3                  : [major: scala3MajorVersion, current: scala3Version],
             scalikeJdbcVersion      : "3.5.0",
-            xtext                   : "2.25.0"
+            xtext                   : "2.35.0"
     ]
 
     dependencyManagement {
