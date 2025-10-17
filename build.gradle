@@ -13,7 +13,7 @@ buildscript {
     dependencies {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:2.6.4"
         classpath "io.freefair.gradle:lombok-plugin:6.4.3"
-        classpath "org.xtext:xtext-gradle-plugin:2.0.9-alpha.3"
+        classpath "org.xtext.builder:org.xtext.builder.gradle.plugin:4.0.0"
         classpath "com.diffplug.spotless:spotless-plugin-gradle:5.14.0"
         classpath 'org.asciidoctor:asciidoctor-gradle-jvm:4.0.3'
         classpath 'org.asciidoctor:asciidoctor-gradle-jvm-gems:4.0.3'
@@ -357,8 +357,9 @@ project(':fsm-pekko-xtext-reader') {
 project(':fsm-pekko-xtend') {
     apply plugin: 'java'
     apply plugin: 'org.xtext.xtend'
+    apply plugin: 'org.xtext.builder'
 
-    sourceSets.main.java.srcDirs = ['src/main/java']
+    sourceSets.main.java.srcDirs = ['src/main/java', 'build/xtend/main/org']
 
     dependencies {
         implementation 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
