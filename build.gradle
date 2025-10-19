@@ -63,10 +63,11 @@ allprojects {
             scala                   : [major: scalaMajorVersion, current: scalaVersion],
             scala3                  : [major: scala3MajorVersion, current: scala3Version],
             scalikeJdbcVersion      : "3.5.0",
-            xtext                   : "2.35.0"
+            xtext                   : "2.40.0"
     ]
 
     dependencyManagement {
+        applyMavenExclusions = false
         imports {
             mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
             mavenBom 'org.springframework.cloud:spring-cloud-dependencies:2021.0.9'
@@ -88,8 +89,8 @@ allprojects {
         mavenCentral()
     }
 
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 
     idea {
         module {
