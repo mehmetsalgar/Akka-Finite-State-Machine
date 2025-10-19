@@ -7,11 +7,14 @@ import org.eclipse.uml2.uml.Transition
 import org.salgar.pekko.fsm.xtend.uml.templates.Naming
 import org.salgar.pekko.fsm.xtend.uml.templates.StateMachineHelper
 
+import org.salgar.pekko.fsm.xtend.uml.engine.TemplateAutoInjector
+
 class SlaveStateMachineFacadeTemplate {
-    @Inject extension Naming
+    extension Naming = new Naming
     @Inject extension StateMachineHelper
 
     def doGenerate (org.eclipse.uml2.uml.StateMachine it, IFileSystemAccess2 fsa) {
+        TemplateAutoInjector.injectTemplates(this)
         val content = generate
         fsa.generateFile(packagePath+"/facade/"+name+"Facade.scala", content)
     }

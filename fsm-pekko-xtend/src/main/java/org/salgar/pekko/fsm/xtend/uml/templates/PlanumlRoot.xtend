@@ -6,11 +6,14 @@ import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.AbstractGenerator
 import org.eclipse.xtext.generator.IGeneratorContext
 
+import org.salgar.pekko.fsm.xtend.uml.engine.TemplateAutoInjector
+
 class PlanumlRoot extends AbstractGenerator {
 	@Inject PlanumlTemplate planumlTemplate
 	@Inject PlanumlActivityTemplate planumlActivityTemplate
 
 	override doGenerate(Resource input, IFileSystemAccess2 fsa, IGeneratorContext context) {
+	    TemplateAutoInjector.injectTemplates(this)
 		planumlTemplate.doGenerate(input,fsa)
 		planumlActivityTemplate.doGenerate(input,fsa)
 	}

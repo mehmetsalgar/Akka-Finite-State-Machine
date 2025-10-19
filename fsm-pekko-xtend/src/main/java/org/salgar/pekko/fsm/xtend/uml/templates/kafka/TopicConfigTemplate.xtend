@@ -6,7 +6,7 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.salgar.pekko.fsm.xtend.uml.templates.Naming
 
 class TopicConfigTemplate {
-	@Inject extension Naming
+	extension Naming = new Naming
 
 	def doGenerate(Resource input, IFileSystemAccess fsa) {
         val masterSm = input.allContents.toIterable.filter(org.eclipse.uml2.uml.StateMachine).filter[i|i.active].filter[s|!s.abstract].head

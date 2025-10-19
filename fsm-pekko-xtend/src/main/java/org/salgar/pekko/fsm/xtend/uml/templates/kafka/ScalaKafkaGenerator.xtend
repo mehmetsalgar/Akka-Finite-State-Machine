@@ -6,6 +6,8 @@ import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.AbstractGenerator
 import org.eclipse.xtext.generator.IGeneratorContext
 
+import org.salgar.pekko.fsm.xtend.uml.engine.TemplateAutoInjector
+
 class ScalaKafkaGenerator extends AbstractGenerator {
     @Inject TopicConfigTemplate topicConfigTemplate
     @Inject ConsumerConfigTemplate consumerConfigTemplate
@@ -13,6 +15,7 @@ class ScalaKafkaGenerator extends AbstractGenerator {
     @Inject AskFacadeTemplate askFacadeTemplate
 
     override doGenerate(Resource input, IFileSystemAccess2 fsa, IGeneratorContext context) {
+        TemplateAutoInjector.injectTemplates(this)
         topicConfigTemplate.doGenerate(input, fsa)
         consumerConfigTemplate.doGenerate(input, fsa)
         streamConfigTemplate.doGenerate(input, fsa)

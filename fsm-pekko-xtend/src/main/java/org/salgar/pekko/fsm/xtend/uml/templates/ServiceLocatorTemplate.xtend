@@ -4,7 +4,7 @@ import javax.inject.Inject
 import org.eclipse.xtext.generator.IFileSystemAccess
 
 class ServiceLocatorTemplate {
-	@Inject extension Naming
+	extension Naming = new Naming
 
 	def doGenerate (org.eclipse.uml2.uml.StateMachine it, IFileSystemAccess fsa) {
         val content = generate

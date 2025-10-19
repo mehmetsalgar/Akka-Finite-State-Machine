@@ -6,7 +6,7 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.salgar.pekko.fsm.xtend.uml.templates.Naming
 
 class AskFacadeTemplate {
-	@Inject extension Naming
+	extension Naming = new Naming
 
 	def doGenerate(Resource input, IFileSystemAccess fsa) {
 	    val masterSm = input

@@ -364,9 +364,11 @@ project(':fsm-pekko-xtend') {
     sourceSets.main.java.srcDirs = ['src/main/java', 'build/xtend/main']
 
     dependencies {
-        implementation 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
+        implementation 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:2.0.0-SNAPSHOT:repackaged'
         implementation "org.eclipse.xtend:org.eclipse.xtend.lib:${versions.xtext}"
         implementation "org.eclipse.xtext:org.eclipse.xtext:${versions.xtext}"
+        implementation 'javax.inject:javax.inject:1'
+        implementation 'org.reflections:reflections:0.10.2'
     }
 }
 

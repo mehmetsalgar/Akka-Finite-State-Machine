@@ -13,7 +13,7 @@ import org.salgar.pekko.fsm.xtend.uml.templates.Naming
 import javax.inject.Inject
 
 class ProtobufHelper {
-    @Inject extension Naming
+    extension Naming = new Naming
 
     def Map<Pair<String,String>, List<org.eclipse.uml2.uml.Class>> populatePackageClassMap(Iterator<org.eclipse.uml2.uml.Class> clazzes) {
         val Map<Pair<String, String>, List<org.eclipse.uml2.uml.Class>> map = new HashMap

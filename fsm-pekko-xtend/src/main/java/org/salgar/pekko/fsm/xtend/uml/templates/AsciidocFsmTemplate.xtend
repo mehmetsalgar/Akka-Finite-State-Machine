@@ -4,10 +4,13 @@ import javax.inject.Inject
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.IFileSystemAccess
 
+import org.salgar.pekko.fsm.xtend.uml.engine.TemplateAutoInjector
+
 class AsciidocFsmTemplate {
 	@Inject AsciidocTemplate asciidocTemplate
 
 	def doGenerate(Resource input, IFileSystemAccess fsa) {
+	    TemplateAutoInjector.injectTemplates(this)
 	    asciidocTemplate.doGenerate(input,fsa)
 
 	    for(it : input.allContents.toIterable.filter(org.eclipse.uml2.uml.Model)) {

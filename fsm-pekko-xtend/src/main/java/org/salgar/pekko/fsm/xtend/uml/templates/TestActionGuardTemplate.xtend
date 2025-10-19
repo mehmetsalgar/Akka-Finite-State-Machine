@@ -6,6 +6,8 @@ import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.AbstractGenerator
 import org.eclipse.xtext.generator.IGeneratorContext
 
+import org.salgar.pekko.fsm.xtend.uml.engine.TemplateAutoInjector
+
 class TestActionGuardTemplate extends AbstractGenerator {
 	@Inject TestActionTemplate testActionTemplate
 	@Inject TestActionConfigTemplate testActionConfigTemplate;
@@ -13,6 +15,7 @@ class TestActionGuardTemplate extends AbstractGenerator {
 	@Inject TestGuardConfigTemplate testGuardConfigTemplate
 
 	override doGenerate(Resource input, IFileSystemAccess2 fsa, IGeneratorContext context) {
+	    TemplateAutoInjector.injectTemplates(this)
 	    for(sm : input.allContents.toIterable.filter(org.eclipse.uml2.uml.StateMachine).filter(s | s.isActive)) {
 	        testActionTemplate.generate(sm, fsa, context)
 	        testActionConfigTemplate.generate(sm, fsa, context)

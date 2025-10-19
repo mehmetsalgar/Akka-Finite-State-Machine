@@ -8,12 +8,15 @@ import org.eclipse.uml2.uml.Pseudostate
 import org.eclipse.uml2.uml.State
 import org.eclipse.uml2.uml.Transition
 
+import org.salgar.pekko.fsm.xtend.uml.engine.TemplateAutoInjector
+
 class TestActionConfigTemplate {
-    @Inject extension Naming
+    extension Naming = new Naming
     @Inject extension SubStateMachineHelper
     @Inject extension GlobalVariableHelper
 
     def generate(org.eclipse.uml2.uml.StateMachine it, IFileSystemAccess2 fsa, IGeneratorContext context) {
+        TemplateAutoInjector.injectTemplates(this)
         val content = generate(context)
         fsa.generateFile(packagePath+"/actions/config/"+name+"ActionConfiguration.java", content)
     }

@@ -7,12 +7,15 @@ import org.eclipse.xtext.generator.IGeneratorContext
 import org.eclipse.uml2.uml.Pseudostate
 import org.eclipse.uml2.uml.State
 
+import org.salgar.pekko.fsm.xtend.uml.engine.TemplateAutoInjector
+
 class TestGuardConfigTemplate {
-    @Inject extension Naming
+    extension Naming = new Naming
 	@Inject extension GlobalVariableHelper
     @Inject extension SubStateMachineHelper
 
     def generate(org.eclipse.uml2.uml.StateMachine it, IFileSystemAccess2 fsa, IGeneratorContext context) {
+        TemplateAutoInjector.injectTemplates(this)
         val content = generate(context)
         fsa.generateFile(packagePath+"/guards/config/"+name+"GuardConfiguration.java", content)
     }

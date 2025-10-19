@@ -6,10 +6,13 @@ import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.AbstractGenerator
 import org.eclipse.xtext.generator.IGeneratorContext
 
+import org.salgar.pekko.fsm.xtend.uml.engine.TemplateAutoInjector
+
 class ProtobufGenerator extends AbstractGenerator {
     @Inject ProtobufTemplate protobufTemplate
 
     override doGenerate(Resource input, IFileSystemAccess2 fsa, IGeneratorContext context) {
+        TemplateAutoInjector.injectTemplates(this)
         protobufTemplate.doGenerate(input, fsa)
     }
 }

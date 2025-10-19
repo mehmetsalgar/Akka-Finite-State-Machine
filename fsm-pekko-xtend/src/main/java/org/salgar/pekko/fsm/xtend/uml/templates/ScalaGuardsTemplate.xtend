@@ -7,12 +7,15 @@ import org.eclipse.xtext.generator.IGeneratorContext
 import org.eclipse.uml2.uml.Pseudostate
 import org.eclipse.uml2.uml.State
 
+import org.salgar.pekko.fsm.xtend.uml.engine.TemplateAutoInjector
+
 class ScalaGuardsTemplate {
-	@Inject extension Naming
+	extension Naming = new Naming
 	@Inject extension SubStateMachineHelper
 	@Inject extension GlobalVariableHelper
 
 	def doGenerate (org.eclipse.uml2.uml.StateMachine it, IFileSystemAccess2 fsa, IGeneratorContext context) {
+        TemplateAutoInjector.injectTemplates(this)
         val content = generate(context)
         fsa.generateFile(packagePath+"/guards/Spring"+name+"GuardsLocator.scala", content)
     }

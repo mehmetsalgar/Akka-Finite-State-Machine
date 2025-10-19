@@ -11,10 +11,13 @@ import org.eclipse.emf.common.util.EList
 import java.util.Map
 import java.util.HashMap
 
+import org.salgar.pekko.fsm.xtend.uml.engine.TemplateAutoInjector
+
 class PlanumlActivityTemplate {
 	@Inject AsciidocTemplate asciidocTemplate
 
 	def doGenerate(Resource input, IFileSystemAccess fsa) {
+	    TemplateAutoInjector.injectTemplates(this)
 	    asciidocTemplate.doGenerate(input,fsa)
 
 	    for(it : input.allContents.toIterable.filter(org.eclipse.uml2.uml.StateMachine)) {

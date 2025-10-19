@@ -5,8 +5,11 @@ import org.eclipse.uml2.uml.PrimitiveType
 import org.eclipse.uml2.uml.Type
 import org.salgar.pekko.fsm.xtend.uml.templates.Naming
 
+import org.salgar.pekko.fsm.xtend.uml.engine.TemplateAutoInjector
+
 class ConverterHelper {
-    @Inject extension Naming
+    extension Naming = new Naming
+
     def String calculateReturnType(org.eclipse.uml2.uml.Property property) {
         if(property.getUpper() === -1) {
             if(property.isOrdered) {

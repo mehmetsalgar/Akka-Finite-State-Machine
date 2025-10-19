@@ -6,11 +6,14 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 
 import org.eclipse.uml2.uml.State
 
+import org.salgar.pekko.fsm.xtend.uml.engine.TemplateAutoInjector
+
 class AsciidocTemplate {
 	@Inject AsciidocsUsecasesTemplate asciidocsUsecasesTemplate
 	@Inject AsciidocsTransitionTemplate asciidocsTransitionTemplate
 
 	def doGenerate(Resource input, IFileSystemAccess fsa) {
+	    TemplateAutoInjector.injectTemplates(this)
 	    for(sm : input.allContents.toIterable.filter(org.eclipse.uml2.uml.StateMachine)) {
             asciidocsUsecasesTemplate.generate(sm, fsa)
             asciidocsTransitionTemplate.generate(sm, fsa)

@@ -6,11 +6,14 @@ import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.AbstractGenerator
 import org.eclipse.xtext.generator.IGeneratorContext
 
+import org.salgar.pekko.fsm.xtend.uml.engine.TemplateAutoInjector
+
 class CommandGenerator extends AbstractGenerator {
     @Inject CommandTemplate commandTemplate
     @Inject CommandConstantTemplate commandConstantTemplate
 
     override doGenerate(Resource input, IFileSystemAccess2 fsa, IGeneratorContext context) {
+        TemplateAutoInjector.injectTemplates(this)
         commandTemplate.doGenerate(input, fsa)
         commandConstantTemplate.doGenerate(input, fsa)
     }

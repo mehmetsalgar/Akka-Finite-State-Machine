@@ -10,11 +10,14 @@ import org.eclipse.uml2.uml.Event
 
 import org.salgar.pekko.fsm.xtend.uml.templates.StateMachineHelper
 
+import org.salgar.pekko.fsm.xtend.uml.engine.TemplateAutoInjector
+
 class ElkPersistEventProcessorTemplate {
-	@Inject extension Naming
+	extension Naming = new Naming
 	@Inject extension StateMachineHelper
 
 	def doGenerate(Resource input, IFileSystemAccess fsa) {
+	    TemplateAutoInjector.injectTemplates(this)
         input
             .allContents
             .filter(org.eclipse.uml2.uml.StateMachine)

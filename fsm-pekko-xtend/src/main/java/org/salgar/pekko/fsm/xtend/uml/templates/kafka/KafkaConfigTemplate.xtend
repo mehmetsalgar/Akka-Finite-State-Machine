@@ -7,8 +7,7 @@ import com.google.common.base.CaseFormat
 import org.salgar.pekko.fsm.xtend.uml.templates.Naming
 
 class KafkaConfigTemplate {
-	@Inject extension Naming
-
+	extension Naming = new Naming
 
 	def doGenerate(Resource input, IFileSystemAccess fsa) {
 	    val Iterable<org.eclipse.uml2.uml.StateMachine> sms =
