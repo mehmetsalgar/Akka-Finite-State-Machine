@@ -1,0 +1,24 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: org.salgar.akka.fsm.fsm-akka-eclipse-dependencies
+Bundle-SymbolicName: fsm-pekko-eclipse-dependencies; singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Require-Bundle: org.eclipse.xtext;bundle-version="[2.20.0,2.30.0)";visibility:=reexport,
+ org.eclipse.xtext.xbase;bundle-version="[2.20,2.30.0)";resolution:=optional;visibility:=reexport,
+ org.eclipse.xtext.generator;bundle-version="[2.20,2.30.0)";resolution:=optional,
+ org.apache.log4j;bundle-version="1.2.15";visibility:=reexport,
+ org.apache.commons.logging;bundle-version="1.0.4";resolution:=optional;visibility:=reexport,
+ org.eclipse.emf.codegen.ecore;resolution:=optional,
+ org.eclipse.emf.mwe.utils;resolution:=optional,
+ org.eclipse.emf.mwe2.launch;resolution:=optional,
+ org.eclipse.uml2.common;bundle-version="2.5.0.v20200302-1312",
+ org.eclipse.uml2.uml;bundle-version="5.5.0.v20200302-1312",
+ org.eclipse.xtext.util,
+ org.eclipse.emf.ecore,
+ org.eclipse.emf.common,
+ org.antlr.runtime,
+ org.eclipse.xtext.common.types,
+ org.eclipse.uml2.codegen.ecore,
+ org.eclipse.xtend.typesystem.uml2,
+ org.eclipse.core.runtime
+Bundle-Vendor: salgar

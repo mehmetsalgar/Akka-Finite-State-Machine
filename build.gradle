@@ -422,7 +422,7 @@ project(':fsm-pekko-4eyes-model') {
         mwe2 project(':fsm-pekko-xtext-reader')
         mwe2 project(':fsm-pekko-xtend')
         mwe2 project(':fsm-pekko-4eyes-uml-model')
-        mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
+        mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:2.0.0-SNAPSHOT:repackaged'
     }
 
     tasks.register('generateXtextLanguage', JavaExec) {
@@ -581,7 +581,7 @@ project(':fsm-pekko-4eyes-statemachine') {
         mwe2 project(':fsm-pekko-xtext-reader')
         mwe2 project(':fsm-pekko-xtend')
         mwe2 project(':fsm-pekko-4eyes-uml-model')
-        mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
+        mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:2.0.0-SNAPSHOT:repackaged'
     }
 
     tasks.register('generateXtextLanguage', JavaExec) {
@@ -701,7 +701,7 @@ project(':fsm-pekko-4eyes-protobuf') {
         mwe2 project(':fsm-pekko-xtext-reader')
         mwe2 project(':fsm-pekko-xtend')
         mwe2 project(':fsm-pekko-4eyes-uml-model')
-        mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
+        mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:2.0.0-SNAPSHOT:repackaged'
     }
 
     tasks.register('generateXtextLanguage', JavaExec) {
@@ -783,7 +783,7 @@ project(':fsm-pekko-4eyes-converter') {
         mwe2 project(':fsm-pekko-xtext-reader')
         mwe2 project(':fsm-pekko-xtend')
         mwe2 project(':fsm-pekko-4eyes-uml-model')
-        mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
+        mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:2.0.0-SNAPSHOT:repackaged'
     }
 
     tasks.register('generateXtextLanguage', JavaExec) {
@@ -865,7 +865,7 @@ project(':fsm-pekko-4eyes-command') {
         mwe2 project(':fsm-pekko-xtext-reader')
         mwe2 project(':fsm-pekko-xtend')
         mwe2 project(':fsm-pekko-4eyes-uml-model')
-        mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
+        mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:2.0.0-SNAPSHOT:repackaged'
     }
 
     tasks.register('generateXtextLanguage', JavaExec) {
@@ -991,7 +991,7 @@ project(':fsm-pekko-4eyes-kafka') {
         mwe2 project(':fsm-pekko-xtext-reader')
         mwe2 project(':fsm-pekko-xtend')
         mwe2 project(':fsm-pekko-4eyes-uml-model')
-        mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
+        mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:2.0.0-SNAPSHOT:repackaged'
     }
 
     tasks.register('generateXtextLanguage', JavaExec) {
@@ -1097,7 +1097,7 @@ project(':fsm-pekko-4eyes-elasticsearch-statemachine-adapter') {
         mwe2 project(':fsm-pekko-xtext-reader')
         mwe2 project(':fsm-pekko-xtend')
         mwe2 project(':fsm-pekko-4eyes-uml-model')
-        mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
+        mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:2.0.0-SNAPSHOT:repackaged'
     }
 
     tasks.register('generateXtextLanguage', JavaExec) {
@@ -1170,7 +1170,7 @@ project(':fsm-pekko-4eyes-projections-statemachine-adapter') {
         mwe2 project(':fsm-pekko-xtext-reader')
         mwe2 project(':fsm-pekko-xtend')
         mwe2 project(':fsm-pekko-4eyes-uml-model')
-        mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
+        mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:2.0.0-SNAPSHOT:repackaged'
     }
 
     tasks.register('generateXtextLanguage', JavaExec) {
@@ -1393,7 +1393,7 @@ project(':fsm-pekko-asciidoc') {
         mwe2 project(':fsm-pekko-xtext-reader')
         mwe2 project(':fsm-pekko-xtend')
         mwe2 project(':fsm-pekko-4eyes-uml-model')
-        mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
+        mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:2.0.0-SNAPSHOT:repackaged'
         asciidoctorGems 'rubygems:rouge:4.5.1'
     }
 
