@@ -1,6 +1,5 @@
 package org.salgar.pekko.fsm.xtend.uml.templates
 
-import javax.inject.Inject
 import org.eclipse.xtext.generator.IFileSystemAccess
 
 class SnapshotTemplate {

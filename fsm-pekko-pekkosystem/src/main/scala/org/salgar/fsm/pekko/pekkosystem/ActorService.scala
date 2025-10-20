@@ -58,13 +58,13 @@ class ActorService (
   private var _scheduler : Scheduler = null
   private var _actorSystem: ActorSystem[NotUsed] = null
 
-  def sharding() = _sharding
+  def sharding(): ClusterSharding = _sharding
 
-  def ec() = _ec
+  def ec(): ExecutionContext = _ec
 
-  def scheduler() = _scheduler
+  def scheduler(): Scheduler = _scheduler
 
-  def actorSystem() = _actorSystem
+  def actorSystem(): ActorSystem[NotUsed] = _actorSystem
 
   @PostConstruct
   def init(): Unit = {
@@ -75,17 +75,17 @@ class ActorService (
       .withSetup(BootstrapSetup(additionalService.configureFromFiles()))
     _actorSystem = ActorSystem(mainBehavior, pekkoApplicationProperty.getApplicationName(), actorSystemSetup)
 
-    additionalService.config(actorSystem)
+    additionalService.config(actorSystem())
 
-    _sharding = ClusterSharding(actorSystem)
-    _ec = actorSystem.executionContext
-    _scheduler = actorSystem.scheduler
+    _sharding = ClusterSharding(actorSystem())
+    _ec = actorSystem().executionContext
+    _scheduler = actorSystem().scheduler
 
     log.info("Initialization of the Actor System complete!")
   }
 
   @PreDestroy
-  def destroy() {
+  def destroy(): Unit = {
     _actorSystem.terminate()
   }
 }

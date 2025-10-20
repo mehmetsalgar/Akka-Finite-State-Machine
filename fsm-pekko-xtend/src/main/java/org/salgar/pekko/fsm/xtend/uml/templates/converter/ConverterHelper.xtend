@@ -1,11 +1,9 @@
 package org.salgar.pekko.fsm.xtend.uml.templates.converter
 
-import javax.inject.Inject
+
 import org.eclipse.uml2.uml.PrimitiveType
 import org.eclipse.uml2.uml.Type
 import org.salgar.pekko.fsm.xtend.uml.templates.Naming
-
-import org.salgar.pekko.fsm.xtend.uml.engine.TemplateAutoInjector
 
 class ConverterHelper {
     extension Naming = new Naming

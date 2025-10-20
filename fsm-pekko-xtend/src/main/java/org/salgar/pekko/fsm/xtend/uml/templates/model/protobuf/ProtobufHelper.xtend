@@ -10,7 +10,6 @@ import org.eclipse.xtext.util.Tuples
 import org.eclipse.xtext.util.Pair
 
 import org.salgar.pekko.fsm.xtend.uml.templates.Naming
-import javax.inject.Inject
 
 class ProtobufHelper {
     extension Naming = new Naming
