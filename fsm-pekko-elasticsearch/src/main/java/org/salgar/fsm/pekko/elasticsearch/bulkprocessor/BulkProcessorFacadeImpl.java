@@ -1,22 +1,22 @@
 package org.salgar.fsm.pekko.elasticsearch.bulkprocessor;
 
+import co.elastic.clients.elasticsearch._helpers.bulk.BulkIngester;
+import co.elastic.clients.elasticsearch._helpers.bulk.BulkListener;
+import co.elastic.clients.elasticsearch._types.RequestBase;
+import co.elastic.clients.elasticsearch.core.BulkRequest;
+import co.elastic.clients.elasticsearch.core.BulkResponse;
+import co.elastic.clients.elasticsearch.core.bulk.BulkOperation;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.action.DocWriteRequest;
-import org.elasticsearch.action.bulk.BackoffPolicy;
 import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkProcessor;
-import org.elasticsearch.action.bulk.BulkRequest;
-import org.elasticsearch.action.bulk.BulkResponse;
-import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.common.unit.ByteSizeUnit;
-import org.elasticsearch.common.unit.ByteSizeValue;
-import org.elasticsearch.core.TimeValue;
 import org.elasticsearch.index.VersionType;
 import org.salgar.fsm.pekko.elasticsearch.OffsetFacade;
 import org.salgar.fsm.pekko.elasticsearch.OffsetState;
@@ -26,8 +26,6 @@ import org.salgar.fsm.pekko.elasticsearch.config.ElasticsearchProperties;
 import org.salgar.fsm.pekko.elasticsearch.model.ElasticsearchOffset;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -59,7 +57,7 @@ public class BulkProcessorFacadeImpl implements BulkProcessorFacade {
     private final ExecutorService bulkExecutorService;
     private final OffsetFacade offsetFacade;
 
-    private final ConcurrentMap<DocWriteRequest<?>, SinkRecordAndOffset> requestToSinkRecord = new ConcurrentHashMap<>();
+    private final ConcurrentMap<RequestBase, SinkRecordAndOffset> requestToSinkRecord = new ConcurrentHashMap<>();
     private final ConcurrentMap<Long, List<SinkRecordAndOffset>> inFlightRequests =  new ConcurrentHashMap<>();
     //private final Runnable afterBulkCallback = () -> log.info("handle offsets");
     private final Lock inFlightRequestLock = new ReentrantLock();
@@ -78,7 +76,7 @@ public class BulkProcessorFacadeImpl implements BulkProcessorFacade {
             )
     );
 
-    private BulkProcessor bulkProcessor;
+    private BulkIngester<RetryContext<?>> ingester;
 
     @Override
     public void index(String offset,
@@ -86,7 +84,9 @@ public class BulkProcessorFacadeImpl implements BulkProcessorFacade {
                       Long sequenceNr,
                       String persistenceKey,
                       String persistenceName,
-                      IndexRequest indexRequest) {
+                      String id,
+                      String index,
+                      String document) {
         requestToSinkRecord.put(
                 indexRequest,
                 new SinkRecordAndOffset(
@@ -97,20 +97,55 @@ public class BulkProcessorFacadeImpl implements BulkProcessorFacade {
                         persistenceName,
                         new OffsetStateImpl(offset)));
         numBufferedRecords.incrementAndGet();
-        this.bulkProcessor.add(indexRequest);
-    }
+        this.ingester.add(
+                BulkOperation.of(
+                        b ->
+                                b.index(
+                                        i -> i
+                                                .index(index)
+                                                .id(id)
+                                                .document(document)
+
+                                )
+                )
+        );
+
+
 
     @PostConstruct
     private void preparebulkProcessor() {
-        this.bulkProcessor = BulkProcessor
-                .builder(buildConsumer(), buildListener(), "fsm-pekko-bulkprocessor")
-                .setBulkActions(elasticsearchProperties.getBatchSize())
-                .setBulkSize(new ByteSizeValue(elasticsearchProperties.getBulkSize(), ByteSizeUnit.KB))
-                .setConcurrentRequests(elasticsearchProperties.getMaxInFlightRequests() - 1) // 0 = no concurrent requests
-                .setFlushInterval(TimeValue.timeValueMillis(elasticsearchProperties.getLingerMs()))
-                // (see https://github.com/elastic/elasticsearch/issues/71159)
-                .setBackoffPolicy(BackoffPolicy.noBackoff())
-                .build();
+        this.ingester = BulkIngester.of(b -> b
+                .client(client)
+                .maxOperations(1000) // batch size
+                .maxSize(1024 * 1024L) // 1 MB
+                .flushInterval(50, TimeUnit.SECONDS)
+                .maxConcurrentRequests(1)
+                .listener(new BulkListener<ElasticsearchBulkService.RetryContext<T>>() {
+                    @Override
+                    public void beforeBulk(long executionId, BulkRequest request, List<ElasticsearchBulkService.RetryContext<T>> retryContexts) {
+                        log.debug("Executing bulk of {} requests", request.operations().size());
+                    }
+
+                    @Override
+                    public void afterBulk(long executionId, BulkRequest request, List<ElasticsearchBulkService.RetryContext<T>> retryContexts, BulkResponse response) {
+                        if (response.errors()) {
+                            for (int i = 0; i < response.items().size(); i++) {
+                                var item = response.items().get(i);
+                                if (item.error() != null) {
+                                    scheduleRetry(retryContexts.get(i));
+                                }
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void afterBulk(long executionId, BulkRequest request, List<ElasticsearchBulkService.RetryContext<T>> retryContexts, Throwable failure) {
+                        log.error("Bulk request failed", failure);
+                        // retry all items
+                        retryContexts.forEach(ElasticsearchBulkService.this::scheduleRetry);
+                    }
+                })
+        );
     }
 
     private BulkProcessor.Listener buildListener() {
@@ -468,6 +503,21 @@ public class BulkProcessorFacadeImpl implements BulkProcessorFacade {
             );
         } finally {
             closeResources();
+        }
+    }
+
+    /** Context to track retries */
+    private static class RetryContext<T> {
+        final String index;
+        final String id;
+        final T doc;
+        final int attempts;
+
+        RetryContext(String index, String id, T doc, int attempts) {
+            this.index = index;
+            this.id = id;
+            this.doc = doc;
+            this.attempts = attempts;
         }
     }
 }

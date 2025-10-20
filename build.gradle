@@ -11,7 +11,7 @@ buildscript {
     }
 
     dependencies {
-        classpath "org.springframework.boot:spring-boot-gradle-plugin:2.7.18"
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:3.5.6"
         classpath "io.freefair.gradle:lombok-plugin:8.14.1"
         classpath "org.xtext.builder:org.xtext.builder.gradle.plugin:4.0.0"
         classpath "com.diffplug.spotless:spotless-plugin-gradle:5.14.0"
@@ -28,7 +28,7 @@ plugins {
     id 'java'
     id 'java-library'
     id 'idea'
-    id 'org.springframework.boot' version '2.7.18'
+    id 'org.springframework.boot' version '3.5.6'
     id 'com.google.cloud.tools.jib' version '3.2.1'
 }
 
@@ -70,8 +70,8 @@ allprojects {
         applyMavenExclusions = false
         imports {
             mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
-            mavenBom 'org.springframework.cloud:spring-cloud-dependencies:2021.0.9'
-            mavenBom 'org.springframework.data:spring-data-bom:2021.2.18'
+            mavenBom 'org.springframework.cloud:spring-cloud-dependencies:2025.0.0'
+            mavenBom 'org.springframework.data:spring-data-bom:2025.0.5'
             mavenBom "org.eclipse.xtext:xtext-dev-bom:${versions.xtext}"
         }
     }
@@ -1384,8 +1384,8 @@ project(':fsm-pekko-4eyes-application') {
         implementation "org.apache.pekko:pekko-persistence-typed_${versions.scala.major}:${versions.pekko}"
         implementation "org.apache.pekko:pekko-cluster-sharding-typed_${versions.scala.major}:${versions.pekko}"
         testImplementation "org.apache.pekko:pekko-serialization-jackson_${versions.scala.major}:${versions.pekko}"
-        testImplementation "org.codehaus.groovy:groovy-all:3.0.9"
-        testImplementation platform("org.spockframework:spock-bom:2.0-groovy-3.0")
+        testImplementation "org.codehaus.groovy:groovy-all:3.0.25"
+        testImplementation platform("org.spockframework:spock-bom:2.3-groovy-3.0")
         testImplementation "org.spockframework:spock-core"
         testImplementation "org.spockframework:spock-spring"
         testImplementation "org.junit.platform:junit-platform-runner:1.8.2"

@@ -27,7 +27,7 @@ class TopicConfigTemplate {
         import org.springframework.boot.autoconfigure.kafka.KafkaProperties
         import org.springframework.stereotype.Component
 
-        import javax.annotation.PostConstruct
+        import jakarta.annotation.PostConstruct
 
         object TopicConfig {
           final case class Topic[K, V](name: String, key: Serde[K], value: Serde[V]) {

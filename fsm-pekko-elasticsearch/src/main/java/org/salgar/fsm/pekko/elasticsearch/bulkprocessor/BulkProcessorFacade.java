@@ -1,6 +1,5 @@
 package org.salgar.fsm.pekko.elasticsearch.bulkprocessor;
 
-import org.elasticsearch.action.index.IndexRequest;
 
 public interface BulkProcessorFacade {
     void index(String offset,
@@ -8,5 +7,7 @@ public interface BulkProcessorFacade {
                Long sequenceId,
                String persistenceKey,
                String persistenceName,
-               IndexRequest indexRequest);
+               String id,
+               String index,
+               String document);
 }

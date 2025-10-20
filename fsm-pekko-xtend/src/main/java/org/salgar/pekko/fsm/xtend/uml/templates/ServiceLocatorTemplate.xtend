@@ -12,7 +12,7 @@ class ServiceLocatorTemplate {
 
     def generate (org.eclipse.uml2.uml.StateMachine it) '''
         package «packageName».config
-        import javax.annotation.PostConstruct
+        import jakarta.annotation.PostConstruct
         import org.salgar.pekko.fsm.api.UseCaseKeyStrategy
         import org.springframework.beans.factory.annotation.Autowired
         import org.springframework.stereotype.Component

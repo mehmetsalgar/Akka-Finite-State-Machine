@@ -1,11 +1,11 @@
 package org.salgar.fsm.pekko.converter.service;
 
 import com.google.protobuf.Message;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.salgar.fsm.pekko.converter.Protobuf2PojoConverter;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

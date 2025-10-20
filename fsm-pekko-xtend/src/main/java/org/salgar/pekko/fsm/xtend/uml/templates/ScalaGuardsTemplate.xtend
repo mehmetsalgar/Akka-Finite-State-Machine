@@ -23,7 +23,7 @@ class ScalaGuardsTemplate {
     def generate (org.eclipse.uml2.uml.StateMachine it, IGeneratorContext context) '''
         package «packageName».guards
 
-        import javax.annotation.PostConstruct
+        import jakarta.annotation.PostConstruct
         import «packageName».«name».«name»Event
         import org.salgar.pekko.fsm.api.guard.Guard
         import org.springframework.beans.factory.annotation.Autowired

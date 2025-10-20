@@ -1,9 +1,8 @@
 package org.salgar.fsm.pekko.elasticsearch;
 
+import co.elastic.clients.elasticsearch.core.IndexRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.client.Requests;
 import org.salgar.fsm.pekko.elasticsearch.bulkprocessor.BulkProcessorFacade;
 import org.springframework.data.elasticsearch.core.convert.ElasticsearchConverter;
 import org.springframework.stereotype.Component;
@@ -69,16 +68,22 @@ public class ElasticsearchRepositoryImpl implements ElasticsearchRepository {
             Map<String, Object> indexPayload = new HashMap<>(payload);
             indexPayload.put("state", persistEvent);
 
-            IndexRequest indexRequest = new IndexRequest(index)
-                    .id(id)
-                    .source(elasticsearchConverter.mapObject(indexPayload).toJson(), Requests.INDEX_CONTENT_TYPE);
+            IndexRequest<?> indexRequest = IndexRequest.of(
+                    builder -> builder
+                            .id(id)
+                            .index(index)
+                            .document(elasticsearchConverter.mapObject(indexPayload).toJson())
+
+            );
             this.bulkProcessorFacade.index(
                     offset,
                     persistenceId,
                     sequenceId,
                     projectionName,
                     projectionKey,
-                    indexRequest);
+                    id,
+                    index,
+                    elasticsearchConverter.mapObject(indexPayload).toJson());
         } catch (Throwable t) {
             log.error(t.getMessage(), t);
         }
