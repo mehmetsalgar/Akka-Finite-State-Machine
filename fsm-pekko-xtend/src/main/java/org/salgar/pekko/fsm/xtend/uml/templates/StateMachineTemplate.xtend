@@ -18,8 +18,10 @@ import java.util.List
 import org.salgar.pekko.fsm.xtend.uml.templates.facade.StateMachineFacadeTemplate
 import org.salgar.pekko.fsm.xtend.uml.templates.facade.SlaveStateMachineFacadeTemplate
 
+import org.salgar.pekko.fsm.xtend.uml.engine.TemplateAutoInjector
+
 class StateMachineTemplate extends AbstractGenerator {
-	@Inject extension Naming
+	extension Naming = new Naming
 	@Inject extension GlobalVariableHelper
 	@Inject extension StateMachineHelper
 	@Inject extension SubStateMachineHelper
@@ -34,6 +36,7 @@ class StateMachineTemplate extends AbstractGenerator {
 	@Inject SlaveStateMachineFacadeTemplate slaveStateMachineFacadeTemplate
 
 	override doGenerate(Resource input, IFileSystemAccess2 fsa, IGeneratorContext context) {
+	    TemplateAutoInjector.injectTemplates(this)
 		input.allContents.filter(org.eclipse.uml2.uml.StateMachine).filter(s | s.isActive).forEach[
 			val content = generate(context)
 			fsa.generateFile(packagePath+"/"+name+".scala", content)

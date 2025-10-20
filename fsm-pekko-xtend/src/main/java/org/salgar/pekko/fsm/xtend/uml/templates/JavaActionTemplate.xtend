@@ -9,11 +9,14 @@ import org.eclipse.uml2.uml.Pseudostate
 import org.eclipse.uml2.uml.State
 import org.eclipse.uml2.uml.Transition
 
+import org.salgar.pekko.fsm.xtend.uml.engine.TemplateAutoInjector
+
 class JavaActionTemplate {
-    @Inject extension Naming
+    extension Naming = new Naming
     @Inject extension GlobalVariableHelper
 
     def generate(org.eclipse.uml2.uml.StateMachine it, IFileSystemAccess2 fsa, IGeneratorContext context) {
+        TemplateAutoInjector.injectTemplates(this)
         generate(name, it, fsa, context)
     }
 

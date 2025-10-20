@@ -1,12 +1,11 @@
 package org.salgar.pekko.fsm.xtend.uml.templates
 
-import javax.inject.Inject
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.generator.IGenerator
 
 class JavaBeanTemplate implements IGenerator {
-	@Inject extension Naming
+	extension Naming = new Naming
 
 	override doGenerate(Resource input, IFileSystemAccess fsa) {
 		input.allContents.filter(org.eclipse.uml2.uml.StateMachine).forEach[

@@ -6,11 +6,14 @@ import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.AbstractGenerator
 import org.eclipse.xtext.generator.IGeneratorContext
 
+import org.salgar.pekko.fsm.xtend.uml.engine.TemplateAutoInjector
+
 class JavaKafkaGenerator extends AbstractGenerator {
     @Inject KafkaConfigTemplate kafkaConfigTemplate
     @Inject TopicPropertiesTemplate topicPropertiesTemplate
 
     override doGenerate(Resource input, IFileSystemAccess2 fsa, IGeneratorContext context) {
+        TemplateAutoInjector.injectTemplates(this)
         kafkaConfigTemplate.doGenerate(input, fsa)
         topicPropertiesTemplate.doGenerate(input, fsa)
     }

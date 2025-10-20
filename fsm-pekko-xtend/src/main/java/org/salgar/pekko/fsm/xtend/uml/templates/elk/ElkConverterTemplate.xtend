@@ -1,14 +1,16 @@
 package org.salgar.pekko.fsm.xtend.uml.templates.elk
 
-import javax.inject.Inject
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.salgar.pekko.fsm.xtend.uml.templates.Naming
 
+import org.salgar.pekko.fsm.xtend.uml.engine.TemplateAutoInjector
+
 class ElkConverterTemplate {
-	@Inject extension Naming
+	extension Naming = new Naming
 
 	def doGenerate(Resource input, IFileSystemAccess fsa) {
+	    TemplateAutoInjector.injectTemplates(this)
         input
             .allContents
             .filter(org.eclipse.uml2.uml.Class).filter[i|!(i instanceof org.eclipse.uml2.uml.StateMachine)]

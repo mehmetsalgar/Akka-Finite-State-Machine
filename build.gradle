@@ -12,7 +12,7 @@ buildscript {
 
     dependencies {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:2.7.18"
-        classpath "io.freefair.gradle:lombok-plugin:6.4.3"
+        classpath "io.freefair.gradle:lombok-plugin:8.14.1"
         classpath "org.xtext.builder:org.xtext.builder.gradle.plugin:4.0.0"
         classpath "com.diffplug.spotless:spotless-plugin-gradle:5.14.0"
         classpath 'org.asciidoctor:asciidoctor-gradle-jvm:4.0.3'
@@ -41,7 +41,7 @@ allprojects {
     def scala3Version = System.getProperty('scala.version', '3.3.0')
     def scala3MajorVersion = '3'
     ext.versions = [
-            aspectjVersion          : "1.9.9.1",
+            aspectjVersion          : "1.9.24",
             cassandraPlugin         : "1.0.5",
             confluent               : "6.1.0",
             lombok                  : "1.18.24",
@@ -63,10 +63,11 @@ allprojects {
             scala                   : [major: scalaMajorVersion, current: scalaVersion],
             scala3                  : [major: scala3MajorVersion, current: scala3Version],
             scalikeJdbcVersion      : "3.5.0",
-            xtext                   : "2.35.0"
+            xtext                   : "2.40.0"
     ]
 
     dependencyManagement {
+        applyMavenExclusions = false
         imports {
             mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
             mavenBom 'org.springframework.cloud:spring-cloud-dependencies:2021.0.9'
@@ -88,8 +89,8 @@ allprojects {
         mavenCentral()
     }
 
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 
     idea {
         module {
@@ -106,6 +107,12 @@ allprojects {
     }
     bootJar {
         enabled = false
+    }
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(17)
+        }
     }
 }
 
@@ -334,6 +341,12 @@ project(':fsm-pekko-base') {
     apply plugin: 'scala'
     apply plugin: 'java-library'
 
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(17)
+        }
+    }
+
     dependencies {
         implementation "org.scala-lang:scala-library:${versions.scala.current}"
         api project(':fsm-pekko-api')
@@ -363,9 +376,11 @@ project(':fsm-pekko-xtend') {
     sourceSets.main.java.srcDirs = ['src/main/java', 'build/xtend/main']
 
     dependencies {
-        implementation 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
+        implementation 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:2.0.0-SNAPSHOT:repackaged'
         implementation "org.eclipse.xtend:org.eclipse.xtend.lib:${versions.xtext}"
         implementation "org.eclipse.xtext:org.eclipse.xtext:${versions.xtext}"
+        implementation 'javax.inject:javax.inject:1'
+        implementation 'org.reflections:reflections:0.10.2'
     }
 }
 
@@ -421,7 +436,7 @@ project(':fsm-pekko-4eyes-model') {
         mwe2 project(':fsm-pekko-xtext-reader')
         mwe2 project(':fsm-pekko-xtend')
         mwe2 project(':fsm-pekko-4eyes-uml-model')
-        mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
+        mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:2.0.0-SNAPSHOT:repackaged'
     }
 
     tasks.register('generateXtextLanguage', JavaExec) {
@@ -440,11 +455,18 @@ project(':fsm-pekko-4eyes-model') {
     clean.dependsOn(cleanGenerateXtextLanguage)
     spotlessJava.dependsOn(generateXtextLanguage)
     compileJava.dependsOn(spotlessApply)
+    compileJava.dependsOn(generateXtextLanguage)
 }
 
 project(':fsm-pekko-pekkosystem') {
     apply plugin: 'java-library'
     apply plugin: 'scala'
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(17)
+        }
+    }
 
     dependencies {
         api project(':fsm-pekko-base')
@@ -470,6 +492,14 @@ project(':fsm-pekko-4eyes-statemachine') {
     apply plugin: 'org.xtext.xtend'
     apply plugin: 'org.xtext.builder'
     apply plugin: 'com.diffplug.spotless'
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(17)
+        }
+    }
+
+    def weaveOutputDir = new File(layout.buildDirectory.get().asFile, "weaved-classes/main")
 
     sourceSets {
         main {
@@ -515,20 +545,33 @@ project(':fsm-pekko-4eyes-statemachine') {
     compileScala {
         dependsOn configurations.ajc.getTaskDependencyFromProjectDependency(true, "compileScala")
         options.compilerArgs << '-parameters'
+    }
+
+    tasks.register('weaveAspectJ') {
+        dependsOn compileScala
+
+        inputs.files(sourceSets.main.output.classesDirs)
+        outputs.dir(weaveOutputDir)
 
         doLast {
-            ant.taskdef (
-                    resource:"org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties",
+            // Directory to weave into (use first compiled output directory)
+            //def outputDir = sourceSets.main.output.classesDirs.files.first()
+            weaveOutputDir.mkdirs()
+
+            ant.taskdef(
+                    resource: "org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties",
                     classpath: configurations.ajc.asPath
             )
+
             ant.iajc(
-                    source: "1.8",
-                    target: "1.8",
+                    source: "17",
+                    target: "17",
                     showWeaveInfo: "true",
-                    destDir: sourceSets.main.scala.outputDir.absolutePath,
+                    destDir: weaveOutputDir,
                     maxmem: "512m",
                     fork: "true",
-                    inpath: sourceSets.main.scala.outputDir.absolutePath,
+                    // For inpath, include ALL class dirs
+                    inpath: sourceSets.main.output.classesDirs.asPath,
                     aspectpath: configurations.aspects.asPath,
                     classpath: configurations.aspectImplementation.asPath
             )
@@ -580,7 +623,7 @@ project(':fsm-pekko-4eyes-statemachine') {
         mwe2 project(':fsm-pekko-xtext-reader')
         mwe2 project(':fsm-pekko-xtend')
         mwe2 project(':fsm-pekko-4eyes-uml-model')
-        mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
+        mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:2.0.0-SNAPSHOT:repackaged'
     }
 
     tasks.register('generateXtextLanguage', JavaExec) {
@@ -599,11 +642,31 @@ project(':fsm-pekko-4eyes-statemachine') {
     spotlessScala.dependsOn(generateXtextLanguage)
     compileJava.dependsOn(spotlessApply)
     compileScala.dependsOn(spotlessApply)
+    tasks.named('jar') {
+        dependsOn tasks.named('weaveAspectJ')
+
+        // Include only woven classes
+        from(weaveOutputDir)
+
+        // Exclude default classesDirs
+        exclude { FileTreeElement element ->
+            sourceSets.main.output.classesDirs.any { dir ->
+                element.file.toPath().startsWith(dir.toPath())
+            }
+        }
+    }
+
 }
 
 project(':fsm-pekko-statemachine-facade') {
     apply plugin: 'java-library'
     apply plugin: 'scala'
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(17)
+        }
+    }
 
     dependencies {
         api project(':fsm-pekko-pekkosystem')
@@ -613,6 +676,12 @@ project(':fsm-pekko-statemachine-facade') {
 project(':fsm-pekko-4eyes-event-adapter') {
     apply plugin: 'java-library'
     apply plugin: 'scala'
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(17)
+        }
+    }
 
     dependencies {
         api project(':fsm-pekko-4eyes-statemachine'),
@@ -660,10 +729,10 @@ project(':fsm-pekko-4eyes-protobuf') {
     sourceSets {
         main {
             java {
-                srcDirs = ['src/main/java', 'build/generated-sources/main/java']
+                srcDirs = ['src/main/java', 'src/generated/main/java']
             }
             proto {
-                srcDir 'build/generated-sources/main/proto'
+                srcDir 'src/generated/main/proto'
             }
         }
     }
@@ -674,7 +743,7 @@ project(':fsm-pekko-4eyes-protobuf') {
     }
 
     protobuf {
-        generatedFilesBaseDir = "$projectDir/build/generated-sources"
+        generatedFilesBaseDir = "$projectDir/src/generated"
         protoc {
             // You still need protoc like in the non-Android case
             artifact = 'com.google.protobuf:protoc:3.19.4'
@@ -700,16 +769,15 @@ project(':fsm-pekko-4eyes-protobuf') {
         mwe2 project(':fsm-pekko-xtext-reader')
         mwe2 project(':fsm-pekko-xtend')
         mwe2 project(':fsm-pekko-4eyes-uml-model')
-        mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
+        mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:2.0.0-SNAPSHOT:repackaged'
     }
 
     tasks.register('generateXtextLanguage', JavaExec) {
-        def generatedFileDir = file("build/generated-sources")
+        def generatedFileDir = file("src/generated")
         outputs.dir generatedFileDir
         mainClass = 'org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher'
         classpath = configurations.mwe2
         inputs.file('src/main/mwe2/GenerateWorkflow.mwe2').withPathSensitivity(PathSensitivity.RELATIVE)
-        outputs.dir('build/generated-sources')
         args += "src/main/mwe2/GenerateWorkflow.mwe2"
         args += "-p"
         args += "rootPath=/${projectDir}/.."
@@ -717,6 +785,10 @@ project(':fsm-pekko-4eyes-protobuf') {
 
     generateXtext.dependsOn(generateXtextLanguage)
     clean.dependsOn(cleanGenerateXtextLanguage)
+    tasks.named('processResources') {
+        dependsOn generateXtextLanguage, generateProto
+        inputs.dir file('src/generated/main/proto')
+    }
 }
 
 project(':fsm-pekko-converter') {
@@ -782,7 +854,7 @@ project(':fsm-pekko-4eyes-converter') {
         mwe2 project(':fsm-pekko-xtext-reader')
         mwe2 project(':fsm-pekko-xtend')
         mwe2 project(':fsm-pekko-4eyes-uml-model')
-        mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
+        mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:2.0.0-SNAPSHOT:repackaged'
     }
 
     tasks.register('generateXtextLanguage', JavaExec) {
@@ -864,7 +936,7 @@ project(':fsm-pekko-4eyes-command') {
         mwe2 project(':fsm-pekko-xtext-reader')
         mwe2 project(':fsm-pekko-xtend')
         mwe2 project(':fsm-pekko-4eyes-uml-model')
-        mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
+        mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:2.0.0-SNAPSHOT:repackaged'
     }
 
     tasks.register('generateXtextLanguage', JavaExec) {
@@ -890,6 +962,12 @@ project(':fsm-pekko-kafka') {
     apply plugin: 'scala'
     apply plugin: 'io.freefair.lombok'
 
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(17)
+        }
+    }
+
     dependencies {
         implementation 'org.springframework.boot:spring-boot-autoconfigure'
         api "io.confluent:kafka-protobuf-serializer:${versions.confluent}"
@@ -906,6 +984,12 @@ project(':fsm-pekko-4eyes-kafka') {
     apply plugin: 'org.xtext.builder'
     apply plugin: 'io.freefair.lombok'
     apply plugin: 'com.diffplug.spotless'
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(17)
+        }
+    }
 
     sourceSets {
         main {
@@ -990,7 +1074,7 @@ project(':fsm-pekko-4eyes-kafka') {
         mwe2 project(':fsm-pekko-xtext-reader')
         mwe2 project(':fsm-pekko-xtend')
         mwe2 project(':fsm-pekko-4eyes-uml-model')
-        mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
+        mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:2.0.0-SNAPSHOT:repackaged'
     }
 
     tasks.register('generateXtextLanguage', JavaExec) {
@@ -1013,7 +1097,9 @@ project(':fsm-pekko-4eyes-kafka') {
     generateXtext.dependsOn(generateXtextLanguage)
     clean.dependsOn(cleanGenerateXtextLanguage)
     spotlessScala.dependsOn(generateXtextLanguage)
-    compileJava.dependsOn(spotlessApply)
+    spotlessJava.dependsOn(generateXtextLanguage)
+    compileJava.dependsOn(spotlessJava)
+    compileScala.dependsOn(spotlessScala)
     compileScala.dependsOn(compileJava)
 }
 
@@ -1047,6 +1133,12 @@ project(':fsm-pekko-4eyes-elasticsearch-statemachine-adapter') {
     apply plugin: 'org.xtext.builder'
     apply plugin: 'io.freefair.lombok'
     apply plugin: 'com.diffplug.spotless'
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(17)
+        }
+    }
 
     sourceSets {
         main {
@@ -1096,7 +1188,7 @@ project(':fsm-pekko-4eyes-elasticsearch-statemachine-adapter') {
         mwe2 project(':fsm-pekko-xtext-reader')
         mwe2 project(':fsm-pekko-xtend')
         mwe2 project(':fsm-pekko-4eyes-uml-model')
-        mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
+        mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:2.0.0-SNAPSHOT:repackaged'
     }
 
     tasks.register('generateXtextLanguage', JavaExec) {
@@ -1126,6 +1218,12 @@ project(':fsm-pekko-4eyes-projections-statemachine-adapter') {
     apply plugin: 'org.xtext.builder'
     apply plugin: 'io.freefair.lombok'
     apply plugin: 'com.diffplug.spotless'
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(17)
+        }
+    }
 
     sourceSets {
         main {
@@ -1169,7 +1267,7 @@ project(':fsm-pekko-4eyes-projections-statemachine-adapter') {
         mwe2 project(':fsm-pekko-xtext-reader')
         mwe2 project(':fsm-pekko-xtend')
         mwe2 project(':fsm-pekko-4eyes-uml-model')
-        mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
+        mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:2.0.0-SNAPSHOT:repackaged'
     }
 
     tasks.register('generateXtextLanguage', JavaExec) {
@@ -1194,6 +1292,12 @@ project(':fsm-pekko-projections') {
     apply plugin: 'java-library'
     apply plugin: 'scala'
 
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(17)
+        }
+    }
+
     dependencies {
         api project(':fsm-pekko-elasticsearch'),
                 project(':fsm-pekko-pekkosystem')
@@ -1209,6 +1313,12 @@ project(':fsm-pekko-4eyes-projections') {
     apply plugin: 'java-library'
     apply plugin: 'scala'
 
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(17)
+        }
+    }
+
     dependencies {
         api project(':fsm-pekko-projections'),
                 project(':fsm-pekko-elasticsearch'),
@@ -1221,6 +1331,12 @@ project(':fsm-pekko-4eyes-projections') {
 project(':fsm-pekko-4eyes-statemachine-facade') {
     apply plugin: 'java-library'
     apply plugin: 'scala'
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(17)
+        }
+    }
 
     dependencies {
         api project(':fsm-pekko-4eyes-event-adapter'),
@@ -1392,7 +1508,7 @@ project(':fsm-pekko-asciidoc') {
         mwe2 project(':fsm-pekko-xtext-reader')
         mwe2 project(':fsm-pekko-xtend')
         mwe2 project(':fsm-pekko-4eyes-uml-model')
-        mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:1.0.0-SNAPSHOT:repackaged'
+        mwe2 'org.salgar.pekko.fsm:fsm-pekko-eclipse-dependencies:2.0.0-SNAPSHOT:repackaged'
         asciidoctorGems 'rubygems:rouge:4.5.1'
     }
 

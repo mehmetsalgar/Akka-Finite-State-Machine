@@ -4,8 +4,11 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 
 import org.eclipse.uml2.uml.State
 
+import org.salgar.pekko.fsm.xtend.uml.engine.TemplateAutoInjector
+
 class AsciidocsUsecasesTemplate {
     def generate(org.eclipse.uml2.uml.StateMachine it, IFileSystemAccess fsa) {
+        TemplateAutoInjector.injectTemplates(this)
         for(state: allOwnedElements.filter(State)) {
             val content = generate(state)
             fsa.generateFile("/"+name.toLowerCase()+"/usecases/"+state.name+".adoc", content)

@@ -1,12 +1,11 @@
 package org.salgar.pekko.fsm.xtend.uml.templates.model.pojo
 
-import javax.inject.Inject
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.salgar.pekko.fsm.xtend.uml.templates.Naming
 
 class PojoTemplate {
-	@Inject extension Naming
+	extension Naming = new Naming
 
 	def doGenerate(Resource input, IFileSystemAccess fsa) {
         input

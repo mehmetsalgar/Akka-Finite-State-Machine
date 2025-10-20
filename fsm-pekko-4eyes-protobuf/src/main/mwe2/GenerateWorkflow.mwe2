@@ -5,7 +5,7 @@ var javaPath = "src"
 Workflow {
 	bean = org.salgar.pekko.fsm.xtend.uml.engine.UmlGeneratorStandaloneSetup : setupProtobuf {
         config = {
-            javaGenPath = "build/generated-sources/main/proto"
+            javaGenPath = "src/generated/main/proto"
             rootClass = "org.salgar.pekko.fsm.xtend.uml.templates.model.protobuf.ProtobufGenerator"
         }
         doInit = true
@@ -24,14 +24,14 @@ Workflow {
     }
 
 	component = org.eclipse.emf.mwe.utils.DirectoryCleaner : protobufCleaner {
-		directory = "build/generated-sources/main/proto"
+		directory = "src/generated/main/proto"
 	}
 
 	component = org.eclipse.xtext.generator.GeneratorComponent : protobufGenerator {
 		register = setupProtobuf
         slot = 'modelSlot'
         outlet = {
-            path = "build/generated-sources/main/proto"
+            path = "src/generated/main/proto"
         }
         outlet = {
         	outletName = "gen-once"

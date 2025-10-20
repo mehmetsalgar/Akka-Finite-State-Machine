@@ -9,11 +9,14 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.util.Pair
 import org.salgar.pekko.fsm.xtend.uml.templates.Naming
 
+import org.salgar.pekko.fsm.xtend.uml.engine.TemplateAutoInjector
+
 class ProtobufTemplate {
-	@Inject extension Naming
+	extension Naming = new Naming
 	@Inject extension ProtobufHelper
 
 	def doGenerate(Resource input, IFileSystemAccess fsa) {
+	    TemplateAutoInjector.injectTemplates(this)
 	    val Map<Pair<String, String>, List<org.eclipse.uml2.uml.Class>> map =
 	        populatePackageClassMap(input.allContents.filter(org.eclipse.uml2.uml.Class))
 

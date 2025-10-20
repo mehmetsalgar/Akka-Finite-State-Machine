@@ -5,8 +5,11 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.uml2.uml.State
 import org.eclipse.uml2.uml.Transition
 
+import org.salgar.pekko.fsm.xtend.uml.engine.TemplateAutoInjector
+
 class AsciidocsTransitionTemplate {
     def generate(org.eclipse.uml2.uml.StateMachine it, IFileSystemAccess fsa) {
+        TemplateAutoInjector.injectTemplates(this)
         for(state: allOwnedElements.filter(State)) {
             for(tr: state.getOutgoings()) {
                 val content = generate(it, tr)

@@ -5,11 +5,14 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 
 import org.eclipse.uml2.uml.Transition
 
+import org.salgar.pekko.fsm.xtend.uml.engine.TemplateAutoInjector
+
 class SlaveGuardianTemplate {
-	@Inject extension Naming
+	extension Naming = new Naming
 	@Inject extension StateMachineHelper
 
 	def doGenerate (org.eclipse.uml2.uml.StateMachine it, IFileSystemAccess fsa) {
+	    TemplateAutoInjector.injectTemplates(this)
         val content = generate
         fsa.generateFile(packagePath+"/"+name+"Guardian.scala", content)
     }

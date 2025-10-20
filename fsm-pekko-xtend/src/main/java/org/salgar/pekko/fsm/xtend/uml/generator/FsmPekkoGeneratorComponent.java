@@ -2,10 +2,6 @@ package org.salgar.pekko.fsm.xtend.uml.generator;
 
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.mwe2.runtime.workflow.IWorkflowContext;
-import org.eclipse.xtend.expression.ExecutionContextImpl;
-import org.eclipse.xtend.expression.ExpressionFacade;
-import org.eclipse.xtend.expression.Variable;
-import org.eclipse.xtend.typesystem.MetaModel;
 import org.eclipse.xtext.generator.GeneratorComponent;
 import org.eclipse.xtext.generator.GeneratorContext;
 import org.eclipse.xtext.generator.GeneratorDelegate;
@@ -26,7 +22,6 @@ import java.util.Map;
 public class FsmPekkoGeneratorComponent extends GeneratorComponent {
     private List<GlobalVarDef> globalVarDefs = new ArrayList<>();
     private final List<GlobalVar> globalVars = new ArrayList<>();
-    protected final List<MetaModel> metaModels = new ArrayList<>();
 
     public static class GlobalVarDef {
         private String name;
@@ -79,11 +74,6 @@ public class FsmPekkoGeneratorComponent extends GeneratorComponent {
         globalVars.add(var);
     }
 
-    public void addMetaModel(final MetaModel metaModel) {
-        assert metaModel != null;
-        metaModels.add(metaModel);
-    }
-
     @Override
     public void invoke(IWorkflowContext ctx) {
         GeneratorDelegate instance = getCompiler();
@@ -111,31 +101,19 @@ public class FsmPekkoGeneratorComponent extends GeneratorComponent {
         }
     }
 
-    protected Map<String, Variable> getGlobalVars(final IWorkflowContext ctx) {
-        final Map<String, Variable> result = new HashMap<>();
+    protected Map<String, Object> getGlobalVars(final IWorkflowContext ctx) {
+        final Map<String, Object> result = new HashMap<>();
 
-        if (!globalVarDefs.isEmpty()) {
-            ExecutionContextImpl ec = new ExecutionContextImpl();
-
-            for (String slot : ctx.getSlotNames()) {
-                ec = (ExecutionContextImpl) ec.cloneWithVariable(new Variable(slot, ctx.get(slot)));
-            }
-
-            for (MetaModel mm : metaModels) {
-                ec.registerMetaModel(mm);
-            }
-
-            final ExpressionFacade ef = new ExpressionFacade(ec);
-            for (GlobalVarDef def : globalVarDefs) {
-                final Object value = ef.evaluate(def.value);
-
-                result.put(def.getName(), new Variable(def.getName(), value));
-            }
+        // Directly put static vars
+        for (GlobalVarDef def : globalVarDefs) {
+            result.put(def.getName(), def.getValue());
         }
+
+        // Add manually added runtime vars
         for (GlobalVar gv : globalVars) {
-            System.out.println("iterate" + gv.toString());
-            result.put(gv.getName(), new Variable(gv.getName(), gv.getValue()));
+            result.put(gv.getName(), gv.getValue());
         }
+
         return result;
     }
 }

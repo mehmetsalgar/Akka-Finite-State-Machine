@@ -1,13 +1,12 @@
 package org.salgar.pekko.fsm.xtend.uml.templates.kafka
 
-import javax.inject.Inject
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.IFileSystemAccess
 import com.google.common.base.CaseFormat
 import org.salgar.pekko.fsm.xtend.uml.templates.Naming
 
 class ConsumerConfigTemplate {
-	@Inject extension Naming
+	extension Naming = new Naming
 
 	def doGenerate(Resource input, IFileSystemAccess fsa) {
 	    val masterSm = input

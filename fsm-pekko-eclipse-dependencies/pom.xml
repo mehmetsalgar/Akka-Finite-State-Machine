@@ -4,12 +4,14 @@
 
   <groupId>org.salgar.pekko.fsm</groupId>
   <artifactId>fsm-pekko-eclipse-dependencies</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>2.0.0-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 
-  <name>FSM Akka - State Machine - MWE Eclipse Dependencies</name>
+  <name>FSM Pekko - State Machine - MWE Eclipse Dependencies</name>
 
   <properties>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <eclipse.uml2.version>5.0.0-v20140602-0749</eclipse.uml2.version>
     <eclipse.uml2.resources.version>5.0.0-v20140602-0749</eclipse.uml2.resources.version>
@@ -29,25 +31,13 @@
     <log4j.version>1.2.13</log4j.version>
     <testng.version>5.9</testng.version>
     <atmosphere.version>2.0.3</atmosphere.version>
-    <primefaces.version>4.0</primefaces.version>
-    <javax.faces.version>2.2.0</javax.faces.version>
-    <spring-webflow.version>2.4.1.RELEASE</spring-webflow.version>
-    <spring.version>4.2.2.RELEASE</spring.version>
-    <spring.faces.version>2.0.5.RELEASE</spring.faces.version>
-    <spring.statemachine.version>1.0.1.RELEASE</spring.statemachine.version>
     <el.version>2.2</el.version>
-    <servlet.version>2.5</servlet.version>
-    <faces.version>2.0.3</faces.version>
-    <jsp.version>2.1</jsp.version>
-    <jstl.version>1.1.2</jstl.version>
-    <tycho.plugin.version>2.6.0</tycho.plugin.version>
-    <xtext-version>2.25.0</xtext-version>
-    <equinox.common.version>3.6.200-v20130402-1505</equinox.common.version>
+    <tycho.plugin.version>4.0.3</tycho.plugin.version>
+    <xtext-version>2.40.0</xtext-version>
     <exec.plugin.version>1.6.0</exec.plugin.version>
     <build_helper.plugin.version>1.9.1</build_helper.plugin.version>
     <lifecycle-mapping.plugin.version>1.0.0</lifecycle-mapping.plugin.version>
     <compiler.plugin.version>3.2</compiler.plugin.version>
-    <easymock.version>3.0</easymock.version>
   </properties>
 
   <build>
@@ -56,6 +46,9 @@
       <groupId>org.eclipse.tycho</groupId>
       <artifactId>tycho-maven-plugin</artifactId>
       <extensions>true</extensions>
+      <configuration>
+        <executionEnvironment>JavaSE-17</executionEnvironment>
+      </configuration>
     </plugin>
     <plugin>
       <groupId>org.eclipse.tycho</groupId>
@@ -111,6 +104,7 @@
     <plugin>
       <groupId>org.apache.maven.plugins</groupId>
       <artifactId>maven-dependency-plugin</artifactId>
+      <version>3.8.0</version>
       <executions>
         <execution>
           <id>unpack-dependencies</id>
@@ -158,8 +152,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>${compiler.plugin.version}</version>
         <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
+          <source>17</source>
+          <target>17</target>
           <!-- ensure that the compile uses
          the same encoding as the file
          encoding of the *.java
@@ -342,7 +336,7 @@
 </dependencyManagement>
 
   <repositories>
-    <repository>
+    <!--repository>
       <id>itemis.repository.release</id>
       <name>Itemis Repository</name>
       <url>https://projects.itemis.de/nexus/</url>
@@ -356,26 +350,39 @@
         <updatePolicy>never</updatePolicy>
         <checksumPolicy>fail</checksumPolicy>
       </snapshots>
-    </repository>
-    <repository>
+    </repository-->
+    <!--repository>
       <id>andromda.repository</id>
       <name>Itemis Repository</name>
       <url>https://andromda.org/maven2/</url>
-    </repository>
+    </repository-->
     <repository>
       <id>jboss</id>
       <url>https://repository.jboss.org/nexus/content/groups/public/</url>
     </repository>
     <repository>
-      <id>4_14.repo.eclipse.org</id>
+      <id>eclipse_4.37.0</id>
       <name>Project Repository - Releases</name>
-      <url>https://download.eclipse.org/eclipse/updates/4.14</url>
+      <url>https://download.eclipse.org/releases/2025-06/</url>
+      <layout>p2</layout>
+    </repository>
+    <!-- XText -->
+    <repository>
+      <id>xtext_2_40_0</id>
+      <name>Project Repository - Releases</name>
+      <url>https://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.40.0/</url>
       <layout>p2</layout>
     </repository>
     <repository>
-      <id>2020_12.repo.eclipse.org</id>
+      <id>emf_2_43_0</id>
       <name>Project Repository - Releases</name>
-      <url>https://download.eclipse.org/releases/2020-12</url>
+      <url>https://download.eclipse.org/modeling/emf/emf/builds/release/2.43.0</url>
+      <layout>p2</layout>
+    </repository>
+    <repository>
+      <id>mwe_2_23_0</id>
+      <name>Project Repository - Releases</name>
+      <url>https://download.eclipse.org/modeling/emft/mwe/updates/releases/2.23.0/</url>
       <layout>p2</layout>
     </repository>
     <!--repository>
@@ -386,6 +393,11 @@
     </repository-->
   </repositories>
   <pluginRepositories>
+    <pluginRepository>
+      <id>maven.central</id>
+      <name>Maven Centra1 Repository</name>
+      <url>	https://repo1.maven.org/maven2/</url>
+    </pluginRepository>
     <pluginRepository>
       <id>itemis.repository.plugin.release</id>
       <name>Itemis Repository</name>

@@ -15,8 +15,14 @@ import java.util.List
 
 import javax.inject.Inject
 
+import org.salgar.pekko.fsm.xtend.uml.engine.TemplateAutoInjector
+
 class SubStateMachineHelper {
     @Inject extension GlobalVariableHelper
+
+    new() {
+        TemplateAutoInjector.injectTemplates(this)
+    }
 
     def Collection<Transition> giveTransitionsRecursive(Iterable<Pseudostate> pseudostates, Iterable<State> states) {
         val result = new HashMap<Transition, Transition>
