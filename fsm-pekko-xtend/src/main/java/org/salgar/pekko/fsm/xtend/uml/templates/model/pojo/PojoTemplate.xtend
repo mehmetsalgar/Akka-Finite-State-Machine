@@ -23,10 +23,12 @@ class PojoTemplate {
         import lombok.Builder;
         import lombok.Data;
         import lombok.RequiredArgsConstructor;
+        import lombok.NoArgsConstructor;
 
         @Builder(toBuilder = true)
         @Data
         @RequiredArgsConstructor
+        @NoArgsConstructor(force = true)
         public class «name» {
             «FOR org.eclipse.uml2.uml.Property property : getAllAttributes.filter(org.eclipse.uml2.uml.Property)»
                 «IF property.upper === -1»
