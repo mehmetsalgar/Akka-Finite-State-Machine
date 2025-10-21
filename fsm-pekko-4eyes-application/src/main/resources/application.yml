@@ -15,7 +15,7 @@ org:
                 multiTenantCreditScoreSM: 'multiTenantScreditScoreSM'
           elasticsearch:
             hostname: 'localhost'
-            port: 57615
+            port: 52678
             batchSize: 1
             bulkSize: 512
             lingerMs: 10

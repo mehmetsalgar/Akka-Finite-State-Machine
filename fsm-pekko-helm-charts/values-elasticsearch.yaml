@@ -4,3 +4,6 @@ elasticsearch:
   #imageTag: "7.16.3-arm64"
   replicas: 1
   minimumMasterNodes: 1
+  esConfig:
+    elasticsearch.yml: |
+      discovery.type: single-node
