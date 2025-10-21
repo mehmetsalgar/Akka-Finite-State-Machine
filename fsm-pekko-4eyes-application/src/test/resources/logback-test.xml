@@ -23,9 +23,9 @@
     <logger name="org.apache.zookeeper" level="WARN" />
     <logger name="org.salgar.fsm.pekko.foureyes" level="INFO" />
     <logger name="scala" level="WARN" />
-    <logger name="org.apoche.pekko" level="INFO" />
-    <logger name="org.apoche.pekko.projection" level="INFO" />
-    <logger name="org.apoche.pekko.projection.elasticsearch.internal" level="INFO" />
+    <logger name="org.apache.pekko" level="INFO" />
+    <logger name="org.apache.pekko.projection" level="INFO" />
+    <logger name="org.apache.pekko.projection.elasticsearch.internal" level="INFO" />
     <logger name="org.apache.http" level="INFO" />
     <logger name="org.elasticsearch" level="ERROR" />
 </configuration>
