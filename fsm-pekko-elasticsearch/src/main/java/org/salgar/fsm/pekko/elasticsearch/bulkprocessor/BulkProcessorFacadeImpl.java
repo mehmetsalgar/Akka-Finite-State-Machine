@@ -20,6 +20,7 @@ import org.salgar.fsm.pekko.elasticsearch.OffsetStateImpl;
 import org.salgar.fsm.pekko.elasticsearch.config.BehaviorOnMalformedDoc;
 import org.salgar.fsm.pekko.elasticsearch.config.ElasticsearchProperties;
 import org.salgar.fsm.pekko.elasticsearch.model.ElasticsearchOffset;
+import org.springframework.data.elasticsearch.core.document.Document;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -70,10 +71,10 @@ public class BulkProcessorFacadeImpl implements BulkProcessorFacade {
     private static class RetryContext<T> {
         final String index;
         final String id;
-        final T doc;
+        final Document doc;
         final int attempts;
 
-        RetryContext(String index, String id, T doc, int attempts) {
+        RetryContext(String index, String id, Document doc, int attempts) {
             this.index = index;
             this.id = id;
             this.doc = doc;
@@ -89,7 +90,7 @@ public class BulkProcessorFacadeImpl implements BulkProcessorFacade {
                       String persistenceName,
                       String id,
                       String index,
-                      Object document) {
+                      Document document) {
         requestToSinkRecord.put(
                 id,
                 new SinkRecordAndOffset(
@@ -167,7 +168,6 @@ public class BulkProcessorFacadeImpl implements BulkProcessorFacade {
                             }
                             idx++;
                         }
-
 
                         if (response.errors()) {
                             for (int i = 0; i < response.items().size(); i++) {

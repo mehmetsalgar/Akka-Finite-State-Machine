@@ -3,10 +3,11 @@ package org.salgar.fsm.pekko.elasticsearch;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.salgar.fsm.pekko.elasticsearch.bulkprocessor.BulkProcessorFacade;
+import org.salgar.fsm.pekko.elasticsearch.model.CreditSMQueryDocument;
 import org.springframework.data.elasticsearch.core.convert.ElasticsearchConverter;
+import org.springframework.data.elasticsearch.core.document.Document;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -64,16 +65,16 @@ public class ElasticsearchRepositoryImpl implements ElasticsearchRepository {
                             final Map<String, Object> payload) {
         log.debug("Processing Index Request for Id: {}", id);
         try {
-            Map<String, Object> indexPayload = new HashMap<>(payload);
-            indexPayload.put("state", persistEvent);
+            //Original Payload Version before CreditSMQueryDocument
+            //Map<String, Object> indexPayload = new HashMap<>(payload);
+            //indexPayload.put("state", persistEvent);
 
-            Map<String, Object> convertedPayload = new HashMap<>();
-            for (String key : payload.keySet()) {
-                Object value = payload.get(key);
-                Object result = elasticsearchConverter.mapObject(value);
-                convertedPayload.put(key, result);
-            }
-            Object py = elasticsearchConverter.mapObject(convertedPayload);
+            CreditSMQueryDocument creditSMQueryDocument =
+                    new CreditSMQueryDocument(
+                            persistEvent,
+                            payload);
+
+            Document py = elasticsearchConverter.mapObject(creditSMQueryDocument);
 
             this.bulkProcessorFacade.index(
                     offset,
