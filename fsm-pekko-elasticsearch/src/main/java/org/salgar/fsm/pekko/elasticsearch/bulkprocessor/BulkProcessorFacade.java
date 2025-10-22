@@ -9,5 +9,5 @@ public interface BulkProcessorFacade {
                String persistenceName,
                String id,
                String index,
-               String document);
+               Object py);
 }

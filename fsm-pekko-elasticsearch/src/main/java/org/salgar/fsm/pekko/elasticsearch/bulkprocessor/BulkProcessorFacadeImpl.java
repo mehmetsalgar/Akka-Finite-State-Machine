@@ -89,7 +89,7 @@ public class BulkProcessorFacadeImpl implements BulkProcessorFacade {
                       String persistenceName,
                       String id,
                       String index,
-                      String document) {
+                      Object document) {
         requestToSinkRecord.put(
                 id,
                 new SinkRecordAndOffset(

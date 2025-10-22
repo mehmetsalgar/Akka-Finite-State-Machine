@@ -11,10 +11,12 @@ import org.salgar.pekko.fsm.xtend.uml.engine.TemplateAutoInjector
 class ElkGenerator extends AbstractGenerator {
     @Inject ElkTemplate elkTemplate
     @Inject ElkConverterTemplate elkConverterTemplate
+    @Inject ElkConverterConfigTemplate elkConverterConfigTemplate
 
     override doGenerate(Resource input, IFileSystemAccess2 fsa, IGeneratorContext context) {
         TemplateAutoInjector.injectTemplates(this)
         elkTemplate.doGenerate(input, fsa)
         elkConverterTemplate.doGenerate(input, fsa)
+        elkConverterConfigTemplate.doGenerate(input, fsa)
     }
 }

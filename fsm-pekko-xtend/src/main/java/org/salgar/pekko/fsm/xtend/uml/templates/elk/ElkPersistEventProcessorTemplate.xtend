@@ -24,7 +24,7 @@ class ElkPersistEventProcessorTemplate {
             .filter(s | s.isActive)
             .forEach[
                 val content = generate
-                fsa.generateFile(packagePath+"/projections//"+name+"PersistEventProcessor.scala", content)
+                fsa.generateFile(packagePath+"/projections/"+name+"PersistEventProcessor.scala", content)
             ]
     }
 

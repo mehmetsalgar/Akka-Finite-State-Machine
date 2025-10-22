@@ -1,6 +1,5 @@
 package org.salgar.fsm.pekko.elasticsearch;
 
-import co.elastic.clients.elasticsearch.core.IndexRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.salgar.fsm.pekko.elasticsearch.bulkprocessor.BulkProcessorFacade;
@@ -68,13 +67,14 @@ public class ElasticsearchRepositoryImpl implements ElasticsearchRepository {
             Map<String, Object> indexPayload = new HashMap<>(payload);
             indexPayload.put("state", persistEvent);
 
-            IndexRequest<?> indexRequest = IndexRequest.of(
-                    builder -> builder
-                            .id(id)
-                            .index(index)
-                            .document(elasticsearchConverter.mapObject(indexPayload).toJson())
+            Map<String, Object> convertedPayload = new HashMap<>();
+            for (String key : payload.keySet()) {
+                Object value = payload.get(key);
+                Object result = elasticsearchConverter.mapObject(value);
+                convertedPayload.put(key, result);
+            }
+            Object py = elasticsearchConverter.mapObject(convertedPayload);
 
-            );
             this.bulkProcessorFacade.index(
                     offset,
                     persistenceId,
@@ -83,7 +83,7 @@ public class ElasticsearchRepositoryImpl implements ElasticsearchRepository {
                     projectionKey,
                     id,
                     index,
-                    elasticsearchConverter.mapObject(indexPayload).toJson());
+                    py);
         } catch (Throwable t) {
             log.error(t.getMessage(), t);
         }
