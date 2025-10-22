@@ -20,14 +20,13 @@ class ElkTemplate {
     def generate (org.eclipse.uml2.uml.Class it) '''
         package «packageName».elasticsearch.model;
 
-        import lombok.Getter;
         import org.springframework.data.elasticsearch.annotations.Field;
         import org.springframework.data.elasticsearch.annotations.FieldType;
 
-        @Getter
         public class «name»ELK {
-            private «packageName».model.«name» _«name.toFirstLower»;
+            private final «packageName».model.«name» _«name.toFirstLower»;
             private «name»ELK() {
+                this._«name.toFirstLower» = new «packageName».model.«name»();
             }
             public «name»ELK(«packageName».model.«name» _«name.toFirstLower») {
                 this._«name.toFirstLower» = _«name.toFirstLower»;
@@ -35,13 +34,19 @@ class ElkTemplate {
             «FOR org.eclipse.uml2.uml.Property property : getAllAttributes.filter(org.eclipse.uml2.uml.Property)»
                 «IF property.upper === -1»
                     @Field(type = FieldType.«property.type.fieldType»)
-                    private final «IF property.isOrdered»java.util.Set<«ELSE»java.util.List<«ENDIF» «packageName(property.type)».model.«property.type.name»> «property.association.name» = _«name.toFirstLower».get«property.association.name.toFirstUpper»();
+                    public «IF property.isOrdered»java.util.Set<«ELSE»java.util.List<«ENDIF»«packageName(property.type)».model.«property.type.name»> get«property.association.name.toFirstUpper»() {
+                        return this._«name.toFirstLower».get«property.association.name.toFirstUpper»();
+                    }
                 «ELSEIF property.association === null»
                     @Field(type = FieldType.«property.type.fieldType»)
-                    private final «typeName(property.type)» «property.name» = _«name.toFirstLower».get«property.name.toFirstUpper»() ;
+                    public «typeName(property.type)» get«property.name.toFirstUpper»() {
+                        return this._«name.toFirstLower».get«property.name.toFirstUpper»();
+                    }
                 «ELSE»
                     @Field(type = FieldType.«property.type.fieldType»)
-                    private final «packageName(property.type)».model.«property.type.name» «property.association.name» = _«name.toFirstLower».get«property.association.name.toFirstUpper»();
+                    public «packageName(property.type)».model.«property.type.name» get«property.association.name.toFirstUpper»() {
+                        return this._«name.toFirstLower».get«property.association.name.toFirstUpper»();
+                    }
                 «ENDIF»
             «ENDFOR»
         }

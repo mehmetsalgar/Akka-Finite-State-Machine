@@ -30,7 +30,7 @@ class AskFacadeTemplate {
             import «packageName(sm)».protobuf.«sm.name»Command
         «ENDFOR»
         import org.springframework.stereotype.Component
-        import javax.annotation.PostConstruct
+        import jakarta.annotation.PostConstruct
         import scala.concurrent.Future
 
         @Component

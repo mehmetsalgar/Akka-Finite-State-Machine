@@ -32,6 +32,7 @@ class ConsumerConfigTemplate {
         import «packageName(sm)».protobuf.«sm.name.toFirstUpper»Command
         import org.springframework.beans.factory.annotation.Qualifier
         import org.springframework.boot.autoconfigure.kafka.KafkaProperties
+        import org.springframework.boot.ssl.DefaultSslBundleRegistry
         import org.springframework.stereotype.Component
 
         import java.util.stream.Collectors
@@ -56,7 +57,7 @@ class ConsumerConfigTemplate {
             )
             .withClientId("pekko-consumer-«CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_HYPHEN, sm.name).toLowerCase»")
             .withGroupId(consumerProperties.getGroupId)
-            .withProperties(consumerProperties.buildProperties().asInstanceOf[java.util.Map[String, String]])
+            .withProperties(consumerProperties.buildProperties(new DefaultSslBundleRegistry()).asInstanceOf[java.util.Map[String, String]])
             .withStopTimeout(0.seconds)
         }
     '''

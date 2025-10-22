@@ -8,7 +8,8 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties("org.salgar.fsm.pekko.foureyes.elasticsearch")
 @Data
 public class ElasticsearchProperties {
-    private String url;
+    private String hostname;
+    private Integer port;
     private Integer batchSize;
     private Long bulkSize;
     private Long lingerMs;

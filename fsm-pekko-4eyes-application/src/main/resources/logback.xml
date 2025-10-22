@@ -11,7 +11,7 @@
         <appender-ref ref="STDOUT" />
     </appender>
 
-    <root level="INFO">
+    <root level="WARN">
         <appender-ref ref="ASYNC"/>
     </root>
 
@@ -20,5 +20,5 @@
     <logger name="org.springframework" level="INFO" />
     <logger name="com.datastax" level="INFO" />
     <logger name="scala" level="WARN" />
-    <logger name="org.apache.pekko" level="INFO" />
+    <logger name="org.apache.pekko" level="WARN" />
 </configuration>

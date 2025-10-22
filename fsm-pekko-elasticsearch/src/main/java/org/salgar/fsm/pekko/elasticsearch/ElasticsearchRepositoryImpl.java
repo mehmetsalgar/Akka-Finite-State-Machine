@@ -2,13 +2,12 @@ package org.salgar.fsm.pekko.elasticsearch;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.client.Requests;
 import org.salgar.fsm.pekko.elasticsearch.bulkprocessor.BulkProcessorFacade;
+import org.salgar.fsm.pekko.elasticsearch.model.CreditSMQueryDocument;
 import org.springframework.data.elasticsearch.core.convert.ElasticsearchConverter;
+import org.springframework.data.elasticsearch.core.document.Document;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -66,19 +65,26 @@ public class ElasticsearchRepositoryImpl implements ElasticsearchRepository {
                             final Map<String, Object> payload) {
         log.debug("Processing Index Request for Id: {}", id);
         try {
-            Map<String, Object> indexPayload = new HashMap<>(payload);
-            indexPayload.put("state", persistEvent);
+            //Original Payload Version before CreditSMQueryDocument
+            //Map<String, Object> indexPayload = new HashMap<>(payload);
+            //indexPayload.put("state", persistEvent);
 
-            IndexRequest indexRequest = new IndexRequest(index)
-                    .id(id)
-                    .source(elasticsearchConverter.mapObject(indexPayload).toJson(), Requests.INDEX_CONTENT_TYPE);
+            CreditSMQueryDocument creditSMQueryDocument =
+                    new CreditSMQueryDocument(
+                            persistEvent,
+                            payload);
+
+            Document py = elasticsearchConverter.mapObject(creditSMQueryDocument);
+
             this.bulkProcessorFacade.index(
                     offset,
                     persistenceId,
                     sequenceId,
                     projectionName,
                     projectionKey,
-                    indexRequest);
+                    id,
+                    index,
+                    py);
         } catch (Throwable t) {
             log.error(t.getMessage(), t);
         }

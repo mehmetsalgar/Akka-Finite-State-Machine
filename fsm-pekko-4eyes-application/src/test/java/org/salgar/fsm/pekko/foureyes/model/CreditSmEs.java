@@ -20,6 +20,4 @@ public class CreditSmEs {
     private Boolean fraudPreventionResult;
     @Field(type = FieldType.Nested)
     private CreditTenantScoreResult creditScoreTenantResults;
-
-
 }

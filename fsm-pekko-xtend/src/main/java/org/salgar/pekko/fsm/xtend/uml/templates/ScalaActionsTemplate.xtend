@@ -23,7 +23,7 @@ class ScalaActionsTemplate {
     def generate (org.eclipse.uml2.uml.StateMachine it, IGeneratorContext context) '''
         package «packageName».actions
 
-        import javax.annotation.PostConstruct
+        import jakarta.annotation.PostConstruct
         import org.salgar.pekko.fsm.api.action.Action
         import «packageName».«name».{«name»Event, PersistEvent, State}
         import org.springframework.beans.factory.annotation.Autowired

@@ -93,3 +93,5 @@ helm install metrics-server . -f values-metrics.yaml
 # Application
 helm repo add fsmakka http://localhost:55120/repository/fsmakka/
 helm install foureyes . -n fsmakka --create-namespace --set fsm-akka-4eyes-application.enabled=true
+
+kubectl logs elasticsearch-master-0 -n fsmakka --previous
