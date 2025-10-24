@@ -301,8 +301,8 @@ project(':fsm-pekko-4eyes-advice') {
                     resource:"org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties",
                     classpath: configurations.ajc.asPath)
             ant.iajc(
-                    source: "1.8",
-                    target: "1.8",
+                    source: "17",
+                    target: "17",
                     showWeaveInfo: "true",
                     destDir: sourceSets.main.java.classesDirectory.get().asFile.path,
                     maxmem: "512m",
@@ -647,7 +647,6 @@ project(':fsm-pekko-4eyes-statemachine') {
             }
         }
     }
-
 }
 
 project(':fsm-pekko-statemachine-facade') {
