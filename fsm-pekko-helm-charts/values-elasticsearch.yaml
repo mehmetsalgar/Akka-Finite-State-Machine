@@ -11,3 +11,4 @@ elasticsearch:
     resources:
       requests:
         storage: 5Gi
+  clusterHealthCheckParams: "wait_for_status=green&timeout=30s"
